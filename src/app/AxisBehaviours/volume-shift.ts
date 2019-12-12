@@ -2,6 +2,7 @@ import { AxisBehaviour } from './axis-behaviour';
 import { Note } from '../note';
 import { SceneManager } from '../scene-manager';
 import { Chord } from '../chord';
+import { SoundEntity } from '../sound-entity';
 
 export class VolumeShift extends AxisBehaviour {
 
@@ -10,12 +11,17 @@ export class VolumeShift extends AxisBehaviour {
     constructor() {super()}
 
 
-    public updateNote(note: Note, currentTime: number) {
+    public updateNote(entity: SoundEntity, currentTime: number) {
 
-        note.volume.gain.value = note.position.y / SceneManager.sF
+        if(entity instanceof Note) {
 
-        // note.osc.frequency.setValueAtTime(note.frequency, currentTime)
+            entity.volume.gain.value = entity.position.y / SceneManager.sF
+        }
+        else if(entity instanceof Chord) {
 
-        console.log('Volume', note.volume.gain.value)
+            entity.volume.gain.value = entity.position.y / SceneManager.sF
+        }
+
+        console.log('Volume', entity.volume.gain.value)
     }
 }

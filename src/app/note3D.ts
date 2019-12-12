@@ -9,6 +9,8 @@ export class Note3D extends SoundEntity3D{
     ctrl: SoundEntity
     obj3D: Mesh
 
+    public partOfChord: boolean = false
+
     constructor(note: Note) {
         super() 
 
@@ -33,5 +35,8 @@ export class Note3D extends SoundEntity3D{
         this.ctrl.position.x = moveTo.x
         this.ctrl.position.y = moveTo.y
         this.ctrl.position.z = moveTo.z
+
+        console.log(this.ctrl.position)
+
     }
 }

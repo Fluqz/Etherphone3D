@@ -11,7 +11,7 @@ export class Chord3D extends SoundEntity3D{
     public obj3D: Mesh
     public notes3D: Note3D[]
 
-    constructor(chord: Chord, soundEntities: SoundEntity3D[]) {
+    constructor(chord: Chord, soundEntities: Note3D[]) {
         super() 
 
         this.ctrl = chord as Chord
@@ -44,7 +44,7 @@ export class Chord3D extends SoundEntity3D{
 
         this.notes3D.forEach(note => {
 
-            note.obj3D.localToWorld(note.ctrl.position)
+            note.obj3D.getWorldPosition(note.ctrl.position)
         })
     }
 }
