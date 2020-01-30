@@ -14,8 +14,9 @@ export class Chord extends SoundEntity {
     public attack: number
     public release: number
     public sustain: number
+    public volume: number
 
-    public volume: GainNode
+    public gainNode: GainNode
 
     public audioContext: AudioContext
 
@@ -34,8 +35,7 @@ export class Chord extends SoundEntity {
 
         this.audioContext = _audioContext
 
-        this.volume = this.audioContext.createGain()
-        this.volume.gain.value = 10 / SceneManager.sF
+        this.gainNode = this.audioContext.createGain()
 
         this.type = 'chord'
 
@@ -43,12 +43,15 @@ export class Chord extends SoundEntity {
 
         _notes.forEach((note, i) => {
 
-            note.volume.disconnect()
+            note.gainNode.disconnect()
 
-            note.volume.connect(this.volume)
+            note.gainNode.connect(this.gainNode)
         })
 
-        this.volume.connect(this.audioContext.destination)
+        this.gainNode.connect(this.audioContext.destination)
+
+        this.gainNode.gain.value = this.volume = 1
+
     }
     
     public getPosition() {

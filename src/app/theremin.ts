@@ -10,6 +10,7 @@ export class Theremin {
     static instance: Theremin
 
     masterVolume: GainNode
+    storedVolume: number
 
     context: AudioContext
 
@@ -26,10 +27,11 @@ export class Theremin {
 
         this.context = new AudioContext()
 
-        // this.masterVolume = this.context.createGain()
+        this.masterVolume = this.context.createGain()
 
-        // this.masterVolume.gain.value = .3
-        // this.masterVolume.connect(this.context.destination)
+        this.masterVolume.gain.value = .3
+        this.masterVolume.connect(this.context.destination)
+        this.storedVolume = this.masterVolume.gain.value
 
         // this.createNote(200)
         // this.createNote(300)
@@ -39,6 +41,7 @@ export class Theremin {
         this.Y = new VolumeShift()
 
         // this.update()
+
     }
 
     public addNote(frequency: number) : SoundEntity{
@@ -115,5 +118,21 @@ export class Theremin {
 
         this.X.updateNote(se, this.context.currentTime)
         this.Y.updateNote(se, this.context.currentTime)
+    }
+
+    public toggleOnOff(isPaused: boolean) {
+
+        this.sounds.forEach(sound => {
+
+            if(isPaused) {
+
+                sound.gainNode.gain.setValueAtTime(0, this.context.currentTime)
+            }
+            else {
+                
+                sound.gainNode.gain.setValueAtTime(this.storedVolume, this.context.currentTime)
+            }
+        })
+
     }
 }

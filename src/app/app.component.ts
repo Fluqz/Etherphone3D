@@ -19,9 +19,9 @@ import { SoundEntity3D } from './soundEntity3D';
 export class AppComponent implements AfterViewInit{
 
   private container: HTMLElement
-  private theremin: Theremin
-  private theremin3D: Theremin3D
-  private objCtrl: ObjectControl
+  public theremin: Theremin
+  public theremin3D: Theremin3D
+  public objCtrl: ObjectControl
 
   constructor() {}
 
@@ -38,13 +38,19 @@ export class AppComponent implements AfterViewInit{
 
     this.container.append(SceneManager.renderer.domElement)
 
-    this.theremin = new Theremin()
+    setTimeout(()=> {
 
-    this.theremin3D = new Theremin3D(this.theremin)
+      this.theremin = new Theremin()
 
-    this.objCtrl = new ObjectControl(this.theremin3D)
+      this.theremin3D = new Theremin3D(this.theremin)
 
-    this.addOsc(300)
+      this.objCtrl = new ObjectControl(this.theremin3D)
+
+      this.addOsc(300)
+
+      this.theremin.toggleOnOff(true)
+    })
+
 
     this.loop()
   }
@@ -57,33 +63,9 @@ export class AppComponent implements AfterViewInit{
 
   }
 
-  private addOsc(frequency?: number) {
+  public addOsc(frequency?: number) {
 
     let osc = this.theremin.addNote(frequency == undefined ? 440 : frequency)
     this.theremin3D.addSoungEntity3D(osc)
-  }
-
-  private getSelected(type: string) {
-
-    if(this.objCtrl && this.objCtrl.selected != null) {
-      if(this.objCtrl.selected.ctrl.type == type)
-        return false
-      else return true
-    }
-  }
-
-  private groupSounEntities() {
-
-    let ses: SoundEntity[] = []
-    let ses3D: SoundEntity3D[] = []
-    this.objCtrl.selectedObjs.forEach(obj => {
-
-      ses3D.push(this.theremin3D.getNoteByObj(obj))
-      ses.push(this.theremin3D.getNoteByObj(obj).ctrl)
-    })
-
-    let chord = this.theremin.groupNotesToChord(ses)
-
-    this.theremin3D.groupNotesToChord(chord, ses3D)
   }
 }

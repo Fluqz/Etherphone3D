@@ -1,0 +1,36 @@
+
+<div id="selected-menu" *ngIf="objCtrl && objCtrl.selected">
+
+    <div>
+        <h4> {{ objCtrl.selected.ctrl.type + ' id:' + objCtrl.selected.ctrl.id }}</h4>
+
+        <label for="volume">Volume</label>
+        <input type="range" step=".01" min="0" max="100" class="slider" id="volume" name="volume" [(ngModel)]="selectedVolume" (change)="changeVolume()" (input)="changeVolume()">
+        
+        <label for="frequency">Frequency</label>
+        <input type="range" min="0" max="5000" value="50" class="slider" id="frequency" name="frequency" [(ngModel)]="objCtrl.selected.ctrl.frequency">
+        
+        <!--<label for="attack">Attack</label>
+        <input type="range" min="0" max="100" value="50" class="slider" id="attack" name="attack" [(ngModel)]="attack">
+        
+        <label for="release">Release</label>
+        <input type="range" min="0" max="100" value="50" class="slider" id="release" name="release" [(ngModel)]="release">
+        
+        <label for="sustain">Sustain</label>
+        <input type="range" min="0" max="100" value="50" class="slider" id="sustain" name="sustain" [(ngModel)]="sustain">
+
+        <label for="affectedByTact">Affected by tact</label>
+        <input type="checkbox" name="affectedByTact"/>
+
+        <label for="stakato">Stakato</label>
+        <input type="checkbox" name="stakato"/>-->
+            
+        <span *ngIf="false">Part of chord </span>
+        
+    </div>
+
+
+    <div *ngIf="objCtrl.selectedObjs.length > 1">
+        <button (click)="groupSoundEntities()">Group</button>
+    </div>
+</div>

@@ -11,8 +11,9 @@ export abstract class SoundEntity {
     public abstract attack: number
     public abstract release: number
     public abstract sustain: number
+    public abstract volume: number
 
-    public abstract volume: GainNode
+    public abstract gainNode: GainNode
 
     public abstract audioContext: AudioContext
 

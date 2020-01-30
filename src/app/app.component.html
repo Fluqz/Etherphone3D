@@ -1,44 +1,13 @@
 <div id="webGL"></div>
 
+
 <div id="obj-menu">
+    
+    <div id="pause-btn" *ngIf="theremin3D" (click)="theremin3D.toggleOnOff()">{{ theremin3D.isPaused ? 'Play' : 'Pause' }}</div>
 
     <button (click)="addOsc()">Add Osc</button>
-    <button (click)="switchCamera()"></button>
+    <button >switchCamera()</button>
 
-    <div id="selected-menu" *ngIf="objCtrl && objCtrl.selected">
-
-        <div>
-            <h4> {{ objCtrl.selected.ctrl.type + ' id:' + objCtrl.selected.ctrl.id }}</h4>
-
-            <label for="volume">Volume</label>
-            <input type="number" name="volume"/>
-            
-            <label for="frequency">Frequency</label>
-            <input type="number" name="frequency"/>
-            
-            <label for="attack">Attack</label>
-            <input type="number" name="attack"/>
-            
-            <label for="release">Release</label>
-            <input type="number" name="release"/>
-            
-            <label for="sustain">Sustain</label>
-            <input type="number" name="sustain"/>
-
-            <label for="affectedByTact">Affected by tact</label>
-            <input type="checkbox" name="affectedByTact"/>
-
-            <label for="stakato">Stakato</label>
-            <input type="checkbox" name="stakato"/>
-             
-            <span>Part of chord </span>
-            
-        </div>
-
-
-        <div *ngIf="objCtrl.selectedObjs.length > 1">
-            <button (click)="groupSounEntities()">Group</button>
-        </div>
-    </div>
+    <selected-menu *ngIf="objCtrl && theremin3D" [objCtrl]="objCtrl" [theremin3D]="theremin3D"></selected-menu>
 
 </div>

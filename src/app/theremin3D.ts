@@ -19,6 +19,8 @@ export class Theremin3D {
 
     public obj: Object3D
 
+    public isPaused: boolean = false
+
     constructor(ctrl: Theremin) {
 
         Theremin3D.instance = this
@@ -101,5 +103,12 @@ export class Theremin3D {
         this.objs.push(chord3D.obj3D)
 
         return chord3D
+    }
+
+    public toggleOnOff() {
+
+        this.isPaused = !this.isPaused
+
+        this.theremin.toggleOnOff(this.isPaused)
     }
 }
