@@ -4,12 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 
 import { Selected } from './selected-menu/selected.component'
+import { ChannelMenu } from './channel-menu/channel.component'
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    Selected
+    Selected,
+    ChannelMenu
   ],
   imports: [
     BrowserModule,

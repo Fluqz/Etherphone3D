@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, OnDestroy, Input } from '@angular/core';
 
 import * as THREE from 'three'
-import { SoundEntity3D } from '../soundEntity3D';
+import { SoundEntity3D } from '../sound-entity-3d';
 import { SoundEntity } from '../sound-entity';
 import { ObjectControl } from '../object-control';
 import { Theremin3D } from '../theremin3D';
@@ -34,6 +34,17 @@ export class Selected implements AfterViewInit{
 
     let moveTo = this.objCtrl.selected.ctrl.position.clone()
     moveTo.y = volume // NEEDS TO HAPPEN SOMEWHERE ELSE
+    this.objCtrl.selected.move(moveTo)
+
+    this.theremin3D.theremin.updateNote(this.objCtrl.selected.ctrl)
+  }
+
+  
+  public get selectedFrequency() { return this.objCtrl.selected.ctrl.frequency }
+  public set selectedFrequency(frequency: number) { 
+
+    let moveTo = this.objCtrl.selected.ctrl.position.clone()
+    moveTo.x = frequency // NEEDS TO HAPPEN SOMEWHERE ELSE
     this.objCtrl.selected.move(moveTo)
 
     this.theremin3D.theremin.updateNote(this.objCtrl.selected.ctrl)

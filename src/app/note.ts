@@ -1,6 +1,8 @@
 import { SoundEntity } from './sound-entity'
 import { Vector3 } from 'three'
 import { SceneManager } from './scene-manager'
+import { Theremin } from './theremin'
+import { Theremin3D } from './theremin3D'
 
 export class Note extends SoundEntity{
     
@@ -21,7 +23,7 @@ export class Note extends SoundEntity{
     public osc: OscillatorNode
 
     public get frequency() : number { return this._frequency }
-    public set frequency(val: number) { console.log(val);this._frequency = val; this.osc.frequency.value = val }
+    public set frequency(val: number) { this._frequency = val; this.osc.frequency.value = val }
 
     public get attack() : number { return this._attack }
     public set attack(val: number) { this._attack = val}
@@ -33,7 +35,7 @@ export class Note extends SoundEntity{
     public set sustain(val: number) { this._sustain = val}
 
     public get volume() : number { return this.gainNode.gain.value }
-    public set volume(val: number) { console.log(val); this.gainNode.gain.value = val }
+    public set volume(val: number) { this.gainNode.gain.value = val }
 
 
     constructor(_audioContext: AudioContext, _frequency: number) {
@@ -46,7 +48,6 @@ export class Note extends SoundEntity{
 
         this.type = 'Note'
 
-        this.position = new Vector3(_frequency / SceneManager.sF, 10, 0)
         
         this.gainNode = this.audioContext.createGain()
 
@@ -56,9 +57,12 @@ export class Note extends SoundEntity{
         this.gainNode.connect(this.audioContext.destination)
 
         this.osc.frequency.value = _frequency
-        this.gainNode.gain.value = 10 / (SceneManager.sF / 2)
+
+        this.gainNode.gain.value = this.volume = .5
 
         this.osc.start(this.audioContext.currentTime)
+
+        this.position = new Vector3(_frequency / Theremin.instance.X.sF, this.volume * Theremin.instance.Y.sF, 0)
     }
 
     public destroy() {
@@ -66,5 +70,15 @@ export class Note extends SoundEntity{
         this.osc.disconnect()
 
         this.gainNode.disconnect()
+    }
+
+    public play() {
+
+        this.osc.start(this.audioContext.currentTime)
+    }
+
+    public stop() {
+
+        this.osc.stop()
     }
 }

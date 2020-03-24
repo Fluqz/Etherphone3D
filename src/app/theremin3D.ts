@@ -1,12 +1,13 @@
 import { Theremin } from './theremin';
 import { Object3D, PlaneBufferGeometry, ShaderMaterial, MeshPhongMaterial, Mesh, CircleBufferGeometry } from 'three';
-import { SoundEntity3D } from './soundEntity3D';
+import { SoundEntity3D } from './sound-entity-3d';
 import { Note3D } from './note3D';
 import { Note } from './note';
 import { SoundEntity } from './sound-entity';
 import { SceneManager } from './scene-manager';
 import { Chord3D } from './chord3D';
 import { Chord } from './chord';
+import { SnapToGrid } from './snap-to-grid';
 
 
 export class Theremin3D {
@@ -29,6 +30,8 @@ export class Theremin3D {
 
         this.obj = new Object3D()
         this.obj.name = 'theremin.3D'
+
+        new SnapToGrid(1, 1, 1)
 
         // let geo = new CircleBufferGeometry(1000, 100)
         // let mat = new MeshPhongMaterial({
@@ -93,6 +96,16 @@ export class Theremin3D {
                 (se as Note3D).partOfChord = true
 
                 soundEntity3D.push(se)
+            }
+            else if(se instanceof Chord3D) {
+
+                let chord = (se as Chord3D)
+                chord.notes3D.forEach(note => {
+
+                    soundEntity3D.push(note)
+                })
+
+                // chord.destroy()
             }
         })
 

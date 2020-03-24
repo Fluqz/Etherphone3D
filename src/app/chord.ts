@@ -51,7 +51,8 @@ export class Chord extends SoundEntity {
         this.gainNode.connect(this.audioContext.destination)
 
         this.gainNode.gain.value = this.volume = 1
-
+        
+        this.position.y = this.gainNode.gain.value
     }
     
     public getPosition() {

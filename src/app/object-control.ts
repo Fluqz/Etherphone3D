@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { SceneManager } from './scene-manager'
 import { Theremin } from './theremin'
 import { Theremin3D } from './theremin3D'
-import { SoundEntity3D } from './soundEntity3D'
+import { SoundEntity3D } from './sound-entity-3d'
 import { Note } from './note'
 
 export class ObjectControl {
@@ -14,6 +14,10 @@ export class ObjectControl {
     private orbit: OrbitControls
 
     private raycaster: Raycaster
+
+    private XKey: boolean
+    private YKey: boolean
+    private ZKey: boolean
 
     private plane: Plane
 
@@ -45,6 +49,9 @@ export class ObjectControl {
         SceneManager.renderer.domElement.addEventListener('mousedown', this.onMouseDown.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('mouseup', this.onMouseUp.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('mousemove', this.onMouseMove.bind(this), false)
+        
+        SceneManager.renderer.domElement.addEventListener('keyup', this.onKeyUp.bind(this), false)
+        SceneManager.renderer.domElement.addEventListener('keydown', this.onKeyDown.bind(this), false)
     }
 
 
@@ -149,7 +156,7 @@ export class ObjectControl {
                 this.moveTo.copy(this.ip.sub(this.offset))
 
                 // Move SELECTED
-                this.selected.move(this.moveTo)
+                this.selected.move(this.moveTo, !this.XKey, !this.YKey, !this.ZKey)
                 // this.selectedObjs.position.copy(this.moveTo)
                 this.theremin3D.theremin.updateNote(this.selected.ctrl)
 
@@ -165,4 +172,31 @@ export class ObjectControl {
         }
     }
 
+
+    public onKeyDown(e) {
+
+        console.log(e)
+
+        const key = e.key.toLowerCase()
+        
+        if(key == 'x') {
+
+            this.XKey = true
+        }
+        else if(key == 'y') {
+            
+            this.YKey = true
+        }
+        else if(key == 'z') {
+
+            this.ZKey = true
+        }
+
+    }
+
+    public onKeyUp(e) {
+
+
+
+    }
 }

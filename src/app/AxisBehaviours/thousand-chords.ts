@@ -4,6 +4,7 @@ import { Chord } from '../chord'
 
 export class ThousandChords extends AxisBehaviour {
 
+    public sF: number = 0
 
     constructor() {super()}
 

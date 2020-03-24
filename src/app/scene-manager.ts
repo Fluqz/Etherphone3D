@@ -22,9 +22,10 @@ export class SceneManager {
     static fragmentShader: string
 
     static id: number
-    static sF: number = 100
 
     ground: THREE.Mesh
+    wall: THREE.Mesh
+    wall2: THREE.Mesh
 
     constructor() {
 
@@ -32,11 +33,11 @@ export class SceneManager {
         SceneManager.renderer.setSize(window.innerWidth, window.innerHeight)
         SceneManager.renderer.setClearColor(0xFFFFFF)
         SceneManager.camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, .1, 1000)
-        SceneManager.camera.position.set(0, 0, 50)
+        SceneManager.camera.position.set(90, 90, 90)
         SceneManager.scene = new THREE.Scene()
         SceneManager.scene.background = new THREE.Color(0xFFFFFF)
-        SceneManager.scene.add(new GridHelper(100, 10))
-        SceneManager.scene.add(new AxesHelper(100))
+        // SceneManager.scene.add(new GridHelper(1000, 100, new THREE.Color(0xAAAAAA)))
+        // SceneManager.scene.add(new AxesHelper(100))
 
         // SceneManager.vertexShader = `
         //     varying vec2 vUv
@@ -98,13 +99,29 @@ export class SceneManager {
         let geo = new THREE.CircleBufferGeometry(1000, 100)
         geo.rotateX(-Math.PI / 2)
         let mat = new THREE.MeshPhongMaterial({
-            color: 0xF67280,
-            shininess: 0
+            color: 0xBF0040,
+            shininess: 0,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: .6
         })
         this.ground = new THREE.Mesh(geo, mat)
+
+        this.wall = this.ground.clone()
+        this.wall.rotateX(-Math.PI / 2)
+        this.wall.material = mat.clone()
+        this.wall.material['color'] = new THREE.Color(0xFFFF00)
+        this.wall2 = this.ground.clone()
+        this.wall2.material = mat.clone()
+        this.wall2.material['color'] = new THREE.Color(0x00FFFF)
+        this.wall2.rotateZ(-Math.PI / 2)
+
+
         this.ground.name = 'Ground'
 
         SceneManager.scene.add(this.ground)
+        SceneManager.scene.add(this.wall)
+        SceneManager.scene.add(this.wall2)
 
         this.addLight()
     }
@@ -138,7 +155,7 @@ export class SceneManager {
 
     private addLight() {
 
-        let hemi = new THREE.HemisphereLight(0xFFFdEF, 0xFFFedF, .4)
+        let hemi = new THREE.HemisphereLight(0xFFFdEF, 0xFFFedF, .8)
         SceneManager.scene.add(hemi)
 
         // let spotLight = new SpotLight(0xffffff, 1)

@@ -110,14 +110,19 @@ export class Theremin {
     
     public updateNote(se: SoundEntity) {
 
-        // this.sounds.forEach(sound => {
-            
-        //     this.X.updateNote(sound, this.context.currentTime)
-        //     this.Y.updateNote(sound, this.context.currentTime)
-        // })
+        // if(se instanceof Note) {
 
-        this.X.updateNote(se, this.context.currentTime)
-        this.Y.updateNote(se, this.context.currentTime)
+            this.X.updateNote(se, this.context.currentTime)
+            this.Y.updateNote(se, this.context.currentTime)
+        // }
+        // else if(se instanceof Chord) {
+
+            // se.notes.forEach(note => {
+                    
+                // this.X.updateNote(note, this.context.currentTime)
+                // this.Y.updateNote(note, this.context.currentTime)
+            // })
+        // }
     }
 
     public toggleOnOff(isPaused: boolean) {

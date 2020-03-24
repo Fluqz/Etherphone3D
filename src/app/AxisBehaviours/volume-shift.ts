@@ -6,13 +6,15 @@ import { SoundEntity } from '../sound-entity';
 
 export class VolumeShift extends AxisBehaviour {
 
+    public sF: number = 100
+
     constructor() {super()}
 
     public updateNote(entity: SoundEntity, currentTime: number) {
 
         if(entity instanceof Note) {
 
-            entity.volume = entity.position.y / SceneManager.sF
+            entity.volume = entity.position.y / this.sF
 
             entity.gainNode.gain.value = entity.volume
         }
@@ -23,6 +25,6 @@ export class VolumeShift extends AxisBehaviour {
             entity.gainNode.gain.value = entity.volume
         }
 
-        console.log('Volume', entity.gainNode.gain.value)
+        // console.log('Volume', entity.gainNode.gain.value)
     }
 }

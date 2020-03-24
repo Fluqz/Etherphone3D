@@ -6,5 +6,5 @@ export abstract class SoundEntity3D {
     public abstract ctrl: SoundEntity
     public abstract obj3D: Mesh
 
-    public abstract move(moveTo: Vector3)
+    public abstract move(moveTo: Vector3, X?: boolean, Y?: boolean, Z?: boolean)
 }

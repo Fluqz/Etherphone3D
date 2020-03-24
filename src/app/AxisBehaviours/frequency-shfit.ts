@@ -6,6 +6,7 @@ import { SoundEntity } from '../sound-entity'
 
 export class FrequencyShift extends AxisBehaviour {
 
+    public sF: number = 10
 
     constructor() {super()}
 
@@ -16,10 +17,12 @@ export class FrequencyShift extends AxisBehaviour {
             
             let note = entity as Note
 
-            note.frequency = note.position.x * SceneManager.sF
+            note.frequency = note.position.x * this.sF
 
             note.osc.frequency.setValueAtTime(note.frequency, currentTime)
 
+            // console.log('Frequency', note.frequency)
+            
         }
         else if(entity instanceof Chord) {
 
@@ -27,11 +30,11 @@ export class FrequencyShift extends AxisBehaviour {
 
             chord.notes.forEach(note => {
 
-                note.frequency = note.position.x * SceneManager.sF
+                note.frequency = note.position.x * this.sF
 
                 note.osc.frequency.setValueAtTime(note.frequency, currentTime)
 
-                console.log('Frequency ' + note.id , note.frequency)
+                // console.log('Frequency ' + note.id , note.frequency)
             })
         }
     }
