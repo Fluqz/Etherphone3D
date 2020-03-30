@@ -23,6 +23,7 @@ export class ObjectControl {
 
     public selectedObjs: Object3D[] = []
     public selected: SoundEntity3D
+    public _selectedObj: Object3D
 
     private ip: Vector3
     private offset: Vector3
@@ -54,6 +55,48 @@ export class ObjectControl {
         SceneManager.renderer.domElement.addEventListener('keydown', this.onKeyDown.bind(this), false)
     }
 
+    public get selectedObj() { return this._selectedObj }
+    public set selectedObj(obj: Object3D) {
+
+        if(obj != null && obj != undefined) {
+
+            if(this._selectedObj != obj && this.selected) {
+
+                this.selected.unselect()
+            }
+
+            this._selectedObj = obj
+
+            switch(obj.name) {
+
+                case 'osc.3D':
+
+                case 'chord.3D':
+
+                    this.selected = this.theremin3D.getNoteByObj(obj)
+
+                    break
+
+                default: 
+
+                    this.selectedObj = null
+            }
+        }
+        else {
+
+            if(this.selected != null && this.selected != undefined) {
+
+                this.selected.unselect()
+                this.selected = null
+            }
+
+            this._selectedObj = null
+            this.selectedObjs
+        }
+    }
+
+
+
 
 
     // EVENTS
@@ -75,17 +118,20 @@ export class ObjectControl {
 
             this.orbit.enabled = false
 
-            if(intersects[0].object && (intersects[0].object.name == 'osc.3D' || intersects[0].object.name == 'chord.3D' )) {
+            if(intersects[0].object) {
 
-                if(!event.shiftKey) {
+                this.selectedObj = intersects[0].object
 
-                    this.selectedObjs = []
-                    this.selectedObjs.push(intersects[0].object)
-                    console.log(intersects[0].object,this.theremin3D.getNoteByObj(intersects[0].object))
-                    this.selected = this.theremin3D.getNoteByObj(intersects[0].object)
+                if(this.selected) {
 
-                    // console.log('no shift', this.selected)
-                    if(this.selected) {
+                    // If no shift key
+                    if(!event.shiftKey) {
+
+                        this.selectedObjs = []
+                        this.selectedObjs.push(intersects[0].object)
+                        console.log(intersects[0].object,this.theremin3D.getNoteByObj(intersects[0].object))
+    
+                        // console.log('no shift', this.selected)
                         this.plane.setFromNormalAndCoplanarPoint(SceneManager.camera.getWorldDirection(this.plane.normal) , intersects[0].object.position)
 
                         this.raycaster.ray.intersectPlane(this.plane, this.ip)
@@ -93,29 +139,32 @@ export class ObjectControl {
                         this.offset.copy(this.ip.sub(intersects[0].object.position))
                         // init move so its not at (0, 0, 0)
                         this.moveTo.copy(intersects[0].object.position)
+
+                        this.selected.select()
+
                     }
-                    else {
-                        this.selected = null
-                        this.selectedObjs = []
+                    else if(!this.selectedObjs.includes(intersects[0].object)) {
+    
+                        this.selectedObj = intersects[0].object
+    
+                        this.selectedObjs.push(intersects[0].object)
+    
+                        // console.log('shift', this.selectedObjs, this.selected)
                     }
-                
                 }
-                else if(!this.selectedObjs.includes(intersects[0].object)) {
-                    this.selectedObjs.push(intersects[0].object)
+                else {
 
-                    this.selected = this.theremin3D.getNoteByObj(intersects[0].object)
-                    // console.log('shift', this.selectedObjs, this.selected)
-
+                    this.selectedObjs = []
                 }
             }
             else {
                 this.selectedObjs = []
-                this.selected = null
+                this.selectedObj = null
             }
         }
         else {
             this.selectedObjs = []
-            this.selected = null
+            this.selectedObj = null
         }
 
         // SceneSetup.instance.onMouseDown(event)
@@ -132,6 +181,11 @@ export class ObjectControl {
 
             // this.selected = null
             // this.selectedObjs = []
+        }
+
+        if(this.selected) {
+
+            this.selected.mouseUp()
         }
 
         // SceneSetup.instance.onMouseUp(event)
@@ -156,7 +210,7 @@ export class ObjectControl {
                 this.moveTo.copy(this.ip.sub(this.offset))
 
                 // Move SELECTED
-                this.selected.move(this.moveTo, !this.XKey, !this.YKey, !this.ZKey)
+                this.selected.move(this.moveTo, this.XKey, this.YKey, this.ZKey)
                 // this.selectedObjs.position.copy(this.moveTo)
                 this.theremin3D.theremin.updateNote(this.selected.ctrl)
 
@@ -182,21 +236,29 @@ export class ObjectControl {
         if(key == 'x') {
 
             this.XKey = true
+            this.YKey = false
+            this.ZKey = false
         }
         else if(key == 'y') {
             
+            this.XKey = false
             this.YKey = true
+            this.ZKey = false
         }
         else if(key == 'z') {
 
+            this.XKey = false
+            this.YKey = false
             this.ZKey = true
         }
-
     }
 
     public onKeyUp(e) {
 
-
-
+        const key = e.key.toLowerCase()
+        
+        this.XKey = true
+        this.YKey = true
+        this.ZKey = true
     }
 }

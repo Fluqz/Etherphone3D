@@ -90,17 +90,18 @@ export class AppComponent implements AfterViewInit{
     this.theremin3D.addSoungEntity3D(osc)
   }
 
-
+  private top:number = 0
+  private left:number = 0
   public onMouseDown(e) {
 
     this.mouseDown = true
-
+    
     if(e.target.classList.contains('drag-bar')) {
 
       this.selected = e.target.closest('.drag-window')
 
-      this.xOffset = this.selected.offsetLeft - e.clientX
-      this.yOffset = this.selected.offsetTop - e.clientY
+      this.xOffset = e.pageX - this.left 
+      this.yOffset = e.pageY - this.top
     }
     else this.selected = null
   }
@@ -111,9 +112,11 @@ export class AppComponent implements AfterViewInit{
 
         let channel = this.selected.closest('channel-menu') as HTMLElement
 
-        channel.style.left = e.pageX + this.xOffset + 'px'
-        channel.style.top = e.pageY + this.yOffset + 'px'
+        this.left = e.pageX - this.xOffset
+        this.top = e.pageY - this.yOffset
 
+        channel.style.left = this.left + 'px'
+        channel.style.top = this.top + 'px'
     }
   }
   

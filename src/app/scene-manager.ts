@@ -27,6 +27,8 @@ export class SceneManager {
     wall: THREE.Mesh
     wall2: THREE.Mesh
 
+    static environmentObjs: THREE.Object3D[] = []
+
     constructor() {
 
         SceneManager.renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -105,23 +107,30 @@ export class SceneManager {
             transparent: true,
             opacity: .6
         })
+
         this.ground = new THREE.Mesh(geo, mat)
+        this.ground.name = 'Ground'
 
         this.wall = this.ground.clone()
+        this.wall.name = 'wall'
         this.wall.rotateX(-Math.PI / 2)
         this.wall.material = mat.clone()
         this.wall.material['color'] = new THREE.Color(0xFFFF00)
+
         this.wall2 = this.ground.clone()
+        this.wall2.name = 'wall2'
         this.wall2.material = mat.clone()
         this.wall2.material['color'] = new THREE.Color(0x00FFFF)
         this.wall2.rotateZ(-Math.PI / 2)
 
 
-        this.ground.name = 'Ground'
-
         SceneManager.scene.add(this.ground)
         SceneManager.scene.add(this.wall)
         SceneManager.scene.add(this.wall2)
+
+        SceneManager.environmentObjs.push(this.wall)
+        SceneManager.environmentObjs.push(this.wall2)
+        SceneManager.environmentObjs.push(this.ground)
 
         this.addLight()
     }

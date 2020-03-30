@@ -51,7 +51,7 @@ export class Theremin3D {
 
                 this.sounds3D.push(new Note3D(note))
 
-                this.objs.push(this.sounds3D[i].obj3D)
+                this.objs.push(this.sounds3D[i].obj)
             }
         })
     }
@@ -61,7 +61,7 @@ export class Theremin3D {
        
         for(let i = 0; i < this.sounds3D.length; i++) {
 
-            if(this.sounds3D[i].obj3D === obj) {
+            if(this.sounds3D[i].obj === obj) {
 
                 return this.sounds3D[i]
             }
@@ -78,7 +78,7 @@ export class Theremin3D {
 
         this.sounds3D.push(note3D)
 
-        this.objs.push(note3D.obj3D)
+        this.objs.push(note3D.obj)
 
         return note3D
     }
@@ -113,7 +113,7 @@ export class Theremin3D {
 
         this.sounds3D.push(chord3D)
 
-        this.objs.push(chord3D.obj3D)
+        this.objs.push(chord3D.obj)
 
         return chord3D
     }
