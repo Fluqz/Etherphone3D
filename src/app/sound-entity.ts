@@ -19,10 +19,14 @@ export abstract class SoundEntity {
 
     public abstract position: Vector3
 
+    public abstract muted: boolean
+
 
     constructor( ) {
 
     }
 
     public update() {}
+    public abstract mute()
+    public abstract unmute()
 } 

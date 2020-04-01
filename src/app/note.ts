@@ -22,6 +22,10 @@ export class Note extends SoundEntity{
 
     public osc: OscillatorNode
 
+    public isPartOfChord: boolean = false
+
+    public muted: boolean = false
+
     public get frequency() : number { return this._frequency }
     public set frequency(val: number) { this._frequency = val; this.osc.frequency.value = val }
 
@@ -80,5 +84,23 @@ export class Note extends SoundEntity{
     public stop() {
 
         this.osc.stop()
+    }
+
+    
+    private storedVolume: number = 0
+    public mute() {
+
+        this.muted = true
+
+        this.storedVolume = this.volume
+
+        this.volume = 0
+    }
+
+    public unmute() {
+
+        this.muted = false
+
+        this.volume = this.storedVolume
     }
 }

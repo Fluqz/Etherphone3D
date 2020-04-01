@@ -26,6 +26,8 @@ export class Chord extends SoundEntity {
 
     public notes: Note[]
 
+    public muted: boolean = false
+
     constructor(_audioContext: AudioContext, _notes: Note[]) {
         super()
 
@@ -42,6 +44,8 @@ export class Chord extends SoundEntity {
         this.notes = _notes
 
         _notes.forEach((note, i) => {
+
+            note.isPartOfChord = true
 
             note.gainNode.disconnect()
 
@@ -64,4 +68,15 @@ export class Chord extends SoundEntity {
     }
 
     public update() {}
+
+    
+    public mute() {
+
+        this.muted = true
+    }
+
+    public unmute() {
+
+        this.muted = false
+    }
 }

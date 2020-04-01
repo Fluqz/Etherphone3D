@@ -4,12 +4,13 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import { Theremin } from './theremin';
-import { SceneManager } from './scene-manager';
+import { SceneManager, CameraType } from './scene-manager';
 import { Theremin3D } from './theremin3D';
 import { ObjectControl } from './object-control';
 import { Chord } from './chord';
 import { SoundEntity } from './sound-entity';
 import { SoundEntity3D } from './sound-entity-3d';
+import { DragWindow } from './tools/drag-window';
 
 @Component({
   selector: 'app-root',
@@ -34,12 +35,13 @@ export class AppComponent implements AfterViewInit{
 
   private selected: HTMLElement
 
-  constructor() {}
+  private dragWindow: DragWindow
 
-  public get currentCamera(){
+  constructor() {
 
-    return SceneManager.camera
+    this.dragWindow = new DragWindow()
   }
+
 
   ngAfterViewInit() {
 
@@ -84,45 +86,38 @@ export class AppComponent implements AfterViewInit{
 
   }
 
+  public setCamera(type:string) {
+
+    if(type == 'orthographic') 
+      SceneManager.activeCamera = CameraType.ORTHOGRAPHIC
+      
+    else if(type == 'perspective') 
+      SceneManager.activeCamera = CameraType.PERSPECTIVE
+
+    this.objCtrl.orbitCamera = SceneManager.currentCamera
+  }
+
   public addOsc(frequency?: number) {
 
     let osc = this.theremin.addNote(frequency == undefined ? 440 : frequency)
     this.theremin3D.addSoungEntity3D(osc)
   }
 
-  private top:number = 0
-  private left:number = 0
   public onMouseDown(e) {
 
     this.mouseDown = true
+
+    this.dragWindow.onMouseDown(e)
     
-    if(e.target.classList.contains('drag-bar')) {
-
-      this.selected = e.target.closest('.drag-window')
-
-      this.xOffset = e.pageX - this.left 
-      this.yOffset = e.pageY - this.top
-    }
-    else this.selected = null
   }
 
   public onMouseMove(e) {
     
-    if(this.mouseDown && this.selected) {
-
-        let channel = this.selected.closest('channel-menu') as HTMLElement
-
-        this.left = e.pageX - this.xOffset
-        this.top = e.pageY - this.yOffset
-
-        channel.style.left = this.left + 'px'
-        channel.style.top = this.top + 'px'
-    }
+    this.dragWindow.onMouseMove(e)
   }
   
   public onMouseUp(e) {
     
-    this.mouseDown = false
-
+    this.dragWindow.onMouseUp(e)
   }
 }

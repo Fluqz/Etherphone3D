@@ -8,11 +8,20 @@ import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import { GridHelper, Line, AxesHelper } from 'three'
 
+export enum CameraType {
+
+    PERSPECTIVE,
+    ORTHOGRAPHIC
+}
+
 export class SceneManager {
 
     static renderer: THREE.WebGLRenderer
-    static camera: THREE.PerspectiveCamera
+    static perspective: THREE.PerspectiveCamera
+    static orthographic: THREE.OrthographicCamera
     static scene: THREE.Scene
+
+    static activeCamera: CameraType
 
     static composer: EffectComposer
     static renderPass: RenderPass
@@ -27,15 +36,29 @@ export class SceneManager {
     wall: THREE.Mesh
     wall2: THREE.Mesh
 
+    w:number
+    h:number
+
     static environmentObjs: THREE.Object3D[] = []
+
 
     constructor() {
 
+        this.w = window.innerWidth
+        this.h = window.innerHeight
+
+        SceneManager.activeCamera = CameraType.PERSPECTIVE
+
         SceneManager.renderer = new THREE.WebGLRenderer({ antialias: true })
-        SceneManager.renderer.setSize(window.innerWidth, window.innerHeight)
+        SceneManager.renderer.setSize(this.w, this.h)
         SceneManager.renderer.setClearColor(0xFFFFFF)
-        SceneManager.camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, .1, 1000)
-        SceneManager.camera.position.set(90, 90, 90)
+        // SceneManager.renderer.gammaOutput
+        SceneManager.renderer.toneMapping = THREE.Uncharted2ToneMapping
+        SceneManager.perspective = new THREE.PerspectiveCamera(40, this.w / this.h, .1, 1000)
+        SceneManager.perspective.position.set(90, 90, 90)
+        SceneManager.orthographic = new THREE.OrthographicCamera(this.w / -2, this.w / 2, this.h / 2, this.h / -2, .1, 1000)
+        SceneManager.orthographic.position.set(5, 5, 5)
+        SceneManager.orthographic.zoom = 20
         SceneManager.scene = new THREE.Scene()
         SceneManager.scene.background = new THREE.Color(0xFFFFFF)
         // SceneManager.scene.add(new GridHelper(1000, 100, new THREE.Color(0xAAAAAA)))
@@ -135,6 +158,12 @@ export class SceneManager {
         this.addLight()
     }
 
+        
+    public static get currentCamera(){
+
+        return SceneManager.activeCamera == CameraType.PERSPECTIVE ? SceneManager.perspective : SceneManager.orthographic
+    }
+
     private addLines() {
 
         // X
@@ -181,7 +210,15 @@ export class SceneManager {
 
     public static update() {
 
-        this.renderer.render(this.scene, this.camera)
-        // this.composer.render()
+        if(this.activeCamera == CameraType.PERSPECTIVE) 
+            this.renderer.render(this.scene, this.perspective)
+        else if(this.activeCamera == CameraType.ORTHOGRAPHIC)  
+            this.renderer.render(this.scene, this.orthographic)
+    }
+
+
+    // ROTATE CAMERA ON KEY 1 2 3 or SHIFT 1 2 3 for negative area to be aligned to a axes
+    public rotateCamera() {
+
     }
 }

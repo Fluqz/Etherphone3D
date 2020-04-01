@@ -5,6 +5,7 @@ import { SoundEntity3D } from '../sound-entity-3d';
 import { SoundEntity } from '../sound-entity';
 import { ObjectControl } from '../object-control';
 import { Theremin3D } from '../theremin3D';
+import { Note } from '../note';
 
 
 @Component({
@@ -22,7 +23,7 @@ export class Selected implements AfterViewInit{
 
     }
 
-  private getSelected(type: string) {
+  private isSelected(type: string) {
 
     if(this.objCtrl.selected && this.objCtrl.selected != null)
         return true
@@ -55,6 +56,33 @@ export class Selected implements AfterViewInit{
     
   }
 
+
+  public toggleMuteSelected() {
+
+    if(this.objCtrl.selected.ctrl.muted)
+      this.objCtrl.selected.unmute()
+    else this.objCtrl.selected.mute()
+    
+  }
+
+  public toggleAxesLabel() {
+
+    this.objCtrl.selected.axesLabel.enabled = !this.objCtrl.selected.axesLabel.enabled
+    this.objCtrl.selected.axesLabel.update()
+  }
+  
+  public toggleMemoryLabel() {
+
+    this.objCtrl.selected.memoryLabel.enabled = !this.objCtrl.selected.memoryLabel.enabled
+    this.objCtrl.selected.memoryLabel.update()
+  }
+  
+  public toggleDistanceLabel() {
+
+    this.objCtrl.selected.distanceLabel.enabled = !this.objCtrl.selected.distanceLabel.enabled
+    this.objCtrl.selected.distanceLabel.update()
+  }
+
   public groupSoundEntities() {
 
     let ses: SoundEntity[] = []
@@ -68,5 +96,20 @@ export class Selected implements AfterViewInit{
     let chord = this.theremin3D.theremin.groupNotesToChord(ses)
 
     this.theremin3D.groupNotesToChord(chord, ses3D)
+  }
+
+  public ungroupSoundEntities() {
+
+    let ses: SoundEntity[] = []
+    let ses3D: SoundEntity3D[] = []
+    this.objCtrl.selectedObjs.forEach(obj => {
+
+      ses3D.push(this.theremin3D.getNoteByObj(obj))
+      ses.push(this.theremin3D.getNoteByObj(obj).ctrl)
+    })
+
+    let chord = this.theremin3D.theremin.ungroupNotes(ses)
+
+    this.theremin3D.ungroupNotes(ses3D, chord)
   }
 }

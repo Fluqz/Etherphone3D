@@ -56,7 +56,7 @@ export class Label {
         this.line = new THREE.Line(this.lineGeo, new THREE.LineBasicMaterial({
             color: 0xffffff,
             transparent: true,
-            opacity: .2
+            opacity: .4
         }))
         this.line.name = 'line.mesh'
 

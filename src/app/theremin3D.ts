@@ -118,6 +118,22 @@ export class Theremin3D {
         return chord3D
     }
 
+    public ungroupNotes(_ses: SoundEntity3D[], chord: Chord3D) {
+
+        _ses.forEach(se => {
+
+            if(se instanceof Note3D) {
+
+                let note = (se as Note3D)
+
+                if((note.ctrl as Note).isPartOfChord) {
+
+                    chord.removeNote(note)
+                }
+            }
+        })
+    }
+
     public toggleOnOff() {
 
         this.isPaused = !this.isPaused

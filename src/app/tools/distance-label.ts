@@ -86,7 +86,7 @@ export class DistanceLabel {
         let label: Label
         this.sides.forEach(side => {
 
-            label = new Label(side, this.SE.obj.position)
+            label = new Label(side, this.SE.ctrl.position)
             this.labels.push(label)
             this.obj.add(label.obj)
         })

@@ -1,4 +1,4 @@
-import { Raycaster, Vector3, Object3D, Plane, Ray, Intersection, MOUSE } from 'three'
+import { Raycaster, Vector3, Object3D, Plane, Ray, Intersection, MOUSE, PerspectiveCamera, OrthographicCamera } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { SceneManager } from './scene-manager'
 import { Theremin } from './theremin'
@@ -44,7 +44,7 @@ export class ObjectControl {
         
         this.plane = new Plane(new Vector3(0, 1, 0), 0)
 
-        this.orbit = new OrbitControls(SceneManager.camera, SceneManager.renderer.domElement)
+        this.orbit = new OrbitControls(SceneManager.currentCamera, SceneManager.renderer.domElement)
 
 
         SceneManager.renderer.domElement.addEventListener('mousedown', this.onMouseDown.bind(this), false)
@@ -53,6 +53,17 @@ export class ObjectControl {
         
         SceneManager.renderer.domElement.addEventListener('keyup', this.onKeyUp.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('keydown', this.onKeyDown.bind(this), false)
+    }
+
+    public set orbitCamera(camera: THREE.Camera) { 
+
+        this.orbit.reset()
+        this.orbit.dispose()
+        
+        if(camera instanceof PerspectiveCamera)
+            this.orbit = new OrbitControls(camera, SceneManager.renderer.domElement)
+        if(camera instanceof OrthographicCamera)
+            this.orbit = new OrbitControls(camera, SceneManager.renderer.domElement)
     }
 
     public get selectedObj() { return this._selectedObj }
@@ -81,6 +92,10 @@ export class ObjectControl {
 
                     this.selectedObj = null
             }
+
+            if(this.selected) 
+                this.selected.select()
+            else this._selectedObj = null
         }
         else {
 
@@ -96,7 +111,8 @@ export class ObjectControl {
     }
 
 
-
+    // ON KEY DOWN SWITCH NOTE/CHORD TO OLD POSITION WHEN CLICKED
+    // ON KEY UP SWITCH BACK TO CURRENT POSITION
 
 
     // EVENTS
@@ -108,9 +124,9 @@ export class ObjectControl {
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
         
         let vector = new Vector3(this.mouse.x, this.mouse.y, .5)
-        vector.unproject(SceneManager.camera)
+        vector.unproject(SceneManager.currentCamera)
 
-        this.raycaster.setFromCamera(this.mouse, SceneManager.camera)
+        this.raycaster.setFromCamera(this.mouse, SceneManager.currentCamera)
 
         let intersects = this.raycaster.intersectObjects(this.theremin3D.objs, true)
 
@@ -132,7 +148,7 @@ export class ObjectControl {
                         console.log(intersects[0].object,this.theremin3D.getNoteByObj(intersects[0].object))
     
                         // console.log('no shift', this.selected)
-                        this.plane.setFromNormalAndCoplanarPoint(SceneManager.camera.getWorldDirection(this.plane.normal) , intersects[0].object.position)
+                        this.plane.setFromNormalAndCoplanarPoint(SceneManager.currentCamera.getWorldDirection(this.plane.normal) , intersects[0].object.position)
 
                         this.raycaster.ray.intersectPlane(this.plane, this.ip)
 
@@ -198,7 +214,7 @@ export class ObjectControl {
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
 
-        this.raycaster.setFromCamera(this.mouse, SceneManager.camera)
+        this.raycaster.setFromCamera(this.mouse, SceneManager.currentCamera)
 
         if(this.mouseDown) {
             

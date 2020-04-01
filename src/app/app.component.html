@@ -1,12 +1,15 @@
 <div id="webGL"></div>
 
 
-<div id="obj-menu">
+<div id="obj-menu" class="drag-window">
+    <div class="drag-bar"></div>
     
     <div id="pause-btn" *ngIf="theremin3D" (click)="theremin3D.toggleOnOff()">{{ theremin3D.isPaused ? 'Play' : 'Pause' }}</div>
 
+    <button (click)="setCamera('perspective')">Perspective Camera</button>
+    <button (click)="setCamera('orthographic')">Orthographic Camera</button>
+
     <button (click)="addOsc()">Add Osc</button>
-    <button >switchCamera()</button>
 
     <selected-menu *ngIf="objCtrl && theremin3D" [objCtrl]="objCtrl" [theremin3D]="theremin3D"></selected-menu>
 

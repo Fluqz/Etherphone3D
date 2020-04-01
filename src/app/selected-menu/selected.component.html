@@ -27,10 +27,21 @@
             
         <span *ngIf="false">Part of chord </span>
         
+        <button (click)="toggleMuteSelected()">Mute/Unmute</button>
+
+        <button (click)="toggleMemoryLabel()">Memory Label</button>
+        <button (click)="toggleDistanceLabel()">Distance Label</button>
+        <button (click)="toggleAxesLabel()">Axes Label</button>
+
     </div>
 
 
     <div *ngIf="objCtrl.selectedObjs.length > 1">
+        Alarm: A Note is already part of chord...
         <button (click)="groupSoundEntities()">Group</button>
+    </div>
+
+    <div>
+        <button>Ungroup</button>
     </div>
 </div>

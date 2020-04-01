@@ -69,7 +69,7 @@ export class Theremin {
 
             if(se instanceof Note) {
 
-                ses.push(se as Note)
+                ses.push(se)
             }
             else if(se instanceof Chord) {
 
@@ -88,6 +88,11 @@ export class Theremin {
         this.sounds.push(chord)
 
         return chord
+    }
+
+    public ungroupNotes(_ses: SoundEntity[]) {
+
+        return null
     }
 
     public removeNoteFromChord(chord: Chord, note: Note) {

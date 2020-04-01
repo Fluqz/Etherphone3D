@@ -6,13 +6,15 @@ import { SoundEntity3D } from './sound-entity-3d'
 import { SnapToGrid } from './snap-to-grid'
 import { DistanceLabel } from './tools/distance-label'
 import { MemoryLabel } from './tools/memory-label'
+import { AxesLabel } from './tools/axes-label'
 
 export class Note3D extends SoundEntity3D{
 
-    public ctrl: SoundEntity
+    public ctrl: Note
     public obj: Mesh
     public distanceLabel: DistanceLabel
     public memoryLabel: MemoryLabel
+    public axesLabel: AxesLabel
 
     public partOfChord: boolean = false
 
@@ -39,6 +41,7 @@ export class Note3D extends SoundEntity3D{
 
         this.distanceLabel = new DistanceLabel(this)
         this.memoryLabel = new MemoryLabel(this)
+        this.axesLabel = new AxesLabel(this)
     }
 
     public move(moveTo: Vector3, X?: boolean, Y?: boolean, Z?: boolean) {
@@ -56,6 +59,9 @@ export class Note3D extends SoundEntity3D{
 
         this.memoryLabel.update()
 
+        this.axesLabel.update()
+
+        this.ctrl.muted = false
     }
 
     public select() {
@@ -63,6 +69,8 @@ export class Note3D extends SoundEntity3D{
         this.distanceLabel.enabled = true
 
         this.memoryLabel.enabled = true
+
+        this.axesLabel.enabled = true
     }
     
     public unselect() {
@@ -70,8 +78,20 @@ export class Note3D extends SoundEntity3D{
         this.distanceLabel.enabled = false
      
         this.memoryLabel.enabled = false
+
+        this.axesLabel.enabled = false
     }
     public mouseUp() {
         
+    }
+
+    public mute() {
+
+        this.ctrl.mute()
+    }
+
+    public unmute() {
+
+        this.ctrl.unmute()
     }
 }
