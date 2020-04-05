@@ -1,4 +1,4 @@
-import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3 } from 'three'
+import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, Object3D } from 'three'
 import { SoundEntity } from './sound-entity'
 import { DistanceLabel } from './tools/distance-label'
 import { MemoryLabel } from './tools/memory-label'
@@ -7,7 +7,7 @@ import { AxesLabel } from './tools/axes-label'
 export abstract class SoundEntity3D {
 
     public abstract ctrl: SoundEntity
-    public abstract obj: Mesh
+    public abstract obj: Object3D
 
     public abstract distanceLabel: DistanceLabel
     public abstract memoryLabel: MemoryLabel
@@ -19,4 +19,5 @@ export abstract class SoundEntity3D {
     public abstract mouseUp() 
     public abstract unmute() 
     public abstract mute() 
+    public abstract destroy() 
 }

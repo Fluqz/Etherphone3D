@@ -8,21 +8,25 @@ export class VolumeShift extends AxisBehaviour {
 
     public sF: number = 100
 
-    constructor() {super()}
+    public axis: string 
 
-    public updateNote(entity: SoundEntity, currentTime: number) {
+    constructor(_axis: string = 'x' || 'y' || 'z') {super()
+        
+        this.axis = _axis
+    }
+
+
+
+    public updateSound(entity: SoundEntity, currentTime: number) {
 
         if(entity instanceof Note) {
 
-            entity.volume = entity.position.y / this.sF
+            entity.volume = entity.position[this.axis] / this.sF
 
-            entity.gainNode.gain.value = entity.volume
         }
         else if(entity instanceof Chord) {
 
-            entity.volume = 1
-
-            entity.gainNode.gain.value = entity.volume
+            entity.notes.forEach(note => note.volume = note.position[this.axis] / this.sF)
         }
 
         // console.log('Volume', entity.gainNode.gain.value)

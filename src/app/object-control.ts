@@ -1,4 +1,4 @@
-import { Raycaster, Vector3, Object3D, Plane, Ray, Intersection, MOUSE, PerspectiveCamera, OrthographicCamera } from 'three'
+import { Raycaster, Vector3, Object3D, Plane, Ray, Intersection, MOUSE, PerspectiveCamera, OrthographicCamera, Scene } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { SceneManager } from './scene-manager'
 import { Theremin } from './theremin'
@@ -81,16 +81,24 @@ export class ObjectControl {
             switch(obj.name) {
 
                 case 'osc.3D':
-
                 case 'chord.3D':
 
                     this.selected = this.theremin3D.getNoteByObj(obj)
 
                     break
 
-                default: 
+                default:
 
-                    this.selectedObj = null
+                    if(obj.parent instanceof Scene) {
+
+                        this.selectedObj = null
+                    }
+                    else {
+                        
+                        this.selectedObj = obj.parent
+
+                        return
+                    } 
             }
 
             if(this.selected) 
@@ -144,6 +152,7 @@ export class ObjectControl {
                     if(!event.shiftKey) {
 
                         this.selectedObjs = []
+                        this.selectedObjs.forEach(obj => { this.theremin3D.getNoteByObj(obj).unselect() })
                         this.selectedObjs.push(intersects[0].object)
                         console.log(intersects[0].object,this.theremin3D.getNoteByObj(intersects[0].object))
     
@@ -157,13 +166,18 @@ export class ObjectControl {
                         this.moveTo.copy(intersects[0].object.position)
 
                         this.selected.select()
-
                     }
                     else if(!this.selectedObjs.includes(intersects[0].object)) {
     
                         this.selectedObj = intersects[0].object
     
                         this.selectedObjs.push(intersects[0].object)
+
+                        // Select all selected objs
+                        this.selectedObjs.forEach(obj => { 
+                             
+                            this.theremin3D.getNoteByObj(obj).select()
+                        })
     
                         // console.log('shift', this.selectedObjs, this.selected)
                     }
@@ -204,6 +218,10 @@ export class ObjectControl {
             this.selected.mouseUp()
         }
 
+        if(this.selectedObjs.length > 1) {
+
+        }
+
         // SceneSetup.instance.onMouseUp(event)
         
     }
@@ -228,11 +246,12 @@ export class ObjectControl {
                 // Move SELECTED
                 this.selected.move(this.moveTo, this.XKey, this.YKey, this.ZKey)
                 // this.selectedObjs.position.copy(this.moveTo)
-                this.theremin3D.theremin.updateNote(this.selected.ctrl)
+                this.theremin3D.theremin.updateSound(this.selected.ctrl)
 
             }
         }
         else {
+
             // HOVER OBJ
             let intersects = this.raycaster.intersectObjects(this.theremin3D.objs, true)
     

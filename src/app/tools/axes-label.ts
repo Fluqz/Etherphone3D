@@ -60,10 +60,6 @@ export class AxesLabel {
         this.end = new THREE.Vector3()
 
         this.createLabel()
-
-        SceneManager.renderer.domElement.addEventListener('mousedown', this.onMouseDown.bind(this), false)
-        SceneManager.renderer.domElement.addEventListener('mouseup', this.onMouseUp.bind(this), false)
-        SceneManager.renderer.domElement.addEventListener('mousemove', this.onMouseMove.bind(this), false)
     }
 
 
@@ -127,26 +123,5 @@ export class AxesLabel {
         this.obj.add(this.z.obj)
 
         SceneManager.scene.add(this.obj)
-
-        console.log(SceneManager.scene)
-    }
-
-
-
-
-
-
-
-    private onMouseDown(e) {
-        
-        
-    }
-
-    private onMouseUp(e) {
-
-    }
-    
-    private onMouseMove(e) {
-        
     }
 }

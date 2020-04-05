@@ -37,11 +37,8 @@ export class Theremin {
         // this.createNote(300)
         // this.createNote(475)
 
-        this.X = new FrequencyShift()
-        this.Y = new VolumeShift()
-
-        // this.update()
-
+        this.X = new FrequencyShift('x')
+        this.Y = new VolumeShift('y')
     }
 
     public addNote(frequency: number) : SoundEntity{
@@ -65,22 +62,27 @@ export class Theremin {
     public groupNotesToChord(_ses: SoundEntity[]) {
 
         let ses: Note[] = []
+        let k: number = -1
         _ses.forEach(se => {
 
             if(se instanceof Note) {
 
                 ses.push(se)
+
+                k = this.sounds.indexOf(se)
             }
             else if(se instanceof Chord) {
 
                 se.notes.forEach(Note => {
                     ses.push(Note)
                 })
-            }
 
-            let i = this.sounds.indexOf(se)
+                k = this.sounds.indexOf(se)
 
-            if(i >= 0) this.sounds.splice(i, 1)
+                // chord.destroy()
+            }   
+
+            if(k >= 0) this.sounds.splice(k, 1)
         })
         
         let chord = new Chord(this.context, ses)
@@ -113,28 +115,17 @@ export class Theremin {
     }
 
     
-    public updateNote(se: SoundEntity) {
+    public updateSound(se: SoundEntity) {
 
-        // if(se instanceof Note) {
-
-            this.X.updateNote(se, this.context.currentTime)
-            this.Y.updateNote(se, this.context.currentTime)
-        // }
-        // else if(se instanceof Chord) {
-
-            // se.notes.forEach(note => {
-                    
-                // this.X.updateNote(note, this.context.currentTime)
-                // this.Y.updateNote(note, this.context.currentTime)
-            // })
-        // }
+        this.X.updateSound(se, this.context.currentTime)
+        this.Y.updateSound(se, this.context.currentTime)
     }
 
-    public toggleOnOff(isPaused: boolean) {
+    public toggleOnOff(isPlaying: boolean) {
 
         this.sounds.forEach(sound => {
 
-            if(isPaused) {
+            if(isPlaying) {
 
                 sound.gainNode.gain.setValueAtTime(0, this.context.currentTime)
             }
@@ -143,6 +134,5 @@ export class Theremin {
                 sound.gainNode.gain.setValueAtTime(this.storedVolume, this.context.currentTime)
             }
         })
-
     }
 }

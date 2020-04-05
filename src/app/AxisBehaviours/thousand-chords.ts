@@ -9,7 +9,7 @@ export class ThousandChords extends AxisBehaviour {
     constructor() {super()}
 
 
-    public updateNote(note: Note, currentTime: number) {
+    public updateSound(note: Note, currentTime: number) {
 
     }
 }

@@ -8,6 +8,7 @@ import { SceneManager } from './scene-manager';
 import { Chord3D } from './chord3D';
 import { Chord } from './chord';
 import { SnapToGrid } from './snap-to-grid';
+import { Tools } from './tools/tools';
 
 
 export class Theremin3D {
@@ -20,7 +21,7 @@ export class Theremin3D {
 
     public obj: Object3D
 
-    public isPaused: boolean = false
+    public isPlaying: boolean = false
 
     constructor(ctrl: Theremin) {
 
@@ -70,6 +71,19 @@ export class Theremin3D {
         return null
     }
 
+    public getNoteByID(id: number) : SoundEntity3D {
+       
+        for(let i = 0; i < this.sounds3D.length; i++) {
+
+            if(this.sounds3D[i].ctrl.id === id) {
+
+                return this.sounds3D[i]
+            }
+        }
+
+        return null
+    }
+
     public addSoungEntity3D(soundEntity: SoundEntity) {
 
         let note = soundEntity as Note
@@ -86,11 +100,9 @@ export class Theremin3D {
     public groupNotesToChord(chord: Chord, ses: SoundEntity3D[]) : Chord3D {
 
         let soundEntity3D: Note3D[] = []
+        let k : number = -1
         ses.forEach(se => {
 
-            // let i = this.sounds3D.indexOf(se)
-
-            // if(i >= 0) this.sounds3D.splice(i, 1)
             if(se instanceof Note3D) {
 
                 (se as Note3D).partOfChord = true
@@ -105,7 +117,9 @@ export class Theremin3D {
                     soundEntity3D.push(note)
                 })
 
-                // chord.destroy()
+                Tools.spliceElementFromArray(se, this.sounds3D)
+                Tools.spliceElementFromArray(se.obj, this.objs)
+                chord.destroy()
             }
         })
 
@@ -136,8 +150,8 @@ export class Theremin3D {
 
     public toggleOnOff() {
 
-        this.isPaused = !this.isPaused
+        this.isPlaying = !this.isPlaying
 
-        this.theremin.toggleOnOff(this.isPaused)
+        this.theremin.toggleOnOff(this.isPlaying)
     }
 }

@@ -128,7 +128,7 @@ export class SceneManager {
             shininess: 0,
             side: THREE.DoubleSide,
             transparent: true,
-            opacity: .6
+            opacity: .2
         })
 
         this.ground = new THREE.Mesh(geo, mat)

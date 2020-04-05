@@ -61,7 +61,7 @@ export class AppComponent implements AfterViewInit{
 
       // this.addOsc(300)
 
-      this.theremin.toggleOnOff(true)
+      this.theremin.toggleOnOff(false)
     })
 
 

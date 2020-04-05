@@ -8,18 +8,22 @@ export class FrequencyShift extends AxisBehaviour {
 
     public sF: number = 10
 
-    constructor() {super()}
+    public axis: string 
+
+    constructor(_axis: string = 'x' || 'y' || 'z') {super()
+        
+        this.axis = _axis
+    }
 
 
-    public updateNote(entity: SoundEntity, currentTime: number) {
+
+    public updateSound(entity: SoundEntity, currentTime: number) {
 
         if(entity instanceof Note) {
             
             let note = entity as Note
 
-            note.frequency = note.position.x * this.sF
-
-            note.osc.frequency.setValueAtTime(note.frequency, currentTime)
+            note.frequency = note.position[this.axis] * this.sF
 
             // console.log('Frequency', note.frequency)
             
@@ -30,9 +34,7 @@ export class FrequencyShift extends AxisBehaviour {
 
             chord.notes.forEach(note => {
 
-                note.frequency = note.position.x * this.sF
-
-                note.osc.frequency.setValueAtTime(note.frequency, currentTime)
+                note.frequency = note.position[this.axis] * this.sF
 
                 // console.log('Frequency ' + note.id , note.frequency)
             })

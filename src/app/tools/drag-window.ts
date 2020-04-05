@@ -27,9 +27,13 @@ export class DragWindow {
         
         if(e.target.classList.contains(this.dragbarClassName)) {
     
-            this.window = e.target.closest('.'+this.dragElementClassName)
-        console.log('click', this.window)
-    
+          this.window = e.target.closest('.'+this.dragElementClassName)
+
+          let rect =this.window.getBoundingClientRect()
+
+          this.left = rect.left
+          this.top = rect.top
+            
           this.xOffset = e.pageX - this.left 
           this.yOffset = e.pageY - this.top
         }
@@ -37,6 +41,9 @@ export class DragWindow {
       }
     
       public onMouseMove(e) {
+
+        // IF WINDOW IS TOO BIG TO BE DRAGED 
+        // SHRINK DOWN AND CALC RECT OFFSET TO SET LEFT AND TOP
         
         if(this.mouseDown && this.window) {
             console.log('move')
@@ -62,6 +69,9 @@ export class DragWindow {
         this.mouseDown = false
     
         this.window = null
+
+        this.top = 0
+        this.left = 0
       }
 
 }

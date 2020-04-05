@@ -54,7 +54,7 @@ export class Label {
         this.lineGeo = new THREE.BufferGeometry()
 
         this.line = new THREE.Line(this.lineGeo, new THREE.LineBasicMaterial({
-            color: 0xffffff,
+            color: 0x000000,
             transparent: true,
             opacity: .4
         }))

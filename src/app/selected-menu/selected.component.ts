@@ -37,7 +37,7 @@ export class Selected implements AfterViewInit{
     moveTo.y = volume // NEEDS TO HAPPEN SOMEWHERE ELSE
     this.objCtrl.selected.move(moveTo)
 
-    this.theremin3D.theremin.updateNote(this.objCtrl.selected.ctrl)
+    this.theremin3D.theremin.updateSound(this.objCtrl.selected.ctrl)
   }
 
   
@@ -48,7 +48,7 @@ export class Selected implements AfterViewInit{
     moveTo.x = frequency // NEEDS TO HAPPEN SOMEWHERE ELSE
     this.objCtrl.selected.move(moveTo)
 
-    this.theremin3D.theremin.updateNote(this.objCtrl.selected.ctrl)
+    this.theremin3D.theremin.updateSound(this.objCtrl.selected.ctrl)
   }
  
   public changeVolume() {

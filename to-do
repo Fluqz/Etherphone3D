@@ -1,0 +1,36 @@
+
+
+Multiple select
+Lasso selection tool
+
+Attack effect
+Sustain
+Release
+
+Delay
+Reverb
+
+LFO ?
+HFO ?
+
+Recognize Notes (even snap to notes ?) 
+Z Axes with Chords of Note ( Also snapping or is there a possible gradient between chords ?)
+
+Menu for showing all active notes and what notes are grouped in folder structure:
+
+Labels : TYPE ID LOCK HIDE
+
+- Note 3242 LOCK HIDE
+- Chord 2342
+    - Note 426
+    - Note 85
+    - Note 347
+- Note 346
+
+BeatMachine:
+Controllable BPM
+Timeline
+
+Channels:
+Each Note/Chord can be attached to a Channel
+Inside the channel you can make samples from chords

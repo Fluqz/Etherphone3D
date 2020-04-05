@@ -4,5 +4,7 @@ export class AxisBehaviour {
 
     public sF: number
 
-    public updateNote(soundEntity: SoundEntity, currentTime: number) {}
+    public axis: string
+
+    public updateSound(soundEntity: SoundEntity, currentTime: number) {}
 }

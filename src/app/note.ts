@@ -10,6 +10,7 @@ export class Note extends SoundEntity{
     public type: string
 
     private _frequency: number
+    private _volume: number
 
     private _attack: number
     private _release: number
@@ -27,7 +28,10 @@ export class Note extends SoundEntity{
     public muted: boolean = false
 
     public get frequency() : number { return this._frequency }
-    public set frequency(val: number) { this._frequency = val; this.osc.frequency.value = val }
+    public set frequency(val: number) { 
+        this._frequency = val; 
+        this.osc.frequency.setValueAtTime(val, this.audioContext.currentTime)
+    }
 
     public get attack() : number { return this._attack }
     public set attack(val: number) { this._attack = val}
@@ -39,7 +43,10 @@ export class Note extends SoundEntity{
     public set sustain(val: number) { this._sustain = val}
 
     public get volume() : number { return this.gainNode.gain.value }
-    public set volume(val: number) { this.gainNode.gain.value = val }
+    public set volume(val: number) { 
+        this._volume = val
+        this.gainNode.gain.value = val
+    }
 
 
     constructor(_audioContext: AudioContext, _frequency: number) {
@@ -62,7 +69,7 @@ export class Note extends SoundEntity{
 
         this.osc.frequency.value = _frequency
 
-        this.gainNode.gain.value = this.volume = .5
+        this.volume = .25
 
         this.osc.start(this.audioContext.currentTime)
 
@@ -75,32 +82,19 @@ export class Note extends SoundEntity{
 
         this.gainNode.disconnect()
     }
-
-    public play() {
-
-        this.osc.start(this.audioContext.currentTime)
-    }
-
-    public stop() {
-
-        this.osc.stop()
-    }
-
     
     private storedVolume: number = 0
     public mute() {
 
         this.muted = true
 
-        this.storedVolume = this.volume
-
-        this.volume = 0
+        this.osc.stop()
     }
 
     public unmute() {
 
         this.muted = false
 
-        this.volume = this.storedVolume
+        this.osc.start()
     }
 }

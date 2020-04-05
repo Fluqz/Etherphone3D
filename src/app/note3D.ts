@@ -21,7 +21,7 @@ export class Note3D extends SoundEntity3D{
     constructor(note: Note) {
         super() 
 
-        this.ctrl = note 
+        this.ctrl = note
 
         let color = new Color();
         color.setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 );
@@ -70,7 +70,7 @@ export class Note3D extends SoundEntity3D{
 
         this.memoryLabel.enabled = true
 
-        this.axesLabel.enabled = true
+        // this.axesLabel.enabled = true
     }
     
     public unselect() {
@@ -79,7 +79,7 @@ export class Note3D extends SoundEntity3D{
      
         this.memoryLabel.enabled = false
 
-        this.axesLabel.enabled = false
+        // this.axesLabel.enabled = false
     }
     public mouseUp() {
         
@@ -94,4 +94,10 @@ export class Note3D extends SoundEntity3D{
 
         this.ctrl.unmute()
     }
+
+    
+    public destroy() {
+
+    }
+
 }
