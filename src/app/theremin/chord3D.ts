@@ -1,12 +1,12 @@
 import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, Object3D, BufferGeometry, LineBasicMaterial, Line } from 'three'
-import { SceneManager } from './scene-manager'
 import { SoundEntity3D } from './sound-entity-3d'
 import { Chord } from './chord'
 import { SoundEntity } from './sound-entity'
 import { Note3D } from './note3D'
-import { DistanceLabel } from './tools/distance-label'
-import { MemoryLabel } from './tools/memory-label'
-import { AxesLabel } from './tools/axes-label'
+import { DistanceLabel } from '../tools/labels/distance-label'
+import { MemoryLabel } from '../tools/labels/memory-label'
+import { AxesLabel } from '../tools/labels/axes-label'
+import { SceneManager } from '../scene-manager'
 
 export class Chord3D extends SoundEntity3D{
 

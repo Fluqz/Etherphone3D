@@ -4,11 +4,12 @@ import { SoundEntity3D } from './sound-entity-3d';
 import { Note3D } from './note3D';
 import { Note } from './note';
 import { SoundEntity } from './sound-entity';
-import { SceneManager } from './scene-manager';
+import { SceneManager } from '../scene-manager';
 import { Chord3D } from './chord3D';
 import { Chord } from './chord';
-import { SnapToGrid } from './snap-to-grid';
-import { Tools } from './tools/tools';
+import { SnapToGrid } from '../tools/snap-to-grid';
+import { Tools } from '../tools/tools';
+import { Grid3D } from '../tools/labels/grid-3d';
 
 
 export class Theremin3D {
@@ -55,6 +56,8 @@ export class Theremin3D {
                 this.objs.push(this.sounds3D[i].obj)
             }
         })
+
+        // new Grid3D(this.theremin.X.max, 10, this.theremin.Y.max, 5)
     }
 
 
@@ -99,31 +102,34 @@ export class Theremin3D {
 
     public groupNotesToChord(chord: Chord, ses: SoundEntity3D[]) : Chord3D {
 
-        let soundEntity3D: Note3D[] = []
-        let k : number = -1
+        let notes3D: Note3D[] = []
         ses.forEach(se => {
 
             if(se instanceof Note3D) {
 
                 (se as Note3D).partOfChord = true
 
-                soundEntity3D.push(se)
+                notes3D.push(se)
             }
             else if(se instanceof Chord3D) {
 
                 let chord = (se as Chord3D)
                 chord.notes3D.forEach(note => {
 
-                    soundEntity3D.push(note)
+                    notes3D.push(note)
                 })
 
-                Tools.spliceElementFromArray(se, this.sounds3D)
-                Tools.spliceElementFromArray(se.obj, this.objs)
                 chord.destroy()
             }
         })
 
-        let chord3D = new Chord3D(chord, soundEntity3D)
+        notes3D.forEach(note => {
+            
+            let i = this.sounds3D.indexOf(note)
+            if(i >= 0) this.sounds3D.splice(i, 1)
+        })
+
+        let chord3D = new Chord3D(chord, notes3D)
 
         this.sounds3D.push(chord3D)
 

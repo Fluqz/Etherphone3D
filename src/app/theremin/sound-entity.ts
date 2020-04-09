@@ -1,4 +1,3 @@
-import { AppComponent } from './app.component'
 import { Vector3 } from 'three'
 
 export abstract class SoundEntity {

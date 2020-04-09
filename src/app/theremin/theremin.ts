@@ -1,8 +1,8 @@
 import { SoundEntity } from './sound-entity'
 import { Note } from './note'
-import { AxisBehaviour } from './AxisBehaviours/axis-behaviour'
-import { FrequencyShift } from './AxisBehaviours/frequency-shfit'
-import { VolumeShift } from './AxisBehaviours/volume-shift'
+import { AxisBehaviour } from '../AxisBehaviours/axis-behaviour'
+import { FrequencyShift } from '../AxisBehaviours/frequency-shfit'
+import { VolumeShift } from '../AxisBehaviours/volume-shift'
 import { Chord } from './chord'
 
 export class Theremin {
@@ -117,8 +117,8 @@ export class Theremin {
     
     public updateSound(se: SoundEntity) {
 
-        this.X.updateSound(se, this.context.currentTime)
-        this.Y.updateSound(se, this.context.currentTime)
+        this.X.updateSound(se)
+        this.Y.updateSound(se)
     }
 
     public toggleOnOff(isPlaying: boolean) {

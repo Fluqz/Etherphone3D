@@ -3,18 +3,43 @@ import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
-import { Theremin } from './theremin';
+import { Theremin } from './theremin/theremin';
 import { SceneManager, CameraType } from './scene-manager';
-import { Theremin3D } from './theremin3D';
+import { Theremin3D } from './theremin/theremin3D';
 import { ObjectControl } from './object-control';
-import { Chord } from './chord';
-import { SoundEntity } from './sound-entity';
-import { SoundEntity3D } from './sound-entity-3d';
+import { SoundEntity3D } from './theremin/sound-entity-3d';
 import { DragWindow } from './tools/drag-window';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
+  template: `
+
+    <div id="webGL"></div>
+
+    <div id="obj-menu" class="drag-window">
+
+        <div class="drag-bar"></div>
+        
+        <div id="pause-btn" *ngIf="theremin3D" (click)="theremin3D.toggleOnOff()">{{ theremin3D.isPaused ? 'Play' : 'Pause' }}</div>
+
+        <button (click)="setCamera('perspective')">Perspective Camera</button>
+        <button (click)="setCamera('orthographic')">Orthographic Camera</button>
+
+        <button (click)="addOsc()">Add Osc</button>
+
+        <button (click)="rotateCamera($event)" axis="z">ROTATE CAM</button>
+
+        <selected-menu *ngIf="objCtrl && theremin3D" [objCtrl]="objCtrl" [theremin3D]="theremin3D"></selected-menu>
+
+    </div>
+
+
+    <mixer *ngIf="objCtrl && theremin3D" class="drag-window" [objCtrl]="objCtrl" [theremin3D]="theremin3D"></mixer>
+
+    <dashboard *ngIf="objCtrl && theremin3D" class="drag-window" [objCtrl]="objCtrl"></dashboard>
+
+        
+  `,
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewInit{
@@ -84,6 +109,20 @@ export class AppComponent implements AfterViewInit{
 
     SceneManager.update()
 
+  }
+
+
+  public rotateCamera(e) {
+
+    let axis = e.target.getAttribute('axis')
+
+    if(axis == 'x') axis = 'y'
+    else if(axis == 'y') axis = 'z'
+    else if(axis == 'z') axis = 'x'
+
+    SceneManager.rotateCamera(axis)
+
+    e.target.setAttribute('axis', axis)
   }
 
   public setCamera(type:string) {

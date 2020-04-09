@@ -1,17 +1,21 @@
 import { Raycaster, Vector3, Object3D, Plane, Ray, Intersection, MOUSE, PerspectiveCamera, OrthographicCamera, Scene } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { SceneManager } from './scene-manager'
-import { Theremin } from './theremin'
-import { Theremin3D } from './theremin3D'
-import { SoundEntity3D } from './sound-entity-3d'
-import { Note } from './note'
+import { Theremin } from './theremin/theremin'
+import { Theremin3D } from './theremin/theremin3D'
+import { SoundEntity3D } from './theremin/sound-entity-3d'
+import { Note } from './theremin/note'
+import { Note3D } from './theremin/note3D'
+import { Chord3D } from './theremin/chord3D'
 
 export class ObjectControl {
+
+    public static instance: ObjectControl
 
     private mouseDown: boolean
     private mouse: Vector3
 
-    private orbit: OrbitControls
+    public orbit: OrbitControls
 
     private raycaster: Raycaster
 
@@ -32,6 +36,8 @@ export class ObjectControl {
     private theremin3D: Theremin3D
     
     constructor(_theremin3D: Theremin3D) {
+
+        ObjectControl.instance = this
 
         this.theremin3D = _theremin3D
 
@@ -119,6 +125,28 @@ export class ObjectControl {
     }
 
 
+    private collectRaycastObjs() {
+        
+        let objs: Object3D[] = []
+        this.theremin3D.sounds3D.forEach(sound => {
+
+            if(sound instanceof Note3D) {
+
+                objs.push(sound.obj)
+            }
+            else if(sound instanceof Chord3D) {
+
+                objs.push(sound.obj)
+
+                sound.notes3D.forEach(note => {
+                    objs.push(note.obj)
+                })
+            }
+        })
+
+        return objs
+    }
+
     // ON KEY DOWN SWITCH NOTE/CHORD TO OLD POSITION WHEN CLICKED
     // ON KEY UP SWITCH BACK TO CURRENT POSITION
 
@@ -136,7 +164,7 @@ export class ObjectControl {
 
         this.raycaster.setFromCamera(this.mouse, SceneManager.currentCamera)
 
-        let intersects = this.raycaster.intersectObjects(this.theremin3D.objs, true)
+        let intersects = this.raycaster.intersectObjects(this.collectRaycastObjs(), true)
 
         if(intersects.length > 0) {
 
@@ -151,8 +179,8 @@ export class ObjectControl {
                     // If no shift key
                     if(!event.shiftKey) {
 
-                        this.selectedObjs = []
                         this.selectedObjs.forEach(obj => { this.theremin3D.getNoteByObj(obj).unselect() })
+                        this.selectedObjs = []
                         this.selectedObjs.push(intersects[0].object)
                         console.log(intersects[0].object,this.theremin3D.getNoteByObj(intersects[0].object))
     
@@ -179,7 +207,7 @@ export class ObjectControl {
                             this.theremin3D.getNoteByObj(obj).select()
                         })
     
-                        // console.log('shift', this.selectedObjs, this.selected)
+                        console.log('shift', this.selectedObjs, this.selected)
                     }
                 }
                 else {
@@ -200,6 +228,7 @@ export class ObjectControl {
         // SceneSetup.instance.onMouseDown(event)
         console.log('CURRENTLY SELECTED: ', this.selectedObjs, '  Main: ', this.selected)
     }
+
 
     public onMouseUp(event) {
         

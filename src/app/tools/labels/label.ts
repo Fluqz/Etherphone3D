@@ -1,6 +1,6 @@
 
 import * as THREE from 'three'
-import { SceneManager } from '../scene-manager'
+import { SceneManager } from '../../scene-manager'
 
 export class Label {
 

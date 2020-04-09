@@ -1,11 +1,11 @@
 import { Component, AfterViewInit, OnDestroy, Input } from '@angular/core';
 
 import * as THREE from 'three'
-import { SoundEntity3D } from '../sound-entity-3d';
-import { SoundEntity } from '../sound-entity';
+import { SoundEntity3D } from '../theremin/sound-entity-3d';
 import { ObjectControl } from '../object-control';
-import { Theremin3D } from '../theremin3D';
-import { Note } from '../note';
+import { Theremin3D } from '../theremin/theremin3D';
+import { Note } from '../theremin/note';
+import { SoundEntity } from '../theremin/sound-entity';
 
 
 @Component({

@@ -1,8 +1,8 @@
 import *  as THREE from 'three'
 
-import { SoundEntity3D } from '../sound-entity-3d'
+import { SoundEntity3D } from '../../theremin/sound-entity-3d'
 import { Label } from './label'
-import { SceneManager } from '../scene-manager'
+import { SceneManager } from '../../scene-manager'
 
 
 export class MemoryLabel {

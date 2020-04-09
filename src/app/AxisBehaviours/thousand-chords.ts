@@ -1,15 +1,23 @@
-import { AxisBehaviour } from './axis-behaviour'
-import { Note } from '../note'
-import { Chord } from '../chord'
+// import { AxisBehaviour } from './axis-behaviour'
+// import { Note } from '../note'
+// import { Chord } from '../chord'
 
-export class ThousandChords extends AxisBehaviour {
+// export class ThousandChords implements AxisBehaviour {
 
-    public sF: number = 0
+//     public sF: number = 0
 
-    constructor() {super()}
+//     public axis: string 
+
+//     public steps: number
+//     public min: number = 0
+//     public max: number = 0
+
+//     public muted: boolean = false
+
+//     constructor() {}
 
 
-    public updateSound(note: Note, currentTime: number) {
+//     public updateSound(note: Note) {
 
-    }
-}
+//     }
+// }

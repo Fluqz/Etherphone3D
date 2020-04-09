@@ -1,12 +1,11 @@
 import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, MeshBasicMaterial, Color, Object3D } from 'three'
-import { SceneManager } from './scene-manager'
 import { SoundEntity } from './sound-entity'
 import { Note } from './note'
 import { SoundEntity3D } from './sound-entity-3d'
-import { SnapToGrid } from './snap-to-grid'
-import { DistanceLabel } from './tools/distance-label'
-import { MemoryLabel } from './tools/memory-label'
-import { AxesLabel } from './tools/axes-label'
+import { DistanceLabel } from '../tools/labels/distance-label'
+import { MemoryLabel } from '../tools/labels/memory-label'
+import { AxesLabel } from '../tools/labels/axes-label'
+import { SceneManager } from '../scene-manager'
 
 export class Note3D extends SoundEntity3D{
 
@@ -42,6 +41,10 @@ export class Note3D extends SoundEntity3D{
         this.distanceLabel = new DistanceLabel(this)
         this.memoryLabel = new MemoryLabel(this)
         this.axesLabel = new AxesLabel(this)
+        
+        this.distanceLabel.enabled = true
+        this.memoryLabel.enabled = false
+        this.axesLabel.enabled = true
     }
 
     public move(moveTo: Vector3, X?: boolean, Y?: boolean, Z?: boolean) {
@@ -66,18 +69,20 @@ export class Note3D extends SoundEntity3D{
 
     public select() {
 
-        this.distanceLabel.enabled = true
+        // this.distanceLabel.enabled = true
 
-        this.memoryLabel.enabled = true
+        // this.memoryLabel.enabled = true
 
         // this.axesLabel.enabled = true
+
+        if(this.axesLabel.enabled) this.axesLabel.reset()
     }
     
     public unselect() {
 
-        this.distanceLabel.enabled = false
+        // this.distanceLabel.enabled = false
      
-        this.memoryLabel.enabled = false
+        // this.memoryLabel.enabled = false
 
         // this.axesLabel.enabled = false
     }

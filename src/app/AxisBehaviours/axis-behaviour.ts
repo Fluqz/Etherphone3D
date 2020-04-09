@@ -1,4 +1,4 @@
-import { SoundEntity } from '../sound-entity';
+import { SoundEntity } from '../sound-entity'
 
 export class AxisBehaviour {
 
@@ -6,5 +6,15 @@ export class AxisBehaviour {
 
     public axis: string
 
-    public updateSound(soundEntity: SoundEntity, currentTime: number) {}
+    public min: number
+    public max: number
+
+    public muted: boolean
+
+    public steps: number
+
+    public updateSound(entity: SoundEntity) {
+
+        console.log('Parent')
+    }
 }

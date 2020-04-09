@@ -6,12 +6,22 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
 import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
-import { GridHelper, Line, AxesHelper } from 'three'
+import { GridHelper, Line, AxesHelper, Vector3 } from 'three'
+import { ObjectControl } from './object-control'
+import { Theremin } from './theremin/theremin'
+import { Theremin3D } from './theremin/theremin3D'
 
 export enum CameraType {
 
     PERSPECTIVE,
     ORTHOGRAPHIC
+}
+
+export enum Axis {
+
+    X,
+    Y,
+    Z
 }
 
 export class SceneManager {
@@ -195,30 +205,39 @@ export class SceneManager {
 
         let hemi = new THREE.HemisphereLight(0xFFFdEF, 0xFFFedF, .8)
         SceneManager.scene.add(hemi)
-
-        // let spotLight = new SpotLight(0xffffff, 1)
-        // spotLight.position.set(0, 2, 0)
-        // spotLight.lookAt(new Vector3(0, 0, 0))
-        // // spotLight.power = 6000
-        // // spotLight.angle = 0.1
-        // // spotLight.decay = 2
-        // // spotLight.penumbra = 0.1
-        // // spotLight.distance = 200
-        // SceneManager.scene.add(spotLight)
     }
 
 
     public static update() {
-
+        
         if(this.activeCamera == CameraType.PERSPECTIVE) 
             this.renderer.render(this.scene, this.perspective)
         else if(this.activeCamera == CameraType.ORTHOGRAPHIC)  
             this.renderer.render(this.scene, this.orthographic)
+
+        // console.log(Theremin.instance.sounds, Theremin3D.instance.sounds3D)
+
     }
 
+    public static distanceToCenter(pos: Vector3) {
+
+        return pos.distanceTo(SceneManager.scene.position)
+    }
 
     // ROTATE CAMERA ON KEY 1 2 3 or SHIFT 1 2 3 for negative area to be aligned to a axes
-    public rotateCamera() {
+    public static rotateCamera(axis: string) {
 
+        if(axis == 'x') {
+
+            SceneManager.perspective.position.set(0, 0, this.distanceToCenter(SceneManager.perspective.position))
+        }
+        else if(axis == 'y') {
+
+            SceneManager.perspective.position.set(this.distanceToCenter(SceneManager.perspective.position), 0, 0)
+        }
+        else if(axis == 'z') {
+
+            SceneManager.perspective.position.set(this.distanceToCenter(SceneManager.perspective.position), 0, 0)
+        }
     }
 }

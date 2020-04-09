@@ -1,8 +1,8 @@
 import { AxisBehaviour } from './axis-behaviour'
-import { Note } from '../note'
-import { Chord } from '../chord'
+import { Note } from '../theremin/note'
 import { SceneManager } from '../scene-manager'
-import { SoundEntity } from '../sound-entity'
+import { Chord } from '../theremin/chord'
+import { SoundEntity } from '../theremin/sound-entity'
 
 export class FrequencyShift extends AxisBehaviour {
 
@@ -10,14 +10,22 @@ export class FrequencyShift extends AxisBehaviour {
 
     public axis: string 
 
-    constructor(_axis: string = 'x' || 'y' || 'z') {super()
+    public steps: number
+    public min: number = 0
+    public max: number = 2000
+
+    public muted: boolean = false
+
+    constructor(_axis: string = 'x' || 'y' || 'z') { super()
         
         this.axis = _axis
     }
 
 
 
-    public updateSound(entity: SoundEntity, currentTime: number) {
+    public updateSound(entity: SoundEntity) {
+
+        if(this.muted) return
 
         if(entity instanceof Note) {
             
@@ -25,8 +33,6 @@ export class FrequencyShift extends AxisBehaviour {
 
             note.frequency = note.position[this.axis] * this.sF
 
-            // console.log('Frequency', note.frequency)
-            
         }
         else if(entity instanceof Chord) {
 
@@ -39,5 +45,6 @@ export class FrequencyShift extends AxisBehaviour {
                 // console.log('Frequency ' + note.id , note.frequency)
             })
         }
+        console.log('Frequency', entity.frequency)
     }
 }

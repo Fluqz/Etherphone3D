@@ -1,7 +1,7 @@
-import { SceneManager } from '../scene-manager';
+import { SceneManager } from '../../scene-manager';
 
 import * as THREE from 'three'
-import { SoundEntity3D } from '../sound-entity-3d';
+import { SoundEntity3D } from '../../theremin/sound-entity-3d';
 
 export class AxesLine {
 
@@ -76,6 +76,14 @@ export class AxesLabel {
         this.update()
     }
 
+    public reset() {
+
+        this.start.copy(this.SE.ctrl.position)
+        this.end.copy(this.SE.ctrl.position)
+
+        this.update()
+    }
+
 
 
     public update() {
@@ -119,7 +127,7 @@ export class AxesLabel {
         this.y = new AxesLine('#222222', 'y')
         this.obj.add(this.y.obj)
         
-        this.z = new AxesLine('#666666','z')
+        this.z = new AxesLine('#666666', 'z')
         this.obj.add(this.z.obj)
 
         SceneManager.scene.add(this.obj)

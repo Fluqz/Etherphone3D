@@ -1,7 +1,6 @@
 import { SoundEntity } from './sound-entity'
 import { Note } from './note'
 import { Vector3, Box3 } from 'three'
-import { SceneManager } from './scene-manager'
 
 export class Chord extends SoundEntity {
     

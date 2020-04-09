@@ -1,4 +1,4 @@
-import { SoundEntity } from './sound-entity';
+import { SoundEntity } from '../sound-entity';
 
 
 export class Sample {

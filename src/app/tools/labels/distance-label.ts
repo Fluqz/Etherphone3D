@@ -1,8 +1,8 @@
-import { SceneManager } from '../scene-manager';
-import { Label } from './labels/label';
+import { SceneManager } from '../../scene-manager';
+import { Label } from './label';
 
 import * as THREE from 'three'
-import { SoundEntity3D } from '../theremin/sound-entity-3d';
+import { SoundEntity3D } from '../../theremin/sound-entity-3d';
 
 export class DistanceLabel {
 

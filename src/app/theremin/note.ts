@@ -1,6 +1,6 @@
 import { SoundEntity } from './sound-entity'
 import { Vector3 } from 'three'
-import { SceneManager } from './scene-manager'
+import { SceneManager } from '../scene-manager'
 import { Theremin } from './theremin'
 import { Theremin3D } from './theremin3D'
 

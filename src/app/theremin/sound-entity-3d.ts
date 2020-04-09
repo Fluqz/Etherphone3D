@@ -1,8 +1,8 @@
 import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, Object3D } from 'three'
 import { SoundEntity } from './sound-entity'
-import { DistanceLabel } from './tools/distance-label'
-import { MemoryLabel } from './tools/memory-label'
-import { AxesLabel } from './tools/axes-label'
+import { DistanceLabel } from '../tools/labels/distance-label'
+import { MemoryLabel } from '../tools/labels/memory-label'
+import { AxesLabel } from '../tools/labels/axes-label'
 
 export abstract class SoundEntity3D {
 

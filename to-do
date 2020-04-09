@@ -13,19 +13,24 @@ Reverb
 LFO ?
 HFO ?
 
+Volca Keys FOs
+
+remove selection when dragging window
+
 Recognize Notes (even snap to notes ?) 
 Z Axes with Chords of Note ( Also snapping or is there a possible gradient between chords ?)
 
-Menu for showing all active notes and what notes are grouped in folder structure:
 
-Labels : TYPE ID LOCK HIDE
 
-- Note 3242 LOCK HIDE
-- Chord 2342
-    - Note 426
-    - Note 85
-    - Note 347
-- Note 346
+Options for the sample
+
+the osc
+animations
+length
+stocato? Or is this a effect
+
+Think about a node system, so its no problem to group groups
+
 
 BeatMachine:
 Controllable BPM

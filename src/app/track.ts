@@ -1,4 +1,4 @@
-import { Sample } from './sample';
+import { Sample } from './sample/sample';
 
 
 export class Track {

@@ -4,14 +4,18 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 
 import { Selected } from './selected-menu/selected.component'
-import { ChannelMenu } from './channel-menu/channel.component'
+import { ChannelMenu } from './channel/channel.component'
+import { MixerMenu } from './mixer/mixer.component'
+import { Dashboard } from './dashboard/dashboard.component'
 
 
 @NgModule({
   declarations: [
     AppComponent,
     Selected,
-    ChannelMenu
+    MixerMenu,
+    ChannelMenu,
+    Dashboard,
   ],
   imports: [
     BrowserModule,
