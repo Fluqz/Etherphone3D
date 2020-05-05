@@ -1,6 +1,6 @@
 import { AxisBehaviour } from './axis-behaviour';
 import { Note } from '../theremin/note';
-import { SoundEntity } from '../theremin/sound-entity';
+import { Sound } from '../theremin/sound-entity';
 import { Chord } from '../theremin/chord';
 
 export class VolumeShift extends AxisBehaviour {
@@ -22,7 +22,7 @@ export class VolumeShift extends AxisBehaviour {
 
 
 
-    public updateSound(entity: SoundEntity) {
+    public updateSound(entity: Sound) {
 
         if(this.muted) return
 

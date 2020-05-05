@@ -1,4 +1,5 @@
-import { SoundEntity } from '../sound-entity'
+import { Sound } from '../theremin/sound-entity'
+
 
 export class AxisBehaviour {
 
@@ -13,7 +14,7 @@ export class AxisBehaviour {
 
     public steps: number
 
-    public updateSound(entity: SoundEntity) {
+    public updateSound(entity: Sound) {
 
         console.log('Parent')
     }

@@ -1,8 +1,8 @@
-import { SoundEntity } from './sound-entity'
+import { Sound } from './sound-entity'
 import { Note } from './note'
 import { Vector3, Box3 } from 'three'
 
-export class Chord extends SoundEntity {
+export class Chord extends Sound {
     
 
     public id: number

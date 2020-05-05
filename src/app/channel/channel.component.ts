@@ -13,8 +13,8 @@ import { Sample } from '../sample/sample';
   
   <div class="channel-inner">
 
-    <!--<sample></sample>-->
     Channel
+    <sample></sample>
 
   </div>
   

@@ -1,13 +1,13 @@
 import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, MeshBasicMaterial, Color, Object3D } from 'three'
-import { SoundEntity } from './sound-entity'
+import { Sound } from './sound-entity'
 import { Note } from './note'
-import { SoundEntity3D } from './sound-entity-3d'
+import { Sound3D } from './sound-entity-3d'
 import { DistanceLabel } from '../tools/labels/distance-label'
 import { MemoryLabel } from '../tools/labels/memory-label'
 import { AxesLabel } from '../tools/labels/axes-label'
 import { SceneManager } from '../scene-manager'
 
-export class Note3D extends SoundEntity3D{
+export class Note3D extends Sound3D{
 
     public ctrl: Note
     public obj: Mesh

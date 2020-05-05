@@ -1,6 +1,6 @@
 import { Vector3 } from 'three'
 
-export abstract class SoundEntity {
+export abstract class Sound {
 
     public abstract id: number
     public abstract type: string

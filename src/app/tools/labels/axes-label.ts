@@ -1,7 +1,7 @@
 import { SceneManager } from '../../scene-manager';
 
 import * as THREE from 'three'
-import { SoundEntity3D } from '../../theremin/sound-entity-3d';
+import { Sound3D } from '../../theremin/sound-entity-3d';
 
 export class AxesLine {
 
@@ -38,7 +38,7 @@ export class AxesLine {
 export class AxesLabel {
 
     
-    private SE: SoundEntity3D
+    private SE: Sound3D
 
     private start: THREE.Vector3
     private end: THREE.Vector3
@@ -52,7 +52,7 @@ export class AxesLabel {
     private _enabled: boolean = false
 
 
-    constructor(_SE: SoundEntity3D) {
+    constructor(_SE: Sound3D) {
 
         this.SE = _SE
 

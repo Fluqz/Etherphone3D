@@ -1,9 +1,9 @@
 import { Theremin } from './theremin';
 import { Object3D, PlaneBufferGeometry, ShaderMaterial, MeshPhongMaterial, Mesh, CircleBufferGeometry } from 'three';
-import { SoundEntity3D } from './sound-entity-3d';
+import { Sound3D } from './sound-entity-3d';
 import { Note3D } from './note3D';
 import { Note } from './note';
-import { SoundEntity } from './sound-entity';
+import { Sound } from './sound-entity';
 import { SceneManager } from '../scene-manager';
 import { Chord3D } from './chord3D';
 import { Chord } from './chord';
@@ -17,7 +17,7 @@ export class Theremin3D {
     static instance: Theremin3D
     public theremin: Theremin
 
-    public sounds3D: SoundEntity3D[] = []
+    public sounds3D: Sound3D[] = []
     public objs: Object3D[] = []
 
     public obj: Object3D
@@ -61,7 +61,7 @@ export class Theremin3D {
     }
 
 
-    public getNoteByObj(obj: Object3D) : SoundEntity3D {
+    public getNoteByObj(obj: Object3D) : Sound3D {
        
         for(let i = 0; i < this.sounds3D.length; i++) {
 
@@ -74,7 +74,7 @@ export class Theremin3D {
         return null
     }
 
-    public getNoteByID(id: number) : SoundEntity3D {
+    public getNoteByID(id: number) : Sound3D {
        
         for(let i = 0; i < this.sounds3D.length; i++) {
 
@@ -87,9 +87,9 @@ export class Theremin3D {
         return null
     }
 
-    public addSoungEntity3D(soundEntity: SoundEntity) {
+    public addSoungEntity3D(Sound: Sound) {
 
-        let note = soundEntity as Note
+        let note = Sound as Note
 
         let note3D = new Note3D(note)
 
@@ -100,7 +100,7 @@ export class Theremin3D {
         return note3D
     }
 
-    public groupNotesToChord(chord: Chord, ses: SoundEntity3D[]) : Chord3D {
+    public groupNotesToChord(chord: Chord, ses: Sound3D[]) : Chord3D {
 
         let notes3D: Note3D[] = []
         ses.forEach(se => {
@@ -138,7 +138,7 @@ export class Theremin3D {
         return chord3D
     }
 
-    public ungroupNotes(_ses: SoundEntity3D[], chord: Chord3D) {
+    public ungroupNotes(_ses: Sound3D[], chord: Chord3D) {
 
         _ses.forEach(se => {
 

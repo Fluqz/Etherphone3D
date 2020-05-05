@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, ElementRef, Input } from '@angular/core';
 import { ObjectControl } from '../object-control';
 import { Theremin3D } from '../theremin/theremin3D';
-import { SoundEntity3D } from '../theremin/sound-entity-3d';
+import { Sound3D } from '../theremin/sound-entity-3d';
 import { Chord3D } from '../theremin/chord3D';
 import { Note3D } from '../theremin/note3D';
 
@@ -87,8 +87,8 @@ export class Dashboard implements AfterViewInit{
     
     private host: HTMLElement
 
-    private _selectedSound: SoundEntity3D
-    public set selectedSound(val: SoundEntity3D) {
+    private _selectedSound: Sound3D
+    public set selectedSound(val: Sound3D) {
 
       this._selectedSound = val
       this.objCtrl.selectedObj = val.obj
@@ -113,7 +113,7 @@ export class Dashboard implements AfterViewInit{
     }
 
 
-    public selectSound(e, sound: SoundEntity3D) {
+    public selectSound(e, sound: Sound3D) {
 
       console.log(e, e.target, e.currentTarget)
 
@@ -134,7 +134,7 @@ export class Dashboard implements AfterViewInit{
     }
 
 
-    public isNote(sound: SoundEntity3D) { return sound instanceof Note3D }
-    public isChord(sound: SoundEntity3D) { return sound instanceof Chord3D }
-    public getSoundAsChord(sound: SoundEntity3D) { return sound as Chord3D }
+    public isNote(sound: Sound3D) { return sound instanceof Note3D }
+    public isChord(sound: Sound3D) { return sound instanceof Chord3D }
+    public getSoundAsChord(sound: Sound3D) { return sound as Chord3D }
 }  

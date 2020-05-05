@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { SceneManager } from './scene-manager'
 import { Theremin } from './theremin/theremin'
 import { Theremin3D } from './theremin/theremin3D'
-import { SoundEntity3D } from './theremin/sound-entity-3d'
+import { Sound3D } from './theremin/sound-entity-3d'
 import { Note } from './theremin/note'
 import { Note3D } from './theremin/note3D'
 import { Chord3D } from './theremin/chord3D'
@@ -26,7 +26,7 @@ export class ObjectControl {
     private plane: Plane
 
     public selectedObjs: Object3D[] = []
-    public selected: SoundEntity3D
+    public selected: Sound3D
     public _selectedObj: Object3D
 
     private ip: Vector3

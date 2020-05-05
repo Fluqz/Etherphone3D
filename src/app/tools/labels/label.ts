@@ -24,7 +24,6 @@ export class Label {
 
     public direction: THREE.Vector3
 
-    // public radius: number
 
     constructor(_side: string, _start: THREE.Vector3, _end?: THREE.Vector3) {
 

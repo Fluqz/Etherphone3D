@@ -1,13 +1,13 @@
 import *  as THREE from 'three'
 
-import { SoundEntity3D } from '../../theremin/sound-entity-3d'
+import { Sound3D } from '../../theremin/sound-entity-3d'
 import { Label } from './label'
 import { SceneManager } from '../../scene-manager'
 
 
 export class MemoryLabel {
 
-    private SE: SoundEntity3D
+    private SE: Sound3D
 
     private storedStart: THREE.Vector3
 
@@ -24,7 +24,7 @@ export class MemoryLabel {
     private _enabled: boolean = false
 
 
-    constructor(_SE: SoundEntity3D) {
+    constructor(_SE: Sound3D) {
 
         this.SE = _SE
 

@@ -1,4 +1,4 @@
-import { SoundEntity3D } from '../theremin/sound-entity-3d';
+import { Sound3D } from '../theremin/sound-entity-3d';
 import { Track } from '../track';
 import { Sample } from '../sample/sample';
 

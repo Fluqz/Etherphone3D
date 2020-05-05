@@ -1,11 +1,11 @@
 import { Component, AfterViewInit, OnDestroy, Input } from '@angular/core';
 
 import * as THREE from 'three'
-import { SoundEntity3D } from '../theremin/sound-entity-3d';
+import { Sound3D } from '../theremin/sound-entity-3d';
 import { ObjectControl } from '../object-control';
 import { Theremin3D } from '../theremin/theremin3D';
 import { Note } from '../theremin/note';
-import { SoundEntity } from '../theremin/sound-entity';
+import { Sound } from '../theremin/sound-entity';
 
 
 @Component({
@@ -85,8 +85,8 @@ export class Selected implements AfterViewInit{
 
   public groupSoundEntities() {
 
-    let ses: SoundEntity[] = []
-    let ses3D: SoundEntity3D[] = []
+    let ses: Sound[] = []
+    let ses3D: Sound3D[] = []
     this.objCtrl.selectedObjs.forEach(obj => {
 
       ses3D.push(this.theremin3D.getNoteByObj(obj))
@@ -100,8 +100,8 @@ export class Selected implements AfterViewInit{
 
   public ungroupSoundEntities() {
 
-    let ses: SoundEntity[] = []
-    let ses3D: SoundEntity3D[] = []
+    let ses: Sound[] = []
+    let ses3D: Sound3D[] = []
     this.objCtrl.selectedObjs.forEach(obj => {
 
       ses3D.push(this.theremin3D.getNoteByObj(obj))

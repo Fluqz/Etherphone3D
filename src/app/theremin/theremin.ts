@@ -1,4 +1,4 @@
-import { SoundEntity } from './sound-entity'
+import { Sound } from './sound-entity'
 import { Note } from './note'
 import { AxisBehaviour } from '../AxisBehaviours/axis-behaviour'
 import { FrequencyShift } from '../AxisBehaviours/frequency-shfit'
@@ -14,7 +14,7 @@ export class Theremin {
 
     context: AudioContext
 
-    public sounds: SoundEntity[] = []
+    public sounds: Sound[] = []
 
     public X: AxisBehaviour
     public Y: AxisBehaviour
@@ -41,7 +41,7 @@ export class Theremin {
         this.Y = new VolumeShift('y')
     }
 
-    public addNote(frequency: number) : SoundEntity{
+    public addNote(frequency: number) : Sound{
 
         let sn = new Note(this.context, frequency)
 
@@ -59,7 +59,7 @@ export class Theremin {
         note.destroy()
     }
 
-    public groupNotesToChord(_ses: SoundEntity[]) {
+    public groupNotesToChord(_ses: Sound[]) {
 
         let ses: Note[] = []
         let k: number = -1
@@ -92,7 +92,7 @@ export class Theremin {
         return chord
     }
 
-    public ungroupNotes(_ses: SoundEntity[]) {
+    public ungroupNotes(_ses: Sound[]) {
 
         return null
     }
@@ -115,7 +115,7 @@ export class Theremin {
     }
 
     
-    public updateSound(se: SoundEntity) {
+    public updateSound(se: Sound) {
 
         this.X.updateSound(se)
         this.Y.updateSound(se)

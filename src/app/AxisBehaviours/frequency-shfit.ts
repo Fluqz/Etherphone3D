@@ -1,8 +1,7 @@
 import { AxisBehaviour } from './axis-behaviour'
 import { Note } from '../theremin/note'
-import { SceneManager } from '../scene-manager'
 import { Chord } from '../theremin/chord'
-import { SoundEntity } from '../theremin/sound-entity'
+import { Sound } from '../theremin/sound-entity'
 
 export class FrequencyShift extends AxisBehaviour {
 
@@ -23,7 +22,7 @@ export class FrequencyShift extends AxisBehaviour {
 
 
 
-    public updateSound(entity: SoundEntity) {
+    public updateSound(entity: Sound) {
 
         if(this.muted) return
 

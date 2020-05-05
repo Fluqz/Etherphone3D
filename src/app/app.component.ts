@@ -7,7 +7,7 @@ import { Theremin } from './theremin/theremin';
 import { SceneManager, CameraType } from './scene-manager';
 import { Theremin3D } from './theremin/theremin3D';
 import { ObjectControl } from './object-control';
-import { SoundEntity3D } from './theremin/sound-entity-3d';
+import { Sound3D } from './theremin/sound-entity-3d';
 import { DragWindow } from './tools/drag-window';
 
 @Component({

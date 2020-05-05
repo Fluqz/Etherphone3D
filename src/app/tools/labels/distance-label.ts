@@ -2,11 +2,11 @@ import { SceneManager } from '../../scene-manager';
 import { Label } from './label';
 
 import * as THREE from 'three'
-import { SoundEntity3D } from '../../theremin/sound-entity-3d';
+import { Sound3D } from '../../theremin/sound-entity-3d';
 
 export class DistanceLabel {
 
-    private SE: SoundEntity3D
+    private SE: Sound3D
 
     private raycaster: THREE.Raycaster
 
@@ -28,7 +28,7 @@ export class DistanceLabel {
 
 
 
-    constructor(_SE: SoundEntity3D) {
+    constructor(_SE: Sound3D) {
 
         this.SE = _SE
 
