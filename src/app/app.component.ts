@@ -20,7 +20,7 @@ import { DragWindow } from './tools/drag-window';
 
         <div class="drag-bar"></div>
         
-        <div id="pause-btn" *ngIf="theremin3D" (click)="theremin3D.toggleOnOff()">{{ theremin3D.isPaused ? 'Play' : 'Pause' }}</div>
+        <div id="pause-btn" *ngIf="theremin3D" (click)="theremin3D.toggleOnOff()">{{ theremin3D.isPlaying ? 'Pause' : 'Play' }}</div>
 
         <button (click)="setCamera('perspective')">Perspective Camera</button>
         <button (click)="setCamera('orthographic')">Orthographic Camera</button>

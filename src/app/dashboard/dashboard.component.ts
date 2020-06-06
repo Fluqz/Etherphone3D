@@ -31,7 +31,7 @@ import { Note3D } from '../theremin/note3D';
 
           <div *ngIf="isChord(sound)">
 
-              <div *ngFor="let chordNote of getSoundAsChord(sound).notes3D"  (click)="selectSound($event, chordNote)" class="dashboard-item" [class.active]="selectedSound == chordNote">
+              <div *ngFor="let chordNote of getSoundAsChord(sound).sounds3D"  (click)="selectSound($event, chordNote)" class="dashboard-item" [class.active]="selectedSound == chordNote">
                   Note
                   <div  class="dashboard-item-inner">{{chordNote.ctrl.id}}</div>
 
