@@ -12,7 +12,7 @@ export class Theremin {
     masterVolume: GainNode
     storedVolume: number
 
-    context: AudioContext
+    public static audioContext: AudioContext
 
     public sounds: Sound[] = []
 
@@ -25,12 +25,12 @@ export class Theremin {
 
         Theremin.instance = this
 
-        this.context = new AudioContext()
+        Theremin.audioContext = new AudioContext()
 
-        this.masterVolume = this.context.createGain()
+        this.masterVolume = Theremin.audioContext.createGain()
 
         this.masterVolume.gain.value = .3
-        this.masterVolume.connect(this.context.destination)
+        this.masterVolume.connect(Theremin.audioContext.destination)
         this.storedVolume = this.masterVolume.gain.value
 
         // this.createNote(200)
@@ -43,7 +43,7 @@ export class Theremin {
 
     public addNote(frequency: number) : Sound{
 
-        let sn = new Note(this.context, frequency)
+        let sn = new Note(frequency)
 
         this.sounds.push(sn)
 
@@ -61,7 +61,7 @@ export class Theremin {
 
     public groupNotesToChord(_ses: Sound[]) {
 
-        let chord = new Chord(this.context, _ses)
+        let chord = new Chord(_ses)
 
         this.sounds.push(chord)
 
@@ -103,11 +103,11 @@ export class Theremin {
 
             if(isPlaying) {
 
-                sound.gainNode.gain.setValueAtTime(0, this.context.currentTime)
+                sound.gainNode.gain.setValueAtTime(0, Theremin.audioContext.currentTime)
             }
             else {
                 
-                sound.gainNode.gain.setValueAtTime(this.storedVolume, this.context.currentTime)
+                sound.gainNode.gain.setValueAtTime(this.storedVolume, Theremin.audioContext.currentTime)
             }
         })
     }

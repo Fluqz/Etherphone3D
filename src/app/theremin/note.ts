@@ -49,12 +49,12 @@ export class Note extends Sound{
     }
 
 
-    constructor(_audioContext: AudioContext, _frequency: number) {
+    constructor(_frequency: number) {
         super()
 
         this.id = Math.random() * 100 + new Date().getTime()
 
-        this.audioContext = _audioContext
+        this.audioContext = Theremin.audioContext
         this._frequency = _frequency
 
         this.type = 'Note'

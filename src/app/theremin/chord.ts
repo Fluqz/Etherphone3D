@@ -47,14 +47,14 @@ export class Chord extends Sound {
         
     }
 
-    constructor(_audioContext: AudioContext, _sounds: Sound[]) {
+    constructor(_sounds: Sound[]) {
         super()
 
         this.id = Math.random() * 100 + new Date().getTime()
 
         this.position = new Vector3()
 
-        this.audioContext = _audioContext
+        this.audioContext = Theremin.audioContext
 
         this.gainNode = this.audioContext.createGain()
 
