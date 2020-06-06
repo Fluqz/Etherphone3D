@@ -37,7 +37,7 @@ export class FrequencyShift extends AxisBehaviour {
 
             let chord = entity as Chord
 
-            chord.notes.forEach(note => {
+            chord.sounds.forEach(note => {
 
                 note.frequency = note.position[this.axis] * this.sF
 

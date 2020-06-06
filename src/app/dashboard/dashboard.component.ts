@@ -109,7 +109,6 @@ export class Dashboard implements AfterViewInit{
 
     ngAfterViewInit() {
 
-        console.log(this.sounds)
     }
 
 

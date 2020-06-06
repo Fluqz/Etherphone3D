@@ -61,31 +61,7 @@ export class Theremin {
 
     public groupNotesToChord(_ses: Sound[]) {
 
-        let ses: Note[] = []
-        let k: number = -1
-        _ses.forEach(se => {
-
-            if(se instanceof Note) {
-
-                ses.push(se)
-
-                k = this.sounds.indexOf(se)
-            }
-            else if(se instanceof Chord) {
-
-                se.notes.forEach(Note => {
-                    ses.push(Note)
-                })
-
-                k = this.sounds.indexOf(se)
-
-                // chord.destroy()
-            }   
-
-            if(k >= 0) this.sounds.splice(k, 1)
-        })
-        
-        let chord = new Chord(this.context, ses)
+        let chord = new Chord(this.context, _ses)
 
         this.sounds.push(chord)
 
@@ -97,22 +73,22 @@ export class Theremin {
         return null
     }
 
-    public removeNoteFromChord(chord: Chord, note: Note) {
+    // public removeNoteFromChord(chord: Chord, note: Note) {
 
-        let i = chord.notes.indexOf(note)
+    //     let i = chord.notes.indexOf(note)
 
-        if(i >= 0) chord.notes.splice(i, 1)
+    //     if(i >= 0) chord.notes.splice(i, 1)
         
-        this.sounds.push(note)
-    }
+    //     this.sounds.push(note)
+    // }
 
-    public splitChord(chord: Chord) {
+    // public splitChord(chord: Chord) {
 
-        chord.notes.forEach(note => {
+    //     chord.notes.forEach(note => {
 
-            this.sounds.push(note)
-        })
-    }
+    //         this.sounds.push(note)
+    //     })
+    // }
 
     
     public updateSound(se: Sound) {

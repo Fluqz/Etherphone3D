@@ -89,12 +89,16 @@ export class Selected implements AfterViewInit{
     let ses3D: Sound3D[] = []
     this.objCtrl.selectedObjs.forEach(obj => {
 
-      ses3D.push(this.theremin3D.getNoteByObj(obj))
+      // Collect all selected Sounds
       ses.push(this.theremin3D.getNoteByObj(obj).ctrl)
+      // Collect all selected Sound3D's
+      ses3D.push(this.theremin3D.getNoteByObj(obj))
     })
 
+    // Make Chord from Sounds
     let chord = this.theremin3D.theremin.groupNotesToChord(ses)
 
+    // Add 3D objs to new Chord3D obj
     this.theremin3D.groupNotesToChord(chord, ses3D)
   }
 

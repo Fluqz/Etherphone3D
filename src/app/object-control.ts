@@ -138,7 +138,7 @@ export class ObjectControl {
 
                 objs.push(sound.obj)
 
-                sound.notes3D.forEach(note => {
+                sound.sounds3D.forEach(note => {
                     objs.push(note.obj)
                 })
             }
@@ -182,7 +182,7 @@ export class ObjectControl {
                         this.selectedObjs.forEach(obj => { this.theremin3D.getNoteByObj(obj).unselect() })
                         this.selectedObjs = []
                         this.selectedObjs.push(intersects[0].object)
-                        console.log(intersects[0].object,this.theremin3D.getNoteByObj(intersects[0].object))
+                        // console.log(intersects[0].object,this.theremin3D.getNoteByObj(intersects[0].object))
     
                         // console.log('no shift', this.selected)
                         this.plane.setFromNormalAndCoplanarPoint(SceneManager.currentCamera.getWorldDirection(this.plane.normal) , intersects[0].object.position)
@@ -206,8 +206,6 @@ export class ObjectControl {
                              
                             this.theremin3D.getNoteByObj(obj).select()
                         })
-    
-                        console.log('shift', this.selectedObjs, this.selected)
                     }
                 }
                 else {

@@ -100,36 +100,9 @@ export class Theremin3D {
         return note3D
     }
 
-    public groupNotesToChord(chord: Chord, ses: Sound3D[]) : Chord3D {
+    public groupNotesToChord(chord: Chord, _ses: Sound3D[]) : Chord3D {
 
-        let notes3D: Note3D[] = []
-        ses.forEach(se => {
-
-            if(se instanceof Note3D) {
-
-                (se as Note3D).partOfChord = true
-
-                notes3D.push(se)
-            }
-            else if(se instanceof Chord3D) {
-
-                let chord = (se as Chord3D)
-                chord.notes3D.forEach(note => {
-
-                    notes3D.push(note)
-                })
-
-                chord.destroy()
-            }
-        })
-
-        notes3D.forEach(note => {
-            
-            let i = this.sounds3D.indexOf(note)
-            if(i >= 0) this.sounds3D.splice(i, 1)
-        })
-
-        let chord3D = new Chord3D(chord, notes3D)
+        let chord3D = new Chord3D(chord, _ses)
 
         this.sounds3D.push(chord3D)
 

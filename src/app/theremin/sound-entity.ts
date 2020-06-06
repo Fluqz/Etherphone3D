@@ -20,6 +20,7 @@ export abstract class Sound {
 
     public abstract muted: boolean
 
+    public abstract isPartOfChord: boolean
 
     constructor( ) {
 

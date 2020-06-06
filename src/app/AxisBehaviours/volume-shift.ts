@@ -33,7 +33,7 @@ export class VolumeShift extends AxisBehaviour {
         }
         else if(entity instanceof Chord) {
 
-            entity.notes.forEach(note => note.volume = note.position[this.axis] / this.sF)
+            entity.sounds.forEach(note => note.volume = note.position[this.axis] / this.sF)
         }
 
         // console.log('Volume', entity.gainNode.gain.value)

@@ -1,6 +1,7 @@
 import { Sound } from './sound-entity'
 import { Note } from './note'
 import { Vector3, Box3 } from 'three'
+import { Theremin } from './theremin'
 
 export class Chord extends Sound {
     
@@ -22,10 +23,11 @@ export class Chord extends Sound {
 
     public oscs: OscillatorNode[] = []
 
-    public notes: Note[]
+    public sounds: Sound[]
 
     public muted: boolean = false
 
+    public isPartOfChord: boolean = false
 
     public get frequency() : number { return this._frequency  } // RETURN MEDIAN OF ALL OSC FREQUENCIES
     public set frequency(val: number){ this._frequency = val } 
@@ -45,7 +47,7 @@ export class Chord extends Sound {
         
     }
 
-    constructor(_audioContext: AudioContext, _notes: Note[]) {
+    constructor(_audioContext: AudioContext, _sounds: Sound[]) {
         super()
 
         this.id = Math.random() * 100 + new Date().getTime()
@@ -58,31 +60,31 @@ export class Chord extends Sound {
 
         this.type = 'chord'
 
-        this.notes = _notes
+        this.sounds = _sounds
 
-        _notes.forEach((note, i) => {
+        _sounds.forEach((sound, i) => {
 
-            note.isPartOfChord = true
+            sound.isPartOfChord = true
 
-            note.gainNode.disconnect()
+            sound.gainNode.disconnect()
 
-            note.gainNode.connect(this.gainNode)
+            sound.gainNode.connect(this.gainNode)
         })
 
         this.gainNode.connect(this.audioContext.destination)
 
-        this.volume = 1
+        this.volume = 1 // VOLUME EQUALS THE INITIAL Y POSITION OF 3D OBJ
         
-        this.position.y = this.gainNode.gain.value
+        this.position.y = this.gainNode.gain.value * Theremin.instance.X.sF
     }
     
-    public getPosition() {
+    // public getPosition() {
 
-        this.notes.forEach(note => {
+    //     this.notes.forEach(note => {
 
 
-        })
-    }
+    //     })
+    // }
 
     public update() {}
 

@@ -42,7 +42,7 @@ export class Note3D extends Sound3D{
         this.memoryLabel = new MemoryLabel(this)
         this.axesLabel = new AxesLabel(this)
         
-        this.distanceLabel.enabled = true
+        this.distanceLabel.enabled = false
         this.memoryLabel.enabled = false
         this.axesLabel.enabled = true
     }

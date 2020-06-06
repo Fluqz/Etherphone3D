@@ -13,19 +13,19 @@ export class Chord3D extends Sound3D{
     public ctrl: Chord
     public obj: Mesh
     public lines: THREE.Line[] = []
-    public notes3D: Note3D[]
+    public sounds3D: Sound3D[]
 
     public distanceLabel: DistanceLabel
     public memoryLabel: MemoryLabel
     public axesLabel: AxesLabel
 
 
-    constructor(chord: Chord, soundEntities: Note3D[]) {
+    constructor(chord: Chord, _soundEntities: Sound3D[]) {
         super() 
 
         this.ctrl = chord as Chord
 
-        this.notes3D = soundEntities
+        this.sounds3D = _soundEntities
 
         this.obj = new Mesh(
             new SphereBufferGeometry(.5, 20, 20), 
@@ -33,10 +33,19 @@ export class Chord3D extends Sound3D{
         )
         this.obj.name = 'chord.3D'
         this.obj.userData.id = chord.id
-
-        this.createLabel()
-
         this.obj.position.copy(this.ctrl.position)
+
+        _soundEntities.forEach(sound => {
+
+            if(sound.ctrl.isPartOfChord) sound.move(new Vector3(sound.ctrl.position.x, sound.ctrl.position.y - this.obj.position.y, sound.ctrl.position.z))
+
+            this.obj.add(sound.obj) // CHORD VOLUME IS INITIALLY ON 1, WHEN SOUNDS ARE ADDED THEY ARE MOVED UP BY (1*SF)
+            // SUBTRACT CHORD Y WITH SOUND Y BUT WHERE?
+            
+        })
+
+        // this.createLabel()
+
 
         SceneManager.scene.add(this.obj)
         
@@ -65,27 +74,24 @@ export class Chord3D extends Sound3D{
         
         // NOTE MOVING PART 
 
-        let offset = new Vector3()
+        // let offset = new Vector3()
+        // offset.copy(lastPosition)
+        // offset.sub(this.ctrl.position)
+        // offset.negate()
 
-        offset.copy(lastPosition)
-        offset.sub(this.ctrl.position)
-        offset.negate()
-        // let matrix = new Matrix4().setPosition(offset)
+        let soundPosition: Vector3 = new Vector3()
+        this.sounds3D.forEach(sound => {
 
-        let notePosition: Vector3 = new Vector3()
-        this.notes3D.forEach(note => {
-
-            notePosition.copy(note.ctrl.position)
-            // notePosition.applyMatrix4(matrix)
-            notePosition.add(offset)
-            note.move(notePosition)
+            // soundPosition.copy(sound.ctrl.position)
+            // soundPosition.add(offset)
+            // sound.move(soundPosition)
 
             // Update position to world 
-            // note.obj.getWorldPosition(note.ctrl.position)
+            sound.obj.getWorldPosition(sound.ctrl.position)
 
-            // note.distanceLabel.update()
-            // note.memoryLabel.update()
-            // note.axesLabel.update()
+            sound.distanceLabel.update()
+            sound.memoryLabel.update()
+            sound.axesLabel.update()
         })
 
         this.updateLabel()
@@ -98,7 +104,7 @@ export class Chord3D extends Sound3D{
         this.memoryLabel.enabled = true
         // this.axesLabel.enabled = true
 
-        this.notes3D.forEach(note => {
+        this.sounds3D.forEach(note => {
 
             note.select()
         })
@@ -110,7 +116,7 @@ export class Chord3D extends Sound3D{
         this.memoryLabel.enabled = false
         // this.axesLabel.enabled = false
         
-        this.notes3D.forEach(note => {
+        this.sounds3D.forEach(note => {
 
             note.unselect()
         })
@@ -126,7 +132,7 @@ export class Chord3D extends Sound3D{
         
         let line: Line
 
-        this.notes3D.forEach(note => {
+        this.sounds3D.forEach(note => {
                 
             line = new Line(geo.clone(), mat) 
             line.name = 'group.line'
@@ -142,10 +148,10 @@ export class Chord3D extends Sound3D{
     
     public updateLabel() {
 
-        this.notes3D.forEach((note, index) => {
+        // this.sounds3D.forEach((note, index) => {
 
-            this.lines[index].geometry.setFromPoints([note.ctrl.position, this.ctrl.position])
-        })
+        //     this.lines[index].geometry.setFromPoints([note.ctrl.position, this.ctrl.position])
+        // })
     }
 
 
@@ -157,20 +163,20 @@ export class Chord3D extends Sound3D{
 
     public addNote(note: Note3D) {
 
-        if(this.notes3D.indexOf(note) != -1) return
+        if(this.sounds3D.indexOf(note) != -1) return
 
-        this.notes3D.push(note)
+        this.sounds3D.push(note)
 
         this.obj.add(note.obj)
     }
 
     public removeNote(note: Note3D) {
 
-        let i = this.notes3D.indexOf(note)
+        let i = this.sounds3D.indexOf(note)
 
         if(!i) return
 
-        this.notes3D.splice(i, 1)
+        this.sounds3D.splice(i, 1)
 
         if(this.obj.getObjectById(note.obj.id)) this.obj.remove(note.obj)
     }

@@ -84,8 +84,6 @@ export class AppComponent implements AfterViewInit{
 
       this.objCtrl = new ObjectControl(this.theremin3D)
 
-      // this.addOsc(300)
-
       this.theremin.toggleOnOff(false)
     })
 
@@ -138,7 +136,7 @@ export class AppComponent implements AfterViewInit{
 
   public addOsc(frequency?: number) {
 
-    let osc = this.theremin.addNote(frequency == undefined ? 440 : frequency)
+    let osc = this.theremin.addNote(frequency == undefined ? 100 : frequency)
     this.theremin3D.addSoungEntity3D(osc)
   }
 

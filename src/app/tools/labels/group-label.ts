@@ -53,7 +53,7 @@ export class GroupLabel {
 
     private updateLines() {
 
-        this.chord.notes3D.forEach((note, index) => {
+        this.chord.sounds3D.forEach((note, index) => {
 
             console.log(index, note.ctrl.position, this.chord.ctrl.position)
             this.lines[index].geometry.setFromPoints([note.ctrl.position, this.chord.ctrl.position])
@@ -77,7 +77,7 @@ export class GroupLabel {
         
         let line: THREE.Line
 
-        this.chord.notes3D.forEach(note => {
+        this.chord.sounds3D.forEach(note => {
                 
             line = new THREE.Line(geo.clone(), mat) 
             line.name = 'group.line'

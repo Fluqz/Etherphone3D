@@ -1,30 +1,30 @@
-import { Component, AfterViewInit, OnDestroy, Input } from '@angular/core';
+// import { Component, AfterViewInit, OnDestroy, Input } from '@angular/core';
 
-import * as THREE from 'three'
-import { ObjectControl } from '../object-control';
-import { Theremin3D } from '../theremin/theremin3D';
+// import * as THREE from 'three'
+// import { ObjectControl } from '../object-control';
+// import { Theremin3D } from '../theremin/theremin3D';
 
 
-@Component({
-  selector: 'effects-menu',
-  template: `
+// @Component({
+//   selector: 'effects-menu',
+//   template: `
   
   
   
   
-  `,
-  styles: [
+//   `,
+//   styles: [
 
-  ]
-})
-export class Effects implements AfterViewInit {
+//   ]
+// })
+// export class Effects implements AfterViewInit {
 
-    @Input('objCtrl') objCtrl: ObjectControl
-    @Input('theremin3D') theremin3D: Theremin3D
+//     @Input('objCtrl') objCtrl: ObjectControl
+//     @Input('theremin3D') theremin3D: Theremin3D
 
-    ngAfterViewInit() {
+//     ngAfterViewInit() {
 
 
-    }
+//     }
 
-}
+// }

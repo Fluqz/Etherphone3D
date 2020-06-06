@@ -29,7 +29,7 @@ export class DragWindow {
     
           this.window = e.target.closest('.'+this.dragElementClassName)
 
-          let rect =this.window.getBoundingClientRect()
+          let rect = this.window.getBoundingClientRect()
 
           this.left = rect.left
           this.top = rect.top
@@ -46,7 +46,6 @@ export class DragWindow {
         // SHRINK DOWN AND CALC RECT OFFSET TO SET LEFT AND TOP
         
         if(this.mouseDown && this.window) {
-            console.log('move')
     
             let window = this.window.closest('.'+this.dragElementClassName) as HTMLElement
     

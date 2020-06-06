@@ -14,7 +14,6 @@ import { Sample } from '../sample/sample';
   <div class="channel-inner">
 
     Channel
-    <sample></sample>
 
   </div>
   
