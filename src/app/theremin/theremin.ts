@@ -65,6 +65,14 @@ export class Theremin {
 
         this.sounds.push(chord)
 
+        chord.sounds.forEach(se => {
+
+            se.parent = chord
+
+            // if(se.parent) {
+            // }
+        })
+
         return chord
     }
 

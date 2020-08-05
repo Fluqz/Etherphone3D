@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, ElementRef, Input } from '@angular/core';
 import { ObjectControl } from '../object-control';
 import { Theremin3D } from '../theremin/theremin3D';
-import { Channel } from '../channel/channel';
+import { Channel } from '../timeline/channel';
 import { Mixer } from './mixer';
 
 
@@ -10,12 +10,11 @@ import { Mixer } from './mixer';
   selector: 'mixer',
   template: ` 
   
+  <div class="drag-bar"></div>
   
   <div id="mixer-menu-wrapper">
 
-    <div class="drag-bar"></div>
-
-    <channel *ngFor="let channel of channels" [channel]="channel"></channel>
+    <channel *ngFor="let channel of channels"></channel>
 
   </div>
   
@@ -31,7 +30,7 @@ import { Mixer } from './mixer';
       top: 0px;
   
       width: 200px;
-      height: 800px;
+      height: 200px;
       background-color: #0c1614;
       color: #fefefe;
   

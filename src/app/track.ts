@@ -1,4 +1,4 @@
-import { Sample } from './sample/sample';
+import { Sample } from './timeline/sample';
 
 
 export class Track {

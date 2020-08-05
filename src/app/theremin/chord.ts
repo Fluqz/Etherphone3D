@@ -1,6 +1,6 @@
 import { Sound } from './sound-entity'
 import { Note } from './note'
-import { Vector3, Box3 } from 'three'
+import { Vector3, Box3, Color } from 'three'
 import { Theremin } from './theremin'
 
 export class Chord extends Sound {
@@ -14,6 +14,7 @@ export class Chord extends Sound {
     public _attack: number
     public _release: number
     public _sustain: number
+    public color: Color
 
     public gainNode: GainNode
 
@@ -25,9 +26,10 @@ export class Chord extends Sound {
 
     public sounds: Sound[]
 
+    public isPlaying: boolean = false
     public muted: boolean = false
 
-    public isPartOfChord: boolean = false
+    public parent: Sound
 
     public get frequency() : number { return this._frequency  } // RETURN MEDIAN OF ALL OSC FREQUENCIES
     public set frequency(val: number){ this._frequency = val } 
@@ -62,9 +64,9 @@ export class Chord extends Sound {
 
         this.sounds = _sounds
 
-        _sounds.forEach((sound, i) => {
+        this.parent = null
 
-            sound.isPartOfChord = true
+        _sounds.forEach((sound, i) => {
 
             sound.gainNode.disconnect()
 
@@ -78,16 +80,37 @@ export class Chord extends Sound {
         this.position.y = this.gainNode.gain.value * Theremin.instance.X.sF
     }
     
-    // public getPosition() {
-
-    //     this.notes.forEach(note => {
-
-
-    //     })
-    // }
-
     public update() {}
 
+    public play() {
+
+        this.isPlaying = true
+
+        this.sounds.forEach(sound => {
+
+            sound.play()
+        })
+    }
+    
+    public playFrequent(length: number) {
+
+        this.isPlaying = false
+
+        this.sounds.forEach(sound => {
+
+            sound.playFrequent(length)
+        })
+    }
+
+    public stop() {
+
+        this.isPlaying = false
+
+        this.sounds.forEach(sound => {
+
+            sound.stop()
+        })
+    }
     
     public mute() {
 

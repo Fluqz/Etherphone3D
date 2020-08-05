@@ -45,17 +45,17 @@ export class Theremin3D {
 
         // SceneManager.scene.add(mesh)
 
-        ctrl.sounds.forEach((sound, i) => {
+        // ctrl.sounds.forEach((sound, i) => {
 
-            if(sound instanceof Note) {
+        //     if(sound instanceof Note) {
 
-                let note = sound as Note
+        //         let note = sound as Note
 
-                this.sounds3D.push(new Note3D(note))
+        //         this.sounds3D.push(new Note3D(note))
 
-                this.objs.push(this.sounds3D[i].obj)
-            }
-        })
+        //         this.objs.push(this.sounds3D[i].obj)
+        //     }
+        // })
 
         // new Grid3D(this.theremin.X.max, 10, this.theremin.Y.max, 5)
     }
@@ -119,7 +119,7 @@ export class Theremin3D {
 
                 let note = (se as Note3D)
 
-                if((note.ctrl as Note).isPartOfChord) {
+                if((note.ctrl as Note).parent) {
 
                     chord.removeNote(note)
                 }

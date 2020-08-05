@@ -52,10 +52,14 @@ export class ObjectControl {
 
         this.orbit = new OrbitControls(SceneManager.currentCamera, SceneManager.renderer.domElement)
 
-
         SceneManager.renderer.domElement.addEventListener('mousedown', this.onMouseDown.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('mouseup', this.onMouseUp.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('mousemove', this.onMouseMove.bind(this), false)
+
+        SceneManager.renderer.domElement.addEventListener('touchstart', this.onTouchStart.bind(this), false)
+        SceneManager.renderer.domElement.addEventListener('touchend', this.onTouchEnd.bind(this), false)
+        SceneManager.renderer.domElement.addEventListener('touchcancel', this.onTouchCancel.bind(this), false)
+        SceneManager.renderer.domElement.addEventListener('touchmove', this.onTouchMove.bind(this), false)
         
         SceneManager.renderer.domElement.addEventListener('keyup', this.onKeyUp.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('keydown', this.onKeyDown.bind(this), false)
@@ -288,10 +292,24 @@ export class ObjectControl {
         }
     }
 
+    private onTouchStart(event: TouchEvent) {
+
+        this.onMouseDown(event)
+    }
+    private onTouchEnd(event) {
+        
+        this.onMouseUp(event)
+    }
+    private onTouchCancel(event) {
+        
+        this.onMouseUp(event)
+    }
+    private onTouchMove(event) {
+        
+        this.onMouseMove(event)
+    }
 
     public onKeyDown(e) {
-
-        console.log(e)
 
         const key = e.key.toLowerCase()
         

@@ -1,9 +1,10 @@
 * {
     margin: 0px;
-    padding: 0px;
+    padding: 0px; 
+    box-sizing: border-box;
 }
 
-body { overflow: hidden; }
+body { overflow: hidden;}
 canvas { border: none;}
 
 #obj-menu {

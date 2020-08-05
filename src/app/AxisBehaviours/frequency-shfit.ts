@@ -30,8 +30,7 @@ export class FrequencyShift extends AxisBehaviour {
             
             let note = entity as Note
 
-            note.frequency = note.position[this.axis] * this.sF
-
+            note.frequency = Math.round((note.position[this.axis] * this.sF) * 100) / 100
         }
         else if(entity instanceof Chord) {
 
@@ -39,9 +38,7 @@ export class FrequencyShift extends AxisBehaviour {
 
             chord.sounds.forEach(note => {
 
-                note.frequency = note.position[this.axis] * this.sF
-
-                // console.log('Frequency ' + note.id , note.frequency)
+                note.frequency = Math.round((note.position[this.axis] * this.sF) * 100) / 100
             })
         }
         console.log('Frequency', entity.frequency)

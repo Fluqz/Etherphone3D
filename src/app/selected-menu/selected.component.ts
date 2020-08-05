@@ -6,16 +6,31 @@ import { ObjectControl } from '../object-control';
 import { Theremin3D } from '../theremin/theremin3D';
 import { Note } from '../theremin/note';
 import { Sound } from '../theremin/sound-entity';
+import { Theremin } from '../theremin/theremin';
 
 
 @Component({
   selector: 'selected-menu',
   templateUrl: './selected.component.html',
-//   styleUrls: ['./selected.component.css']
+  styles: [
+    `
+    :host {
+        
+        display:block;    
+        width: 100%;
+        height: auto;
+        background-color: #0c1614;
+        color: #fefefe;
+    
+        resize: vertical;
+        overflow: auto;
+    }
+    `
+  ]
 })
-export class Selected implements AfterViewInit{
+export class Selected implements AfterViewInit {
 
-    @Input('objCtrl') objCtrl: ObjectControl 
+    @Input('objCtrl') objCtrl: ObjectControl
     @Input('theremin3D') theremin3D: Theremin3D
 
     ngAfterViewInit() {
@@ -34,7 +49,7 @@ export class Selected implements AfterViewInit{
   public set selectedVolume(volume: number) { 
 
     let moveTo = this.objCtrl.selected.ctrl.position.clone()
-    moveTo.y = volume // NEEDS TO HAPPEN SOMEWHERE ELSE
+    moveTo.y = volume * Theremin.instance.X.sF // NEEDS TO HAPPEN SOMEWHERE ELSE
     this.objCtrl.selected.move(moveTo)
 
     this.theremin3D.theremin.updateSound(this.objCtrl.selected.ctrl)

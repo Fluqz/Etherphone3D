@@ -1,4 +1,4 @@
-import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, Object3D, BufferGeometry, LineBasicMaterial, Line } from 'three'
+import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, Object3D, BufferGeometry, LineBasicMaterial, Line, TetrahedronBufferGeometry, Box3 } from 'three'
 import { Sound3D } from './sound-entity-3d'
 import { Chord } from './chord'
 import { Sound } from './sound-entity'
@@ -28,17 +28,18 @@ export class Chord3D extends Sound3D{
         this.sounds3D = _soundEntities
 
         this.obj = new Mesh(
-            new SphereBufferGeometry(.5, 20, 20), 
+            new TetrahedronBufferGeometry(1), 
             new MeshNormalMaterial()
         )
         this.obj.name = 'chord.3D'
         this.obj.userData.id = chord.id
         this.obj.position.copy(this.ctrl.position)
+        // this.setInitPosition()
 
         _soundEntities.forEach(sound => {
 
-            if(sound.ctrl.isPartOfChord) sound.move(new Vector3(sound.ctrl.position.x, sound.ctrl.position.y - this.obj.position.y, sound.ctrl.position.z))
-
+            sound.move(new Vector3(sound.ctrl.position.x, sound.ctrl.position.y - this.obj.position.y, sound.ctrl.position.z))
+            
             this.obj.add(sound.obj) // CHORD VOLUME IS INITIALLY ON 1, WHEN SOUNDS ARE ADDED THEY ARE MOVED UP BY (1*SF)
             // SUBTRACT CHORD Y WITH SOUND Y BUT WHERE?
             
@@ -52,6 +53,10 @@ export class Chord3D extends Sound3D{
         this.distanceLabel = new DistanceLabel(this)
         this.memoryLabel = new MemoryLabel(this)
         this.axesLabel = new AxesLabel(this)
+        
+        this.distanceLabel.enabled = false
+        this.memoryLabel.enabled = false
+        this.axesLabel.enabled = true
     }
 
 
@@ -70,7 +75,7 @@ export class Chord3D extends Sound3D{
 
         this.distanceLabel.update()
         this.memoryLabel.update()
-        // this.axesLabel.update()
+        this.axesLabel.update()
         
         // NOTE MOVING PART 
 
@@ -79,7 +84,7 @@ export class Chord3D extends Sound3D{
         // offset.sub(this.ctrl.position)
         // offset.negate()
 
-        let soundPosition: Vector3 = new Vector3()
+        // let soundPosition: Vector3 = new Vector3()
         this.sounds3D.forEach(sound => {
 
             // soundPosition.copy(sound.ctrl.position)
@@ -88,6 +93,8 @@ export class Chord3D extends Sound3D{
 
             // Update position to world 
             sound.obj.getWorldPosition(sound.ctrl.position)
+
+            // console.log('Chord notes pos ', sound.ctrl.position)
 
             sound.distanceLabel.update()
             sound.memoryLabel.update()
@@ -100,9 +107,7 @@ export class Chord3D extends Sound3D{
 
     public select() {
 
-        this.distanceLabel.enabled = true
-        this.memoryLabel.enabled = true
-        // this.axesLabel.enabled = true
+        if(this.axesLabel.enabled) this.axesLabel.reset()
 
         this.sounds3D.forEach(note => {
 
@@ -112,10 +117,6 @@ export class Chord3D extends Sound3D{
     
     public unselect() {
 
-        this.distanceLabel.enabled = false
-        this.memoryLabel.enabled = false
-        // this.axesLabel.enabled = false
-        
         this.sounds3D.forEach(note => {
 
             note.unselect()
@@ -124,6 +125,42 @@ export class Chord3D extends Sound3D{
 
     public mouseUp() {}
 
+
+    private setInitPosition() {
+     
+        let bbox = new Box3()
+        let center = new Vector3()
+        let position = new Vector3()
+
+        this.sounds3D.forEach(se => {
+
+            bbox.expandByObject(se.obj)
+        })
+
+        bbox.getCenter(center)
+
+        position.set(center.x, this.ctrl.volume, center.z)
+
+        let allGoodCount: number = 0
+        let i = 0
+        let errorPrevention: number = 0
+        while(this.sounds3D.length != allGoodCount || errorPrevention < 50) {
+
+            if(this.sounds3D[i].obj.position.distanceTo(position) > 2) allGoodCount += 1
+            else position.z += 1
+
+            i += 1
+
+            if(i == this.sounds3D.length) { 
+                i = 0 
+                allGoodCount = 0
+            }
+
+            errorPrevention += 1
+        }
+
+        this.ctrl.position.copy(position)
+    }
 
     private createLabel() {
 
@@ -148,9 +185,9 @@ export class Chord3D extends Sound3D{
     
     public updateLabel() {
 
-        // this.sounds3D.forEach((note, index) => {
+        // this.sounds3D.forEach((sound, index) => {
 
-        //     this.lines[index].geometry.setFromPoints([note.ctrl.position, this.ctrl.position])
+        //     this.lines[index].geometry.setFromPoints([sound.ctrl.position, this.ctrl.position])
         // })
     }
 

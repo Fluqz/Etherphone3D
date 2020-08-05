@@ -19,22 +19,23 @@ import { DragWindow } from './tools/drag-window';
     <div id="obj-menu" class="drag-window">
 
         <div class="drag-bar"></div>
-        
-        <div id="pause-btn" *ngIf="theremin3D" (click)="theremin3D.toggleOnOff()">{{ theremin3D.isPlaying ? 'Pause' : 'Play' }}</div>
-
-        <button (click)="setCamera('perspective')">Perspective Camera</button>
-        <button (click)="setCamera('orthographic')">Orthographic Camera</button>
 
         <button (click)="addOsc()">Add Osc</button>
+        
+        <!--<button (click)="setCamera('perspective')">Perspective Camera</button>-->
+        <!--<button (click)="setCamera('orthographic')">Orthographic Camera</button>-->
 
-        <button (click)="rotateCamera($event)" axis="z">ROTATE CAM</button>
+
+        <!--<button (click)="rotateCamera($event)" axis="z">ROTATE CAM</button>-->
 
         <selected-menu *ngIf="objCtrl && theremin3D" [objCtrl]="objCtrl" [theremin3D]="theremin3D"></selected-menu>
+
+        <timeline *ngIf="theremin3D" class="drag-window" [objCtrl]="objCtrl" [theremin3D]="theremin3D"></timeline>
 
     </div>
 
 
-    <mixer *ngIf="objCtrl && theremin3D" class="drag-window" [objCtrl]="objCtrl" [theremin3D]="theremin3D"></mixer>
+    <!--<mixer *ngIf="objCtrl && theremin3D" class="drag-window" [objCtrl]="objCtrl" [theremin3D]="theremin3D"></mixer>-->
 
     <dashboard *ngIf="objCtrl && theremin3D" class="drag-window" [objCtrl]="objCtrl"></dashboard>
 
@@ -136,8 +137,9 @@ export class AppComponent implements AfterViewInit{
 
   public addOsc(frequency?: number) {
 
-    let osc = this.theremin.addNote(frequency == undefined ? 100 : frequency)
-    this.theremin3D.addSoungEntity3D(osc)
+    let note = this.theremin.addNote(frequency == undefined ? 100 : frequency)
+    let note3D = this.theremin3D.addSoungEntity3D(note)
+    this.objCtrl.selectedObj = note3D.obj
   }
 
   public onMouseDown(e) {

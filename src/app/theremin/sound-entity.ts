@@ -1,4 +1,4 @@
-import { Vector3 } from 'three'
+import { Vector3, Color } from 'three'
 
 export abstract class Sound {
 
@@ -11,6 +11,7 @@ export abstract class Sound {
     public abstract release: number
     public abstract sustain: number
     public abstract volume: number
+    public abstract color: Color
 
     public abstract gainNode: GainNode
 
@@ -20,7 +21,7 @@ export abstract class Sound {
 
     public abstract muted: boolean
 
-    public abstract isPartOfChord: boolean
+    public abstract parent: Sound
 
     constructor( ) {
 
@@ -35,4 +36,7 @@ export abstract class Sound {
     public update() {}
     public abstract mute()
     public abstract unmute()
+    public abstract play()
+    public abstract playFrequent(length:number)
+    public abstract stop()
 } 

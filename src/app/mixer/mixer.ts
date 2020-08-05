@@ -1,4 +1,4 @@
-import { Channel } from '../channel/channel'
+import { Channel } from '../timeline/channel'
 
 
 

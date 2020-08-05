@@ -15,8 +15,6 @@ export class Note3D extends Sound3D{
     public memoryLabel: MemoryLabel
     public axesLabel: AxesLabel
 
-    public partOfChord: boolean = false
-
     constructor(note: Note) {
         super() 
 
@@ -24,6 +22,8 @@ export class Note3D extends Sound3D{
 
         let color = new Color();
         color.setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 );
+
+        this.ctrl.color = color
 
         this.obj = new Mesh(
             new SphereBufferGeometry(.5, 20, 20), 
@@ -52,11 +52,13 @@ export class Note3D extends Sound3D{
         // moveTo = SnapToGrid.instance.snapVectorToAxes(moveTo)
         // console.log(X, Y, Z)
 
-        if(X || X == undefined) this.ctrl.position.x = moveTo.x
-        if(Y || Y == undefined) this.ctrl.position.y = moveTo.y
-        if(Z || Z == undefined) this.ctrl.position.z = moveTo.z
+        if(X || X == undefined) this.ctrl.position.x = (moveTo.x)
+        if(Y || Y == undefined) this.ctrl.position.y = (moveTo.y)
+        if(Z || Z == undefined) this.ctrl.position.z = (moveTo.z)
 
         this.obj.position.copy(this.ctrl.position)
+
+        this.obj.getWorldPosition(this.ctrl.position)
 
         this.distanceLabel.update()
 
@@ -69,22 +71,11 @@ export class Note3D extends Sound3D{
 
     public select() {
 
-        // this.distanceLabel.enabled = true
-
-        // this.memoryLabel.enabled = true
-
-        // this.axesLabel.enabled = true
-
         if(this.axesLabel.enabled) this.axesLabel.reset()
     }
     
     public unselect() {
 
-        // this.distanceLabel.enabled = false
-     
-        // this.memoryLabel.enabled = false
-
-        // this.axesLabel.enabled = false
     }
     public mouseUp() {
         

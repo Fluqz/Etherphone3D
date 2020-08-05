@@ -4,9 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 
 import { Selected } from './selected-menu/selected.component'
-import { ChannelMenu } from './channel/channel.component'
+import { ChannelMenu } from './timeline/channel.component'
 import { MixerMenu } from './mixer/mixer.component'
 import { Dashboard } from './dashboard/dashboard.component'
+import { TimelineMenu } from './timeline/timeline.component'
 
 
 @NgModule({
@@ -16,6 +17,7 @@ import { Dashboard } from './dashboard/dashboard.component'
     MixerMenu,
     ChannelMenu,
     Dashboard,
+    TimelineMenu
   ],
   imports: [
     BrowserModule,
