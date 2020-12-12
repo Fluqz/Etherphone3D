@@ -5,23 +5,19 @@ export abstract class Sound {
     public abstract id: number
     public abstract type: string
 
-    public abstract frequency: number
-
-    public abstract attack: number
-    public abstract release: number
-    public abstract sustain: number
-    public abstract volume: number
-    public abstract color: Color
-
-    public abstract gainNode: GainNode
+    public abstract parent: Sound
 
     public abstract audioContext: AudioContext
+    public abstract gainNode: GainNode
 
-    public abstract position: Vector3
+    public abstract volume: number
 
     public abstract muted: boolean
 
-    public abstract parent: Sound
+    public abstract color: Color
+
+    public abstract position: Vector3
+
 
     constructor( ) {
 

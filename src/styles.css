@@ -2,10 +2,80 @@
     margin: 0px;
     padding: 0px; 
     box-sizing: border-box;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 body { overflow: hidden;}
+
 canvas { border: none;}
+
+input {
+
+    height: 30px;
+    width: 100px;
+
+    text-align: center;
+
+    border: none;
+    border-bottom: 1px solid #FFFFFF;
+
+    color: #FFFFFF;
+    background-color: transparent;
+}
+
+select {
+    
+    height: 30px;
+    width: 100px;
+
+    text-align: center;
+
+    border: none;
+    background-color: transparent;
+
+    outline: none;
+}
+
+option {
+
+    color: #000000;
+}
+
+
+.btn {
+
+    display: inline-block;
+
+    cursor: pointer;
+
+    width: 30px;
+    height: 30px;
+
+    background-color: transparent;
+    color: #FFFFFF;
+}
+
+.btn.play {
+    background: url('./assets/images/play.svg');
+    background-size: 70%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.btn.pause {
+    background: url('./assets/images/pause.svg');
+    background-size: 68%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.btn.add {
+    background: url('./assets/images/plus.svg');
+    background-size: 70%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+
+
 
 #obj-menu {
 
@@ -14,8 +84,6 @@ canvas { border: none;}
     bottom: 0px;
 
     width: 100%;
-
-    background-color: #0c1614;
 
     color: #fefefe;
 }

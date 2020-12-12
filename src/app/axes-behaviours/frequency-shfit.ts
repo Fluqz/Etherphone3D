@@ -1,44 +1,44 @@
-import { AxisBehaviour } from './axis-behaviour'
+import { AxesBehaviour } from './axes-behaviour'
 import { Note } from '../theremin/note'
 import { Chord } from '../theremin/chord'
 import { Sound } from '../theremin/sound-entity'
 import { NoteData, NoteDataClass } from "../data/frequency-of-notes"
+import { Axis } from '../theremin/axis'
 
-export class FrequencyShift extends AxisBehaviour {
+export class FrequencyShift extends AxesBehaviour {
 
     noteData: NoteData[] = []
 
-    public sF: number = 10
+    keydown:boolean = false
 
-    public axis: string 
-
-    public steps: number
-    public min: number = 0
-    public max: number = 2000
-
-    public muted: boolean = false
-
-    constructor(_axis: string = 'x' || 'y' || 'z') { super()
+    constructor(axis?: Axis) { 
         
-        this.axis = _axis
+        super(axis)
         
+        this.name = 'Frequency Shift'
+
+        this.sF = 10
+
+        this.min = 0
+        this.max = 2000
+
+        this.muted = false
+
+
+        window.addEventListener('keydown', this.onkeydown.bind(this))
+        window.addEventListener('keyup', this.onkeyup.bind(this))
     }
 
-    // MOVE THIS TO NOTE.MOVE() ????
-    public snapToNearNote(frequency: number, offset:number) : number {
-
-        NoteDataClass.data.forEach(data => {
-
-            if(Math.abs(frequency - data.frequency) <= offset) {
-
-                frequency = data.frequency
-                console.log('NOTE ', data.note, frequency)
-            }
-        })
-
-        return frequency
+    private onkeydown(e: KeyboardEvent) {
+        if(e.key == 's') this.keydown = true
     }
+    private onkeyup(e: KeyboardEvent) {
+        if(e.key == 's') this.keydown = false
+    }
+
     public snapToNote(frequency: number) : number {
+
+        if(!this.keydown) return frequency
 
         let nearest: number = 1000
         let currentNote: NoteData
@@ -53,13 +53,12 @@ export class FrequencyShift extends AxisBehaviour {
             }
         })
 
-        console.log('NOTE ', currentNote.note, frequency)
-
         return currentNote.frequency
     }
 
     public updateSound(entity: Sound) {
 
+        if(this.axis == null) return
         if(this.muted) return
 
         if(entity instanceof Note) {
@@ -68,9 +67,7 @@ export class FrequencyShift extends AxisBehaviour {
 
             let frequency = Math.round((note.position[this.axis] * this.sF) * 100) / 100
 
-            // note.frequency = this.snapToNearNote(frequency, 4)
             note.frequency = this.snapToNote(frequency)
-
         }
         else if(entity instanceof Chord) {
 
@@ -78,9 +75,11 @@ export class FrequencyShift extends AxisBehaviour {
 
             let frequency
 
-            chord.sounds.forEach(note => {
+            chord.sounds.forEach(sound => {
 
-                frequency = Math.round((note.position[this.axis] * this.sF) * 100) / 100
+                frequency = Math.round((sound.position[this.axis] * this.sF) * 100) / 100
+
+                let note = sound as Note
 
                 // note.frequency = this.snapToNearNote(frequency, 4)
                 note.frequency = this.snapToNote(frequency)

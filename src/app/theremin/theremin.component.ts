@@ -1,5 +1,6 @@
 import { Component, Input, ElementRef } from '@angular/core'
 import { ObjectControl } from '../object-control'
+import { Axis } from './axis'
 import { Theremin } from './theremin'
 import { Theremin3D } from './theremin3D'
 
@@ -8,23 +9,21 @@ import { Theremin3D } from './theremin3D'
     selector: 'theremin',
     template: `
     
-    Theremin
-
-        <button (click)="addOsc()">Add Osc</button>
+        <div class="btn add" (click)="addOsc()"></div>
 
         <label for="x">X</label>
         <select name="x">
-            <option value=""></option>
+            <option *ngFor="let b of behaviours; let i = index" value="i">{{ b.name }}</option>
         </select>
         
         <label for="y">Y</label>
         <select name="y">
-            <option value=""></option>
+            <option *ngFor="let b of behaviours; let i = index" value="i">{{ b.name }}</option>
         </select>
         
         <label for="z">Z</label>
         <select name="z">
-            <option value=""></option>
+            <option *ngFor="let b of behaviours; let i = index" value="i">{{ b.name }}</option>
         </select>
         
         <button (click)="toggleMemoryLabel()">Memory Label</button>
@@ -52,6 +51,18 @@ import { Theremin3D } from './theremin3D'
         this.host = this.hostRef.nativeElement
   
       }
+
+      get behaviours() { return Theremin.axesBehaviours }
+
+      getBehaviourByAxis(axis: Axis) {
+
+        for(let b of Theremin.axesBehaviours) {
+
+            if(b.axis == axis) return b
+        }
+      }
+
+
   
       ngAfterViewInit() {
   

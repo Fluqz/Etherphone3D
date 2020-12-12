@@ -26,7 +26,7 @@ export class Note3D extends Sound3D{
         this.ctrl.color = color
 
         this.obj = new Mesh(
-            new SphereBufferGeometry(.5, 20, 20), 
+            new SphereBufferGeometry(2, 20, 20), 
             new MeshBasicMaterial({
                 color: color,
             })

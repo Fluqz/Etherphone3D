@@ -12,17 +12,13 @@ import { Theremin } from './theremin/theremin'
 import { Theremin3D } from './theremin/theremin3D'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
+import { Color } from './color'
+
+
 export enum CameraType {
 
     PERSPECTIVE,
     ORTHOGRAPHIC
-}
-
-export enum Axis {
-
-    X,
-    Y,
-    Z
 }
 
 export class SceneManager {
@@ -46,10 +42,11 @@ export class SceneManager {
 
     public id: number
 
-    public w:number
-    public h:number
+    public static w:number
+    public static h:number
 
     public static environmentObjs: THREE.Object3D[] = []
+    public sphere: THREE.Mesh
     public xyPlane: THREE.Mesh
     public yzPlane: THREE.Mesh
     public xzPlane: THREE.Mesh
@@ -63,74 +60,36 @@ export class SceneManager {
 
         this.container = container
 
-        this.w = window.innerWidth
-        this.h = window.innerHeight
+        SceneManager.w = window.innerWidth
+        SceneManager.h = window.innerHeight
 
         SceneManager.activeCamera = CameraType.PERSPECTIVE
 
         SceneManager.renderer = new THREE.WebGLRenderer({ antialias: true })
-        SceneManager.renderer.setSize(this.w, this.h)
-        SceneManager.renderer.setClearColor(0xFFFFFF)
+        SceneManager.renderer.setSize(SceneManager.w, SceneManager.h)
+        SceneManager.renderer.setClearColor(Color.BG)
         SceneManager.renderer.toneMapping = THREE.Uncharted2ToneMapping
         this.container.append(SceneManager.renderer.domElement)
 
-        SceneManager.perspective = new THREE.PerspectiveCamera(40, this.w / this.h, .1, 1000)
+        SceneManager.perspective = new THREE.PerspectiveCamera(50, SceneManager.w / SceneManager.h, .1, 10000)
         SceneManager.perspective.position.set(90, 90, 90)
 
-        SceneManager.orthographic = new THREE.OrthographicCamera(this.w / -2, this.w / 2, this.h / 2, this.h / -2, .1, 1000)
+        SceneManager.orthographic = new THREE.OrthographicCamera(SceneManager.w / -2, SceneManager.w / 2, SceneManager.h / 2, SceneManager.h / -2, .1, 1000)
         SceneManager.orthographic.position.set(5, 5, 5)
         SceneManager.orthographic.zoom = 20
 
         SceneManager.scene = new THREE.Scene()
-        SceneManager.scene.background = new THREE.Color(0xFFFFFF)
+        SceneManager.scene.background = new THREE.Color(Color.BG)
         // this.scene.add(new GridHelper(1000, 100, new THREE.Color(0xAAAAAA)))
         // this.scene.add(new AxesHelper(100))
 
         SceneManager.orbitCamera = SceneManager.perspective
 
-
-        // this.createAxis()
-        // this.createLight()
+        this.createAxes()
+        this.createEnvironment()
+        this.createLight()
     }
 
-    public createEnvironment() {
-        
-        let geo = new THREE.CircleBufferGeometry(1000, 100)
-        geo.rotateX(-Math.PI / 2)
-        let mat = new THREE.MeshPhongMaterial({
-            color: 0xEEEEEE,
-            shininess: 0,
-            side: THREE.DoubleSide,
-            transparent: true,
-            opacity: .2
-        })
-
-        this.xzPlane = new THREE.Mesh(geo, mat)
-        this.xzPlane.name = 'xz'
-
-        this.yzPlane = this.xzPlane.clone()
-        this.yzPlane.name = 'yz'
-        this.yzPlane.rotateX(-Math.PI / 2)
-        this.yzPlane.material = mat.clone()
-        this.yzPlane.material['color'] = new THREE.Color(0x888888)
-
-        this.xyPlane = this.xzPlane.clone()
-        this.xyPlane.name = 'xy'
-        this.xyPlane.material = mat.clone()
-        this.xyPlane.material['color'] = new THREE.Color(0x333333)
-        this.xyPlane.rotateZ(-Math.PI / 2)
-
-
-        SceneManager.scene.add(this.xzPlane)
-        SceneManager.scene.add(this.yzPlane)
-        SceneManager.scene.add(this.xyPlane)
-
-        SceneManager.environmentObjs.push(this.xzPlane)
-        SceneManager.environmentObjs.push(this.yzPlane)
-        SceneManager.environmentObjs.push(this.xyPlane)
-
-    }
-        
     public static get currentCamera(){
 
         return this.activeCamera == CameraType.PERSPECTIVE ? SceneManager.perspective : SceneManager.orthographic
@@ -151,39 +110,78 @@ export class SceneManager {
             SceneManager.orbit = new OrbitControls(camera, SceneManager.renderer.domElement)
     }
 
-    private createAxis() {
+    private createAxes() {
 
         let points: THREE.Vector3[] = []
 
         // X
-        points.push(new THREE.Vector3(-1000, 0, 0))
-        points.push(new THREE.Vector3(1000, 0, 0))
+        points.push(new THREE.Vector3(-10000, 0, 0))
+        points.push(new THREE.Vector3(10000, 0, 0))
         let geometry = new THREE.BufferGeometry().setFromPoints(points)
-        let material = new THREE.LineBasicMaterial( { color: 0x000000 } )
+        let material = new THREE.LineBasicMaterial( { color: Color.X } )
         this.x = new THREE.Line( geometry, material )
         this.x.position.set(0, 0, 0)
         SceneManager.scene.add(this.x)
         
         // Y
         points = []
-        points.push(new THREE.Vector3(0, -1000, 0))
-        points.push(new THREE.Vector3(0, 1000, 0))
+        points.push(new THREE.Vector3(0, -10000, 0))
+        points.push(new THREE.Vector3(0, 10000, 0))
         geometry = new THREE.BufferGeometry().setFromPoints(points)
-        material = new THREE.LineBasicMaterial( { color: 0x000000 } )
+        material = new THREE.LineBasicMaterial( { color: Color.Y } )
         this.y = new THREE.Line( geometry, material )
         this.y.position.set(0, 0, 0)
         SceneManager.scene.add(this.y)
 
         // Z
         points = []
-        points.push(new THREE.Vector3(0, 0, -1000))
-        points.push(new THREE.Vector3(0, 0, 1000))
+        points.push(new THREE.Vector3(0, 0, -10000))
+        points.push(new THREE.Vector3(0, 0, 10000))
         geometry = new THREE.BufferGeometry().setFromPoints(points)
-        material = new THREE.LineBasicMaterial( { color: 0x000000 } )
+        material = new THREE.LineBasicMaterial( { color: Color.Z } )
         this.z = new THREE.Line( geometry, material )
         this.z.position.set(0, 0, 0)
         SceneManager.scene.add(this.z)
     }
+    
+    public createEnvironment() {
+
+        let sGeo = new THREE.SphereBufferGeometry(1000, 1000, 1000)
+        let sMat = new THREE.MeshStandardMaterial({
+            color: Color.BG,
+            metalness: .1,
+            roughness: .1,
+            side: THREE.DoubleSide
+        })
+        this.sphere = new THREE.Mesh(sGeo, sMat)
+        SceneManager.scene.add(this.sphere)
+
+        
+        let geo = new THREE.CircleBufferGeometry(1000, 100)
+        geo.rotateX(-Math.PI / 2)
+        let mat = new THREE.MeshBasicMaterial({ visible: false })
+
+        this.xzPlane = new THREE.Mesh(geo, mat)
+        this.xzPlane.name = 'xz'
+
+        this.yzPlane = this.xzPlane.clone()
+        this.yzPlane.name = 'yz'
+        this.yzPlane.rotateX(-Math.PI / 2)
+
+        this.xyPlane = this.xzPlane.clone()
+        this.xyPlane.name = 'xy'
+        this.xyPlane.rotateZ(-Math.PI / 2)
+
+
+        SceneManager.scene.add(this.xzPlane)
+        SceneManager.scene.add(this.yzPlane)
+        SceneManager.scene.add(this.xyPlane)
+
+        SceneManager.environmentObjs.push(this.xzPlane)
+        SceneManager.environmentObjs.push(this.yzPlane)
+        SceneManager.environmentObjs.push(this.xyPlane)
+    }
+        
 
     private createLight() {
 
@@ -223,5 +221,18 @@ export class SceneManager {
 
             SceneManager.perspective.position.set(this.distanceToCenter(SceneManager.perspective.position), 0, 0)
         }
+    }
+
+
+    resize() {
+
+        SceneManager.w = this.container.clientWidth
+        SceneManager.h = this.container.clientHeight
+
+        SceneManager.perspective.aspect = SceneManager.w / SceneManager.h
+        SceneManager.perspective.updateProjectionMatrix()
+
+        SceneManager.renderer.setPixelRatio(SceneManager.w / SceneManager.h)
+        SceneManager.renderer.setSize(SceneManager.w, SceneManager.h)
     }
 }

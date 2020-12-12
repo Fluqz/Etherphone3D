@@ -4,22 +4,20 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 
 import { Selected } from './selected-menu/selected.component'
-import { ChannelMenu } from './timeline/channel.component'
-import { MixerMenu } from './mixer/mixer.component'
+import { TrackView } from './beatmachine/track.component'
 import { Dashboard } from './dashboard/dashboard.component'
-import { TimelineMenu } from './timeline/timeline.component'
 import { ThereminView } from './theremin/theremin.component'
+import { BeatMachineView } from './beatmachine/beat-machine.component'
 
 
 @NgModule({
   declarations: [
     AppComponent,
     Selected,
-    MixerMenu,
-    ChannelMenu,
+    TrackView,
     Dashboard,
-    TimelineMenu,
-    ThereminView
+    ThereminView,
+    BeatMachineView
   ],
   imports: [
     BrowserModule,

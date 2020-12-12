@@ -1,67 +1,48 @@
 import { Sound } from './sound-entity'
-import { Vector3, Color } from 'three'
+import { Vector3, Color, ReverseSubtractEquation } from 'three'
 import { Theremin } from './theremin'
+
+import '../effects/effects'
+import { reverb } from '../effects/effects'
 
 export class Note extends Sound{
     
     public id: number
     public type: string
 
-    private _frequency: number
-
-    private _attack: number
-    private _release: number
-    private _sustain: number
-
-    private effects: { name: string, enabled: boolean }[] = []
-
-    public gainNode: GainNode
-    public color: Color
+    public parent: Sound
 
     public audioContext: AudioContext
-
-    public position: Vector3
-
+    public gainNode: GainNode
     public osc: OscillatorNode
 
-    public parent: Sound
-    
     public isPlaying: boolean = false
     public muted: boolean = false
 
-    public get frequency() : number { return this._frequency }
+    public color: Color
+
+    public position: Vector3
+
+    public get frequency() : number { return this.osc.frequency.value }
     public set frequency(val: number) { 
-        this._frequency = val; 
         this.osc.frequency.setValueAtTime(val, this.audioContext.currentTime)
     }
 
-    public get attack() : number { return this._attack }
-    public set attack(val: number) { this._attack = val}
-
-    public get release() : number { return this._release }
-    public set release(val: number) { this._release = val}
-
-    public get sustain() : number { return this._sustain }
-    public set sustain(val: number) { this._sustain = val}
-
     public get volume() : number { return this.gainNode.gain.value }
     public set volume(val: number) { 
-        this.gainNode.gain.value = val
+        this.gainNode.gain.setValueAtTime(val, this.audioContext.currentTime)
     }
 
 
-    constructor(_frequency: number, context: AudioContext) {
+    constructor(context: AudioContext) {
         super()
 
-        this.id = Math.random() * 100 + new Date().getTime()
-
         this.audioContext = context
-        this._frequency = _frequency
 
+        this.id = Math.random() * 100 + new Date().getTime()
         this.type = 'note'
-
         this.parent = null
-        
+
         this.gainNode = this.audioContext.createGain()
 
         this.osc = this.audioContext.createOscillator()
@@ -69,14 +50,11 @@ export class Note extends Sound{
         this.osc.connect(this.gainNode)
         this.gainNode.connect(this.audioContext.destination)
 
-        this.osc.frequency.value = _frequency
-
         this.volume = .25
 
-        // this.isPlaying = true
-        // this.osc.start(this.audioContext.currentTime)
+        this.frequency = 0
 
-        this.position = new Vector3(_frequency / Theremin.instance.X.sF, this.volume * Theremin.instance.Y.sF, 0)
+        this.position = new Vector3(0, 0, 0)
     }
 
     // public createOsc() {
@@ -106,10 +84,16 @@ export class Note extends Sound{
 
         this.isPlaying = true
 
+        // let convolver = reverb()
+
+        // this.osc.connect(convolver)
+
         this.osc.start()
     }
     
     public playFrequent(length: number) {
+
+        this.isPlaying = true
 
         this.osc.disconnect()
 
@@ -118,29 +102,26 @@ export class Note extends Sound{
         this.osc.connect(this.gainNode)
         Theremin.instance.updateSound(this)
 
-        this.isPlaying = true
-
-        // this.gainNode.gain.cancelScheduledValues(Theremin.audioContext.currentTime)
-        // this.gainNode.gain.setValueAtTime(0, Theremin.audioContext.currentTime)
-        // set our attack
-        // this.gainNode.gain.linearRampToValueAtTime(1, Theremin.audioContext.currentTime + attackTime);
-        // set our release
-        // this.gainNode.gain.linearRampToValueAtTime(0, Theremin.audioContext.currentTime + sweepLength - releaseTime);
-
         this.osc.start(this.audioContext.currentTime)
 
-        // console.log('Note.PlayFrequent', this.audioContext.currentTime, length)
+        // this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, this.audioContext.currentTime)
 
-        this.osc.stop(length)
+        // this.gainNode.gain.exponentialRampToValueAtTime(.0001, length + .03)
 
-        this.gainNode.gain.exponentialRampToValueAtTime(0.0001, length)
+        this.osc.stop(length + .03)
     }
 
     public stop() {
 
         this.isPlaying = false
 
-        this.osc.stop()
+        if(!this.osc) return
+
+        this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, this.audioContext.currentTime)
+
+        this.gainNode.gain.exponentialRampToValueAtTime(.0001, this.audioContext.currentTime + .03)
+
+        this.osc.stop(this.audioContext.currentTime + .03)
     }
     
     public mute() {

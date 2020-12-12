@@ -21,7 +21,7 @@ import { DragWindow } from './tools/drag-window';
 
         <selected-menu *ngIf="theremin3D" [theremin3D]="theremin3D"></selected-menu>
 
-        <timeline *ngIf="theremin3D" class="drag-window" [theremin3D]="theremin3D"></timeline>
+        <beatmachine *ngIf="theremin3D" class="drag-window" [theremin3D]="theremin3D"></beatmachine>
 
     </div>
 
@@ -46,6 +46,7 @@ export class AppComponent implements AfterViewInit{
   private mouseDownEvent: any
   private mouseUpEvent: any
   private mouseMovevent: any
+  private resizeEvent: any
 
   private dragWindow: DragWindow
 
@@ -76,7 +77,11 @@ export class AppComponent implements AfterViewInit{
       this.loop()
     })
 
-    // Channel html element addaevent
+
+
+    this.resizeEvent = this.onResize.bind(this)
+    window.onresize = this.resizeEvent
+
     this.mouseDownEvent = this.onMouseDown.bind(this)
     document.addEventListener('mousedown', this.mouseDownEvent, false)
 
@@ -133,5 +138,11 @@ export class AppComponent implements AfterViewInit{
   public onMouseUp(e) {
     
     this.dragWindow.onMouseUp(e)
+  }
+
+
+  public onResize() {
+
+    this.sm.resize()
   }
 }

@@ -1,32 +1,32 @@
-import { AxisBehaviour } from './axis-behaviour'
+import { AxesBehaviour } from './axes-behaviour'
 import { Note } from '../theremin/note'
 import { Chord } from '../theremin/chord'
 import { Sound } from '../theremin/sound-entity'
 import { NoteData, NoteDataClass } from "../data/frequency-of-notes"
 import { Theremin } from '../theremin/theremin'
+import { Axis } from '../theremin/axis'
 
-export class AdditiveSynthesis extends AxisBehaviour {
-
-    public sF: number = 10
-
-    public axis: string 
-
-    public steps: number
-    public min: number = 0
-    public max: number = 2000
-
-    public muted: boolean = false
+export class AdditiveSynthesis extends AxesBehaviour {
 
     private oscs: OscillatorNode[] = []
 
-    constructor(_axis: string = 'x' || 'y' || 'z') { super()
+    constructor(axis?: Axis) { 
         
-        this.axis = _axis
+        super(axis)
+        
+        this.name = 'Additive Synthesis'
 
+        this.sF = 10
+        
+        this.min = 0
+        this.max = 2000
+
+        this.muted = false
     }
 
     public updateSound(entity: Sound) {
 
+        if(this.axis == null) return
         if(this.muted) return
 
         this.oscs.forEach(osc => {
@@ -81,7 +81,9 @@ export class AdditiveSynthesis extends AxisBehaviour {
 
             let frequency
 
-            chord.sounds.forEach(note => {
+            chord.sounds.forEach(sound => {
+
+                let note = sound as Note
 
                 osc1 = Theremin.audioContext.createOscillator()
                 osc2 = Theremin.audioContext.createOscillator()

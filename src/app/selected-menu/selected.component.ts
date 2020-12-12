@@ -19,7 +19,6 @@ import { Theremin } from '../theremin/theremin';
         display:block;    
         width: 100%;
         height: auto;
-        background-color: #0c1614;
         color: #fefefe;
     
         resize: vertical;
@@ -52,27 +51,6 @@ export class Selected implements AfterViewInit {
     else return false
   }
 
-  public get selectedVolume() { return ObjectControl.selected.ctrl.volume }
-  public set selectedVolume(volume: number) { 
-
-    let moveTo = ObjectControl.selected.ctrl.position.clone()
-    moveTo.y = volume * Theremin.instance.X.sF // NEEDS TO HAPPEN SOMEWHERE ELSE
-    ObjectControl.selected.move(moveTo)
-
-    this.theremin3D.theremin.updateSound(ObjectControl.selected.ctrl)
-  }
-
-  
-  public get selectedFrequency() { return ObjectControl.selected.ctrl.frequency }
-  public set selectedFrequency(frequency: number) { 
-
-    let moveTo = ObjectControl.selected.ctrl.position.clone()
-    moveTo.x = frequency // NEEDS TO HAPPEN SOMEWHERE ELSE
-    ObjectControl.selected.move(moveTo)
-
-    this.theremin3D.theremin.updateSound(ObjectControl.selected.ctrl)
-  }
- 
   public changeVolume() {
 
     

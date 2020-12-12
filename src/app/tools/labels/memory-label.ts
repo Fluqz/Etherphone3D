@@ -1,8 +1,8 @@
 import *  as THREE from 'three'
 
 import { Sound3D } from '../../theremin/sound-entity-3d'
-import { Label } from './label'
 import { SceneManager } from '../../scene-manager'
+import { Color } from 'src/app/color'
 
 
 export class MemoryLabel {
@@ -74,33 +74,17 @@ export class MemoryLabel {
         this.obj.visible = this._enabled
 
         this.lineGeo = new THREE.BufferGeometry()
-        this.line = new THREE.Line(this.lineGeo, new THREE.LineBasicMaterial({ color: 0x000000, transparent: true, opacity: .2 })) 
+        this.line = new THREE.Line(this.lineGeo, new THREE.LineBasicMaterial({ color: Color.X, transparent: true, opacity: .2 })) 
         this.line.name = 'line.obj'
 
         this.obj.add(this.line)
 
-        this.sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(.1), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: .2 }))
+        this.sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(.1), new THREE.MeshBasicMaterial({ color: Color.X, transparent: true, opacity: .2 }))
         this.sphere.name = 'sphere.obj'
         this.sphere.position.copy(this.start)
         
         this.obj.add(this.sphere)
 
         SceneManager.scene.add(this.obj)
-    }
-
-
-
-
-    private onMouseDown(e) {
-        
-        
-    }
-
-    private onMouseUp(e) {
-
-    }
-    
-    private onMouseMove(e) {
-        
     }
 }

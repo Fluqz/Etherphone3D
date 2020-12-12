@@ -1,10 +1,8 @@
 import { Sound } from '../theremin/sound-entity'
 
 
-export class Sample {
+export interface Sample {
  
-    private static UID: number = 0
-
     id: number
 
     sound: Sound
@@ -12,10 +10,4 @@ export class Sample {
     scheduleTime: number
 
     length: number
-
-    constructor() {
-
-        this.id = Sample.UID += 1
-    }
-
 }

@@ -137,8 +137,8 @@ export class ObjectControl {
         // console.log(event)
         this.mouseDown = true
 
-        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
-        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+        this.mouse.x = (event.clientX / SceneManager.w) * 2 - 1
+        this.mouse.y = -(event.clientY / SceneManager.h) * 2 + 1
         
         let vector = new Vector3(this.mouse.x, this.mouse.y, .5)
         vector.unproject(SceneManager.currentCamera)
@@ -237,8 +237,8 @@ export class ObjectControl {
     public onMouseMove(event) {
         // event.preventDefault()
 
-        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
-        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+        this.mouse.x = (event.clientX / SceneManager.w) * 2 - 1
+        this.mouse.y = -(event.clientY / SceneManager.h) * 2 + 1
 
         this.raycaster.setFromCamera(this.mouse, SceneManager.currentCamera)
 
@@ -346,5 +346,9 @@ export class ObjectControl {
                 this.ZKey = true
             }
         }
+    }
+
+    onResize() {
+
     }
 }

@@ -55,7 +55,6 @@ import { Note3D } from '../theremin/note3D';
         top: 0px;
     
         width: 200px;
-        background-color: #0c1614;
         color: #fefefe;
     }
       

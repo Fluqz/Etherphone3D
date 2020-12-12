@@ -1,11 +1,11 @@
 import { Sound } from './sound-entity'
 import { Note } from './note'
-import { AxisBehaviour } from '../AxisBehaviours/axis-behaviour'
-import { FrequencyShift } from '../AxisBehaviours/frequency-shfit'
-import { VolumeShift } from '../AxisBehaviours/volume-shift'
-import { AdditiveSynthesis } from '../AxisBehaviours/additive-synthesis'
+import { AxesBehaviour } from '../axes-behaviours/axes-behaviour'
+import { FrequencyShift } from '../axes-behaviours/frequency-shfit'
+import { VolumeShift } from '../axes-behaviours/volume-shift'
+import { AdditiveSynthesis } from '../axes-behaviours/additive-synthesis'
 import { Chord } from './chord'
-import { Theremin3D } from './theremin3D'
+import { Axis } from './axis'
 
 export class Theremin {
 
@@ -18,11 +18,32 @@ export class Theremin {
 
     public sounds: Sound[] = []
 
-    public X: AxisBehaviour
-    public Y: AxisBehaviour
-    public Z: AxisBehaviour
+    public static _x: AxesBehaviour
+    public static get x() { return Theremin._x }
+    public static set x(behaviour: AxesBehaviour) {
 
-    public axisBehaviors: AxisBehaviour[] = []
+        Theremin._x = behaviour
+        Theremin._x.axis = Axis.x
+    }
+
+    public static _y: AxesBehaviour
+    public static get y() { return Theremin._y }
+    public static set y(behaviour: AxesBehaviour) {
+
+        Theremin._y = behaviour
+        Theremin._y.axis = Axis.y
+    }
+    public static _z: AxesBehaviour
+    public static get z() { return Theremin._z }
+    public static set z(behaviour: AxesBehaviour) {
+
+        Theremin._z = behaviour
+        Theremin._z.axis = Axis.z
+    }
+
+
+
+    public static axesBehaviours: AxesBehaviour[] = []
 
     public isPlaying: boolean = false
 
@@ -39,14 +60,17 @@ export class Theremin {
         this.masterVolume.connect(Theremin.audioContext.destination)
         this.storedVolume = this.masterVolume.gain.value
 
-        this.X = new FrequencyShift('x')
-        this.Y = new VolumeShift('y')
-        // this.Z = new AdditiveSynthesis('z')
+        Theremin.x = new FrequencyShift()
+        Theremin.y = new VolumeShift()
+    }
+
+    public setAxisbehaviour(axis: string, behaviour: AxesBehaviour) {
+
     }
 
     public addNote(frequency: number) : Sound {
 
-        let sn = new Note(frequency, Theremin.audioContext)
+        let sn = new Note(Theremin.audioContext)
 
         this.sounds.push(sn)
 
@@ -106,9 +130,9 @@ export class Theremin {
     
     public updateSound(se: Sound) {
 
-        this.X.updateSound(se)
-        this.Y.updateSound(se)
-        // this.Z.updateSound(se)
+        if(Theremin.x) Theremin.x.updateSound(se)
+        if(Theremin.y) Theremin.y.updateSound(se)
+        if(Theremin.z) Theremin.z.updateSound(se)
     }
 
     public toggleOnOff(play: boolean) {

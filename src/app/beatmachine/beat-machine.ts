@@ -1,5 +1,5 @@
-import { Sample } from './timeline/sample'
-import { Theremin } from './theremin/theremin'
+import { Sample } from './sample'
+import { Theremin } from '../theremin/theremin'
 
 
 export class BeatMachine {
@@ -17,19 +17,20 @@ export class BeatMachine {
 
     public static lookahead: number = 25 // MS
     public static scheduleAhead: number = .1 // Seconds
-
+    
     public static currentNote = 0 // 1/4 Note
     public static nextNoteTime = 0 // 1/4 Note
 
+    public static secondsPerBeat: number = 0
 
     constructor() {
         
-        Theremin.audioContext = new AudioContext()
+        // Theremin.audioContext = new AudioContext()
 
-        BeatMachine.masterNode = Theremin.audioContext.createGain()
+        // BeatMachine.masterNode = Theremin.audioContext.createGain()
 
-        BeatMachine.masterNode.gain.value = .3
-        BeatMachine.masterNode.connect(Theremin.audioContext.destination)
+        // BeatMachine.masterNode.gain.value = .3
+        // BeatMachine.masterNode.connect(Theremin.audioContext.destination)
     }
 
     public static get instance() {
@@ -77,9 +78,9 @@ export class BeatMachine {
 
     private static nextNote() {
 
-        let secondsPerBeat = 60 / BeatMachine.bpm
+        BeatMachine.secondsPerBeat = 60 / BeatMachine.bpm
 
-        BeatMachine.nextNoteTime += secondsPerBeat
+        BeatMachine.nextNoteTime += BeatMachine.secondsPerBeat
 
         BeatMachine.currentNote += 1
         if(BeatMachine.currentNote == BeatMachine.beats)
@@ -88,9 +89,16 @@ export class BeatMachine {
     
     private static scheduleNote(beatNumber: number, time: number) {
 
+        console.log(beatNumber, time)
+
         BeatMachine.samplesInQueue.forEach(sample => {
-            if(sample.scheduleTime == beatNumber)
-                sample.sound.playFrequent(time + sample.length)
+
+            if(sample.scheduleTime == beatNumber) {
+
+                console.log('play', sample.scheduleTime, sample.length, time + sample.length)
+
+                sample.sound.playFrequent(time + (sample.length * BeatMachine.secondsPerBeat))
+            }
         })
     }
 
