@@ -1,45 +1,35 @@
 import { Raycaster, Vector3, Object3D, Plane, Ray, Intersection, MOUSE, PerspectiveCamera, OrthographicCamera, Scene } from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { SceneManager } from './scene-manager'
-import { Theremin } from './theremin/theremin'
 import { Theremin3D } from './theremin/theremin3D'
 import { Sound3D } from './theremin/sound-entity-3d'
-import { Note } from './theremin/note'
 import { Note3D } from './theremin/note3D'
 import { Chord3D } from './theremin/chord3D'
+import { SceneManager } from './scene-manager'
 
 export class ObjectControl {
 
-    public static instance: ObjectControl
+    private static theremin3D: Theremin3D
+
+    public static selectedObjs: Object3D[] = []
+    public static selected: Sound3D
+    public static _selectedObj: Object3D
 
     private mouseDown: boolean
     private mouse: Vector3
 
-    public orbit: OrbitControls
-
     private raycaster: Raycaster
-
-    private XKey: boolean
-    private YKey: boolean
-    private ZKey: boolean
-
-    private plane: Plane
-
-    public selectedObjs: Object3D[] = []
-    public selected: Sound3D
-    public _selectedObj: Object3D
-
     private ip: Vector3
     private offset: Vector3
     private moveTo: Vector3
+    private plane: Plane
 
-    private theremin3D: Theremin3D
+    private keyMap: Map<string, boolean> = new Map()
+    private XKey: boolean
+    private YKey: boolean
+    private ZKey: boolean
     
     constructor(_theremin3D: Theremin3D) {
 
-        ObjectControl.instance = this
-
-        this.theremin3D = _theremin3D
+        ObjectControl.theremin3D = _theremin3D
 
         this.mouseDown = false
         this.mouse = new Vector3()
@@ -49,8 +39,6 @@ export class ObjectControl {
         this.raycaster = new Raycaster()
         
         this.plane = new Plane(new Vector3(0, 1, 0), 0)
-
-        this.orbit = new OrbitControls(SceneManager.currentCamera, SceneManager.renderer.domElement)
 
         SceneManager.renderer.domElement.addEventListener('mousedown', this.onMouseDown.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('mouseup', this.onMouseUp.bind(this), false)
@@ -65,35 +53,25 @@ export class ObjectControl {
         SceneManager.renderer.domElement.addEventListener('keydown', this.onKeyDown.bind(this), false)
     }
 
-    public set orbitCamera(camera: THREE.Camera) { 
 
-        this.orbit.reset()
-        this.orbit.dispose()
-        
-        if(camera instanceof PerspectiveCamera)
-            this.orbit = new OrbitControls(camera, SceneManager.renderer.domElement)
-        if(camera instanceof OrthographicCamera)
-            this.orbit = new OrbitControls(camera, SceneManager.renderer.domElement)
-    }
-
-    public get selectedObj() { return this._selectedObj }
-    public set selectedObj(obj: Object3D) {
+    public static get selectedObj() { return ObjectControl._selectedObj }
+    public static set selectedObj(obj: Object3D) {
 
         if(obj != null && obj != undefined) {
 
-            if(this._selectedObj != obj && this.selected) {
+            if(ObjectControl._selectedObj != obj && ObjectControl.selected) {
 
-                this.selected.unselect()
+                ObjectControl.selected.unselect()
             }
 
-            this._selectedObj = obj
+            ObjectControl._selectedObj = obj
 
             switch(obj.name) {
 
                 case 'osc.3D':
                 case 'chord.3D':
 
-                    this.selected = this.theremin3D.getNoteByObj(obj)
+                    ObjectControl.selected = ObjectControl.theremin3D.getNoteByObj(obj)
 
                     break
 
@@ -101,30 +79,29 @@ export class ObjectControl {
 
                     if(obj.parent instanceof Scene) {
 
-                        this.selectedObj = null
+                        ObjectControl.selectedObj = null
                     }
                     else {
                         
-                        this.selectedObj = obj.parent
+                        ObjectControl.selectedObj = obj.parent
 
                         return
                     } 
             }
 
-            if(this.selected) 
-                this.selected.select()
-            else this._selectedObj = null
+            if(ObjectControl.selected) 
+                ObjectControl.selected.select()
+            else ObjectControl._selectedObj = null
         }
         else {
 
-            if(this.selected != null && this.selected != undefined) {
+            if(ObjectControl.selected != null && ObjectControl.selected != undefined) {
 
-                this.selected.unselect()
-                this.selected = null
+                ObjectControl.selected.unselect()
+                ObjectControl.selected = null
             }
 
-            this._selectedObj = null
-            this.selectedObjs
+            ObjectControl._selectedObj = null
         }
     }
 
@@ -132,7 +109,7 @@ export class ObjectControl {
     private collectRaycastObjs() {
         
         let objs: Object3D[] = []
-        this.theremin3D.sounds3D.forEach(sound => {
+        ObjectControl.theremin3D.sounds3D.forEach(sound => {
 
             if(sound instanceof Note3D) {
 
@@ -172,20 +149,20 @@ export class ObjectControl {
 
         if(intersects.length > 0) {
 
-            this.orbit.enabled = false
+            SceneManager.orbit.enabled = false
 
             if(intersects[0].object) {
 
-                this.selectedObj = intersects[0].object
+                ObjectControl.selectedObj = intersects[0].object
 
-                if(this.selected) {
+                if(ObjectControl.selected) {
 
                     // If no shift key
                     if(!event.shiftKey) {
 
-                        this.selectedObjs.forEach(obj => { this.theremin3D.getNoteByObj(obj).unselect() })
-                        this.selectedObjs = []
-                        this.selectedObjs.push(intersects[0].object)
+                        ObjectControl.selectedObjs.forEach(obj => { ObjectControl.theremin3D.getNoteByObj(obj).unselect() })
+                        ObjectControl.selectedObjs = []
+                        ObjectControl.selectedObjs.push(intersects[0].object)
                         // console.log(intersects[0].object,this.theremin3D.getNoteByObj(intersects[0].object))
     
                         // console.log('no shift', this.selected)
@@ -197,38 +174,38 @@ export class ObjectControl {
                         // init move so its not at (0, 0, 0)
                         this.moveTo.copy(intersects[0].object.position)
 
-                        this.selected.select()
+                        ObjectControl.selected.select()
                     }
-                    else if(!this.selectedObjs.includes(intersects[0].object)) {
+                    else if(!ObjectControl.selectedObjs.includes(intersects[0].object)) {
     
-                        this.selectedObj = intersects[0].object
+                        ObjectControl.selectedObj = intersects[0].object
     
-                        this.selectedObjs.push(intersects[0].object)
+                        ObjectControl.selectedObjs.push(intersects[0].object)
 
                         // Select all selected objs
-                        this.selectedObjs.forEach(obj => { 
+                        ObjectControl.selectedObjs.forEach(obj => { 
                              
-                            this.theremin3D.getNoteByObj(obj).select()
+                            ObjectControl.theremin3D.getNoteByObj(obj).select()
                         })
                     }
                 }
                 else {
 
-                    this.selectedObjs = []
+                    ObjectControl.selectedObjs = []
                 }
             }
             else {
-                this.selectedObjs = []
-                this.selectedObj = null
+                ObjectControl.selectedObjs = []
+                ObjectControl.selectedObj = null
             }
         }
         else {
-            this.selectedObjs = []
-            this.selectedObj = null
+            ObjectControl.selectedObjs = []
+            ObjectControl.selectedObj = null
         }
 
         // SceneSetup.instance.onMouseDown(event)
-        console.log('CURRENTLY SELECTED: ', this.selectedObjs, '  Main: ', this.selected)
+        console.log('CURRENTLY SELECTED: ', ObjectControl.selectedObjs, '  Main: ', ObjectControl.selected)
     }
 
 
@@ -236,7 +213,7 @@ export class ObjectControl {
         
         this.mouseDown = false
 
-        this.orbit.enabled = true
+        SceneManager.orbit.enabled = true
 
         if(!event.shiftKey) {
 
@@ -244,12 +221,12 @@ export class ObjectControl {
             // this.selectedObjs = []
         }
 
-        if(this.selected) {
+        if(ObjectControl.selected) {
 
-            this.selected.mouseUp()
+            ObjectControl.selected.mouseUp()
         }
 
-        if(this.selectedObjs.length > 1) {
+        if(ObjectControl.selectedObjs.length > 1) {
 
         }
 
@@ -268,23 +245,23 @@ export class ObjectControl {
         if(this.mouseDown) {
             
             // When selected calc position
-            if (this.selectedObjs.length == 1 && this.selected) {
+            if (ObjectControl.selectedObjs.length == 1 && ObjectControl.selected) {
 
                 this.raycaster.ray.intersectPlane(this.plane, this.ip)
 
                 this.moveTo.copy(this.ip.sub(this.offset))
 
                 // Move SELECTED
-                this.selected.move(this.moveTo, this.XKey, this.YKey, this.ZKey)
+                ObjectControl.selected.move(this.moveTo, this.XKey, this.YKey, this.ZKey)
                 // this.selectedObjs.position.copy(this.moveTo)
-                this.theremin3D.theremin.updateSound(this.selected.ctrl)
+                ObjectControl.theremin3D.theremin.updateSound(ObjectControl.selected.ctrl)
 
             }
         }
         else {
 
             // HOVER OBJ
-            let intersects = this.raycaster.intersectObjects(this.theremin3D.objs, true)
+            let intersects = this.raycaster.intersectObjects(ObjectControl.theremin3D.objs, true)
     
             if(intersects.length > 0) {
 
@@ -309,36 +286,65 @@ export class ObjectControl {
         this.onMouseMove(event)
     }
 
-    public onKeyDown(e) {
 
+    // onkeydown = onkeyup = {
+    //     e = e || event; // to deal with IE
+    //     map[e.keyCode] = e.type == 'keydown';
+    //     /* insert conditional here */
+    // }
+
+    public onKeyDown(e: KeyboardEvent) {
+
+        // MAKE POSSIBLE TO CLICK TWO KEYS e.g. X AND Y AND DONT CHANGE Z 
         const key = e.key.toLowerCase()
-        
-        if(key == 'x') {
 
-            this.XKey = true
-            this.YKey = false
-            this.ZKey = false
-        }
-        else if(key == 'y') {
+        if(key == 'x' || key == 'y' || key == 'z' || key == '<') {
             
             this.XKey = false
-            this.YKey = true
-            this.ZKey = false
-        }
-        else if(key == 'z') {
-
-            this.XKey = false
             this.YKey = false
-            this.ZKey = true
+            this.ZKey = false
+            
+            this.keyMap.set(key, e.type == 'keydown')
+
+            if(this.keyMap.get('x')) {
+
+                this.XKey = true
+            }
+            if(this.keyMap.get('y')) {
+                
+                this.YKey = true
+            }
+            if(this.keyMap.get('z') || this.keyMap.get('<')) {
+
+                this.ZKey = true
+            }
         }
     }
 
     public onKeyUp(e) {
 
         const key = e.key.toLowerCase()
+
+        if(key == 'x' || key == 'y' || key == 'z' || key == '<') {
         
-        this.XKey = true
-        this.YKey = true
-        this.ZKey = true
+            this.keyMap.set(key, e.type == 'keydown')
+
+            if(this.keyMap.get('x') && this.keyMap.get('y') || 
+                this.keyMap.get('x') && (this.keyMap.get('z') || this.keyMap.get('<')) || 
+                this.keyMap.get('y') && (this.keyMap.get('z') || this.keyMap.get('<')) ||
+                this.keyMap.get('x') && this.keyMap.get('y') && (this.keyMap.get('z') || this.keyMap.get('<'))) {
+                
+                if(this.keyMap.get(key)) {
+
+                    this.XKey = false
+                }
+            }
+            else {
+                
+                this.XKey = true
+                this.YKey = true
+                this.ZKey = true
+            }
+        }
     }
 }

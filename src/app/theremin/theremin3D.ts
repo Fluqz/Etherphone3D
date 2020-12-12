@@ -7,7 +7,6 @@ import { Sound } from './sound-entity';
 import { SceneManager } from '../scene-manager';
 import { Chord3D } from './chord3D';
 import { Chord } from './chord';
-import { SnapToGrid } from '../tools/snap-to-grid';
 import { Tools } from '../tools/tools';
 import { Grid3D } from '../tools/labels/grid-3d';
 
@@ -22,8 +21,6 @@ export class Theremin3D {
 
     public obj: Object3D
 
-    public isPlaying: boolean = false
-
     constructor(ctrl: Theremin) {
 
         Theremin3D.instance = this
@@ -32,8 +29,6 @@ export class Theremin3D {
 
         this.obj = new Object3D()
         this.obj.name = 'theremin.3D'
-
-        new SnapToGrid(1, 1, 1)
 
         // let geo = new CircleBufferGeometry(1000, 100)
         // let mat = new MeshPhongMaterial({
@@ -87,7 +82,7 @@ export class Theremin3D {
         return null
     }
 
-    public addSoungEntity3D(Sound: Sound) {
+    public addSoundEntity3D(Sound: Sound) {
 
         let note = Sound as Note
 
@@ -125,12 +120,5 @@ export class Theremin3D {
                 }
             }
         })
-    }
-
-    public toggleOnOff() {
-
-        this.isPlaying = !this.isPlaying
-
-        this.theremin.toggleOnOff(this.isPlaying)
     }
 }

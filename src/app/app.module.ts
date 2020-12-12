@@ -8,6 +8,7 @@ import { ChannelMenu } from './timeline/channel.component'
 import { MixerMenu } from './mixer/mixer.component'
 import { Dashboard } from './dashboard/dashboard.component'
 import { TimelineMenu } from './timeline/timeline.component'
+import { ThereminView } from './theremin/theremin.component'
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { TimelineMenu } from './timeline/timeline.component'
     MixerMenu,
     ChannelMenu,
     Dashboard,
-    TimelineMenu
+    TimelineMenu,
+    ThereminView
   ],
   imports: [
     BrowserModule,

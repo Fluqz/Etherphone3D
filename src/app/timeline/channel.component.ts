@@ -18,7 +18,17 @@ import { Sound3D } from '../theremin/sound-entity-3d';
 
     <div class="creation-click-zone">
 
-        <div *ngFor="let sample of samples" class="sample" data-id="{{sample.id}}" [style.background-color]="color" [style.left.%]="sample.scheduleTime * (100/beats)" [style.width.%]="100 / beats"></div>
+        <div *ngFor="let sample of samples" 
+          class="sample" 
+          data-id="{{sample.id}}" 
+          [style.background-color]="color" 
+          [style.left.%]="sample.scheduleTime * (100/beats)" 
+          [style.width.%]="100 / beats">
+
+            <div class="sample-start"></div>
+            <div class="sample-end"></div>
+
+        </div>
 
     </div>
 
@@ -73,6 +83,25 @@ import { Sound3D } from '../theremin/sound-entity-3d';
       height: 80%;
       background-color: #00DDAA;
       
+    }
+
+    .sample-start,
+    .sample-end {
+      position:absolute;
+      top:0px;
+      width: 4px;
+      height:100%;
+      display: inline-block;
+    }
+    .sample-start{
+      left: 0px;
+    }
+    .sample-end {
+      right: 0px;
+    }
+    .sample-start:hover,
+    .sample-end:hover {
+      background-color:#458459;
     }
       `
   ]
@@ -168,17 +197,11 @@ export class ChannelMenu implements AfterViewInit{
 
         let rect = e.target.getBoundingClientRect()
 
+        // Cutting to beat begin
         let x = e.clientX - rect.left
-  
-        console.log(x , e.target.clientWidth)
-  
         let scheduleTime = (x / e.target.clientWidth) * 100
-  
         scheduleTime /= 100 / this.beats
-  
         scheduleTime = Math.trunc(scheduleTime)
-  
-        console.log(BeatMachine.nextNoteTime, scheduleTime)
   
         this.createSample(BeatMachine.nextNoteTime, scheduleTime)
       }
@@ -186,7 +209,7 @@ export class ChannelMenu implements AfterViewInit{
 
     private onClick(e) {
 
-      ObjectControl.instance.selectedObj = this.sound.obj
+      ObjectControl.selectedObj = this.sound.obj
 
     }
 
@@ -194,6 +217,19 @@ export class ChannelMenu implements AfterViewInit{
       console.log('MouseUp')
       
       this.mouseDown = true
+
+      // SELECT SAMPLE 
+      if(e.target.classList.contains('sample')) {
+
+
+      }
+      else if(e.target.classList.contains('sample-end')){
+        
+      }
+      else if(e.target.classList.contains('sample-start')){
+
+        
+      }
     }
 
     private onMouseUp(e) {

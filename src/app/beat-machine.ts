@@ -7,6 +7,7 @@ export class BeatMachine {
     private static _instance: BeatMachine
     public static bpm:number = 200
     public static beats:number = 8
+    public static noteDuration:string = '1'
 
     public static masterNode: GainNode
 
@@ -89,7 +90,7 @@ export class BeatMachine {
 
         BeatMachine.samplesInQueue.forEach(sample => {
             if(sample.scheduleTime == beatNumber)
-                sample.sound.playFrequent(time)
+                sample.sound.playFrequent(time + sample.length)
         })
     }
 
@@ -99,26 +100,9 @@ export class BeatMachine {
         while(BeatMachine.nextNoteTime < Theremin.audioContext.currentTime + BeatMachine.scheduleAhead) {
             BeatMachine.scheduleNote(BeatMachine.currentNote, BeatMachine.nextNoteTime)
             BeatMachine.nextNote()
-            console.log(BeatMachine.currentNote)
+            // console.log(BeatMachine.currentNote)
         }
 
         BeatMachine.TOID = window.setTimeout(BeatMachine.scheduler, BeatMachine.lookahead)
     }
-
-    // private update() { // RUN EACH CHANNELS CURRENT TRACK INSTEAD OF SAMPLES -> PLAY TRACK -> THEN RUN EACH NOTE OF SAMPLE
-
-    //     if(!BeatMachine.isPlaying) return
-
-    //     if(BeatMachine.samplesInQueue.length > 0 ) {
-
-    //         let currentSample = BeatMachine.samplesInQueue[0]
-
-    //         while(BeatMachine.samplesInQueue[0].scheduleTime < Theremin.audioContext.currentTime ) {
-                
-    //             currentSample = BeatMachine.samplesInQueue[0]
-                
-    //             BeatMachine.samplesInQueue.shift()
-    //         }
-    //     }
-    // }
 }

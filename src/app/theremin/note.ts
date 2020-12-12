@@ -1,8 +1,6 @@
 import { Sound } from './sound-entity'
 import { Vector3, Color } from 'three'
-import { SceneManager } from '../scene-manager'
 import { Theremin } from './theremin'
-import { Theremin3D } from './theremin3D'
 
 export class Note extends Sound{
     
@@ -10,11 +8,13 @@ export class Note extends Sound{
     public type: string
 
     private _frequency: number
-    private _volume: number
 
     private _attack: number
     private _release: number
     private _sustain: number
+
+    private effects: { name: string, enabled: boolean }[] = []
+
     public gainNode: GainNode
     public color: Color
 
@@ -46,17 +46,16 @@ export class Note extends Sound{
 
     public get volume() : number { return this.gainNode.gain.value }
     public set volume(val: number) { 
-        this._volume = val
         this.gainNode.gain.value = val
     }
 
 
-    constructor(_frequency: number) {
+    constructor(_frequency: number, context: AudioContext) {
         super()
 
         this.id = Math.random() * 100 + new Date().getTime()
 
-        this.audioContext = Theremin.audioContext
+        this.audioContext = context
         this._frequency = _frequency
 
         this.type = 'note'
@@ -80,6 +79,22 @@ export class Note extends Sound{
         this.position = new Vector3(_frequency / Theremin.instance.X.sF, this.volume * Theremin.instance.Y.sF, 0)
     }
 
+    // public createOsc() {
+
+    //     this.gainNode = this.audioContext.createGain()
+
+    //     this.osc = this.audioContext.createOscillator()
+    //     this.osc.type = 'sine'
+    //     this.osc.connect(this.gainNode)
+    //     this.gainNode.connect(this.audioContext.destination)
+
+    //     this.osc.frequency.value = this._frequency
+
+    //     this.volume = this.volume
+
+    //     this.position = new Vector3(_frequency / Theremin.instance.X.sF, this.volume * Theremin.instance.Y.sF, 0)
+    // }
+
     public destroy() {
 
         this.osc.disconnect()
@@ -87,13 +102,11 @@ export class Note extends Sound{
         this.gainNode.disconnect()
     }
     
-    private storedVolume: number = 0
-
     public play() {
 
         this.isPlaying = true
 
-        this.osc.stop()
+        this.osc.start()
     }
     
     public playFrequent(length: number) {
@@ -116,16 +129,18 @@ export class Note extends Sound{
 
         this.osc.start(this.audioContext.currentTime)
 
-        console.log('Note.PlayFrequent', this.audioContext.currentTime, length)
+        // console.log('Note.PlayFrequent', this.audioContext.currentTime, length)
 
-        this.osc.stop(length+.4)
+        this.osc.stop(length)
+
+        this.gainNode.gain.exponentialRampToValueAtTime(0.0001, length)
     }
 
     public stop() {
 
         this.isPlaying = false
 
-        this.osc.start()
+        this.osc.stop()
     }
     
     public mute() {
@@ -133,6 +148,10 @@ export class Note extends Sound{
         this.muted = true
 
         this.osc.stop()
+    }
+
+    public addReverb() {
+
     }
 
     public unmute() {

@@ -3,7 +3,6 @@ import { ObjectControl } from '../object-control';
 import { Theremin3D } from '../theremin/theremin3D';
 import { Sound3D } from '../theremin/sound-entity-3d';
 import { Sample } from './sample';
-import { SampleView } from './sample.component';
 import { ChannelMenu } from './channel.component';
 import { BeatMachine } from '../beat-machine';
 
@@ -17,28 +16,41 @@ import { BeatMachine } from '../beat-machine';
   
     <div style="margin: 15px 0px;">
 
-        <button *ngIf="theremin3D" (click)="play()">{{ theremin3D.isPlaying ? 'Pause' : 'Play' }}</button>
+        <button *ngIf="theremin3D" (click)="play()">{{ theremin3D.theremin.isPlaying ? 'Pause' : 'Play' }}</button>
 
         <input type="number" [value]="bpm" (change)="setBPM($event.target.value)" />
 
         <input type="number" [value]="beats" (change)="setBeats($event.target.value)" />
+
+        <select name="noteDuration" (change)="setNoteDuration($event.target.value)">
+
+            <option value="1">1</option>
+            <option value="1/2">1/2</option>
+            <option value="1/4">1/4</option>
+            <option value="1/8">1/8</option>
+            <option value="1/16">1/16</option>
+            <option value="1/32">1/32</option>
+            <option value="1/64">1/64</option>
+
+        </select>
     </div>
   
+
     <div id="timeline-wrapper">
 
-        <div id="timeline-wrapper">
+        <div id="timeline-pointer" [style.left]=""></div>
 
-            <div id="timeline-pointer"></div>
-
-            <div id="timeline">
-                <div *ngFor="let beat of beatsArray" class="beat-marking" [style.left.%]="beat*(100/beats)"></div>
-            </div>
-            
+        <div id="timeline">
+            <div *ngFor="let beat of beatsArray" class="beat-marking" [style.left.%]="beat*(100/beats)"></div>
+        </div>
+        
+        <div>
+            <div class="channel-menu"></div>
             <channel #channel *ngFor="let sound of sounds" [sound]="sound" [beats]="beats" class="channel-timeline"></channel>
-
         </div>
 
     </div>
+
 
   `,
   styles: [
@@ -67,6 +79,11 @@ import { BeatMachine } from '../beat-machine';
     }
 
     #timeline-pointer {
+
+        position:absolute;
+        top: 0px;
+        margin-left: 50px;
+
 
         width: 1px;
         height: 100%;
@@ -170,12 +187,15 @@ export class TimelineMenu implements AfterViewInit{
         BeatMachine.stop()
     }
 
+    public get currentBeat() { return BeatMachine.currentNote }
 
     public get bpm() { return BeatMachine.bpm }
     public setBPM(bpm: number) {
 
         BeatMachine.bpm = bpm
     }
+
+    public get noteDuration() { return BeatMachine.noteDuration }
 
     public get beats() { return BeatMachine.beats }
     public get beatsArray() { 
@@ -189,5 +209,21 @@ export class TimelineMenu implements AfterViewInit{
     public setBeats(beats: number) {
 
         BeatMachine.beats = beats
+    }
+
+    public setNoteDuration(duration:string) {
+
+        console.log('NOTE DURATION ', duration)
+        switch(duration) {
+            case '1':
+            case '1/2':
+            case '1/4':
+            case '1/8':
+            case '1/16':
+            case '1/32':
+            case '1/64':
+                    BeatMachine.noteDuration = duration
+                break
+        }
     }
 } 

@@ -3,6 +3,8 @@ import { Sound } from '../theremin/sound-entity'
 
 export class Sample {
  
+    private static UID: number = 0
+
     id: number
 
     sound: Sound
@@ -13,7 +15,7 @@ export class Sample {
 
     constructor() {
 
-        this.id = Math.random() * 100 + new Date().getTime()
+        this.id = Sample.UID += 1
     }
 
 }

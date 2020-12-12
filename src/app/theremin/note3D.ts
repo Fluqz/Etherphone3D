@@ -49,9 +49,6 @@ export class Note3D extends Sound3D{
 
     public move(moveTo: Vector3, X?: boolean, Y?: boolean, Z?: boolean) {
 
-        // moveTo = SnapToGrid.instance.snapVectorToAxes(moveTo)
-        // console.log(X, Y, Z)
-
         if(X || X == undefined) this.ctrl.position.x = (moveTo.x)
         if(Y || Y == undefined) this.ctrl.position.y = (moveTo.y)
         if(Z || Z == undefined) this.ctrl.position.z = (moveTo.z)

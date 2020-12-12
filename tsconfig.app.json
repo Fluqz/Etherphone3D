@@ -5,7 +5,6 @@
     "types": ["node", "webgl2", "offscreencanvas"],
     "experimentalDecorators": true,
     "allowJs": true,
-    "allowJs": true
   },
   "files": [
     "src/main.ts",

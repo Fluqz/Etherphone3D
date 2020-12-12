@@ -10,7 +10,7 @@
       "path": "./tsconfig.spec.json"
     }
   ],
-  "experimentalDecorators": true,
+  "experimentalDecorators": false,
   "allowJs": true,
 
 }

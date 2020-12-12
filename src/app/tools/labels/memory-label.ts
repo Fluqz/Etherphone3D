@@ -86,8 +86,6 @@ export class MemoryLabel {
         this.obj.add(this.sphere)
 
         SceneManager.scene.add(this.obj)
-
-        console.log(SceneManager.scene)
     }
 
 

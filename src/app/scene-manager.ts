@@ -6,10 +6,11 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass'
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader'
 import { CopyShader } from 'three/examples/jsm/shaders/CopyShader'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
-import { GridHelper, Line, AxesHelper, Vector3 } from 'three'
+import { GridHelper, Line, AxesHelper, Vector3, PerspectiveCamera, OrthographicCamera } from 'three'
 import { ObjectControl } from './object-control'
 import { Theremin } from './theremin/theremin'
 import { Theremin3D } from './theremin/theremin3D'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 export enum CameraType {
 
@@ -26,33 +27,41 @@ export enum Axis {
 
 export class SceneManager {
 
-    static renderer: THREE.WebGLRenderer
-    static perspective: THREE.PerspectiveCamera
-    static orthographic: THREE.OrthographicCamera
-    static scene: THREE.Scene
+    public container: HTMLElement
 
-    static activeCamera: CameraType
+    public static renderer: THREE.WebGLRenderer
+    public static perspective: THREE.PerspectiveCamera
+    public static orthographic: THREE.OrthographicCamera
+    public static scene: THREE.Scene
+    public static orbit: OrbitControls
 
-    static composer: EffectComposer
-    static renderPass: RenderPass
-    static effectFXAA: ShaderPass
-    static copyShader: ShaderPass
-    static vertexShader: string
-    static fragmentShader: string
+    public static activeCamera: CameraType
 
-    static id: number
+    public composer: EffectComposer
+    public renderPass: RenderPass
+    public effectFXAA: ShaderPass
+    public copyShader: ShaderPass
+    public vertexShader: string
+    public fragmentShader: string
 
-    ground: THREE.Mesh
-    wall: THREE.Mesh
-    wall2: THREE.Mesh
+    public id: number
 
-    w:number
-    h:number
+    public w:number
+    public h:number
 
-    static environmentObjs: THREE.Object3D[] = []
+    public static environmentObjs: THREE.Object3D[] = []
+    public xyPlane: THREE.Mesh
+    public yzPlane: THREE.Mesh
+    public xzPlane: THREE.Mesh
+
+    public x: THREE.Line
+    public y: THREE.Line
+    public z: THREE.Line
 
 
-    constructor() {
+    constructor(container: HTMLElement) {
+
+        this.container = container
 
         this.w = window.innerWidth
         this.h = window.innerHeight
@@ -62,170 +71,145 @@ export class SceneManager {
         SceneManager.renderer = new THREE.WebGLRenderer({ antialias: true })
         SceneManager.renderer.setSize(this.w, this.h)
         SceneManager.renderer.setClearColor(0xFFFFFF)
-        // SceneManager.renderer.gammaOutput
         SceneManager.renderer.toneMapping = THREE.Uncharted2ToneMapping
+        this.container.append(SceneManager.renderer.domElement)
+
         SceneManager.perspective = new THREE.PerspectiveCamera(40, this.w / this.h, .1, 1000)
         SceneManager.perspective.position.set(90, 90, 90)
+
         SceneManager.orthographic = new THREE.OrthographicCamera(this.w / -2, this.w / 2, this.h / 2, this.h / -2, .1, 1000)
         SceneManager.orthographic.position.set(5, 5, 5)
         SceneManager.orthographic.zoom = 20
+
         SceneManager.scene = new THREE.Scene()
         SceneManager.scene.background = new THREE.Color(0xFFFFFF)
-        // SceneManager.scene.add(new GridHelper(1000, 100, new THREE.Color(0xAAAAAA)))
-        // SceneManager.scene.add(new AxesHelper(100))
+        // this.scene.add(new GridHelper(1000, 100, new THREE.Color(0xAAAAAA)))
+        // this.scene.add(new AxesHelper(100))
 
-        // SceneManager.vertexShader = `
-        //     varying vec2 vUv
-		// 	void main() {
-		// 		vUv = uv
-		// 		gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 )
-		// 	}
-        // `
-        
-        // SceneManager.fragmentShader = `
-        //     uniform sampler2D baseTexture
-        //     uniform sampler2D bloomTexture
-        //     varying vec2 vUv
-        //     vec4 getTexture( sampler2D texelToLinearTexture ) {
-        //         return mapTexelToLinear( texture2D( texelToLinearTexture , vUv ) )
-        //     }
-        //     void main() {
-        //         gl_FragColor = ( getTexture( baseTexture ) + vec4( 1.0 ) * getTexture( bloomTexture ) )
-        //     }
-        // `
-
-        // SceneManager.renderPass = new RenderPass(SceneManager.scene, SceneManager.camera)
-
-        // let effectFXAA = new ShaderPass(FXAAShader)
-        // effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight )
-        
-        // let copyShader = new ShaderPass(CopyShader)
-        // // copyShader.renderToScreen = true
-        
-        
-        // let bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), .25, 1, 1)
-        // bloomPass.threshold = 0 
-        // bloomPass.strength = 5
-        // bloomPass.radius = 0
-        
-        // SceneManager.composer = new EffectComposer(SceneManager.renderer)
-        // SceneManager.composer.setSize(window.innerWidth, window.innerHeight)
-        // SceneManager.composer.addPass(SceneManager.renderPass)
-        // SceneManager.composer.addPass(effectFXAA)
-        // SceneManager.composer.addPass(bloomPass)
-        // SceneManager.composer.addPass(copyShader)
-        
-        // let finalPass = new ShaderPass(
-        //     new THREE.ShaderMaterial( {
-        //         uniforms: {
-        //             baseTexture: { value: null },
-        //             bloomTexture: { value: SceneManager.composer.renderTarget2.texture }
-        //         },
-        //         vertexShader: SceneManager.vertexShader,
-        //         fragmentShader: SceneManager.fragmentShader,
-        //         defines: {}
-        //     } ), "baseTexture"
-        // )
-        // finalPass.needsSwap = true
-
-        // SceneManager.composer.addPass(finalPass)
+        SceneManager.orbitCamera = SceneManager.perspective
 
 
+        // this.createAxis()
+        // this.createLight()
+    }
+
+    public createEnvironment() {
+        
         let geo = new THREE.CircleBufferGeometry(1000, 100)
         geo.rotateX(-Math.PI / 2)
         let mat = new THREE.MeshPhongMaterial({
-            color: 0xBF0040,
+            color: 0xEEEEEE,
             shininess: 0,
             side: THREE.DoubleSide,
             transparent: true,
             opacity: .2
         })
 
-        this.ground = new THREE.Mesh(geo, mat)
-        this.ground.name = 'Ground'
+        this.xzPlane = new THREE.Mesh(geo, mat)
+        this.xzPlane.name = 'xz'
 
-        this.wall = this.ground.clone()
-        this.wall.name = 'wall'
-        this.wall.rotateX(-Math.PI / 2)
-        this.wall.material = mat.clone()
-        this.wall.material['color'] = new THREE.Color(0xFFFF00)
+        this.yzPlane = this.xzPlane.clone()
+        this.yzPlane.name = 'yz'
+        this.yzPlane.rotateX(-Math.PI / 2)
+        this.yzPlane.material = mat.clone()
+        this.yzPlane.material['color'] = new THREE.Color(0x888888)
 
-        this.wall2 = this.ground.clone()
-        this.wall2.name = 'wall2'
-        this.wall2.material = mat.clone()
-        this.wall2.material['color'] = new THREE.Color(0x00FFFF)
-        this.wall2.rotateZ(-Math.PI / 2)
+        this.xyPlane = this.xzPlane.clone()
+        this.xyPlane.name = 'xy'
+        this.xyPlane.material = mat.clone()
+        this.xyPlane.material['color'] = new THREE.Color(0x333333)
+        this.xyPlane.rotateZ(-Math.PI / 2)
 
 
-        SceneManager.scene.add(this.ground)
-        SceneManager.scene.add(this.wall)
-        SceneManager.scene.add(this.wall2)
+        SceneManager.scene.add(this.xzPlane)
+        SceneManager.scene.add(this.yzPlane)
+        SceneManager.scene.add(this.xyPlane)
 
-        SceneManager.environmentObjs.push(this.wall)
-        SceneManager.environmentObjs.push(this.wall2)
-        SceneManager.environmentObjs.push(this.ground)
+        SceneManager.environmentObjs.push(this.xzPlane)
+        SceneManager.environmentObjs.push(this.yzPlane)
+        SceneManager.environmentObjs.push(this.xyPlane)
 
-        this.addLight()
     }
-
         
     public static get currentCamera(){
 
-        return SceneManager.activeCamera == CameraType.PERSPECTIVE ? SceneManager.perspective : SceneManager.orthographic
+        return this.activeCamera == CameraType.PERSPECTIVE ? SceneManager.perspective : SceneManager.orthographic
     }
 
-    private addLines() {
+    
+    public static set orbitCamera(camera: THREE.Camera) { 
+
+        if(SceneManager.orbit) {
+
+            SceneManager.orbit.reset()
+            SceneManager.orbit.dispose()
+        }
+        
+        if(camera instanceof PerspectiveCamera)
+            SceneManager.orbit = new OrbitControls(camera, SceneManager.renderer.domElement)
+        if(camera instanceof OrthographicCamera)
+            SceneManager.orbit = new OrbitControls(camera, SceneManager.renderer.domElement)
+    }
+
+    private createAxis() {
+
+        let points: THREE.Vector3[] = []
 
         // X
-        let geometry = new THREE.BufferGeometry()
-        let vertices = new Float32Array( [ 0, 1, 2 ] )
-        // itemSize = 3 because there are 3 values (components) per vertex
-        geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) )
+        points.push(new THREE.Vector3(-1000, 0, 0))
+        points.push(new THREE.Vector3(1000, 0, 0))
+        let geometry = new THREE.BufferGeometry().setFromPoints(points)
         let material = new THREE.LineBasicMaterial( { color: 0x000000 } )
-        let x = new THREE.Line( geometry, material )
-        x.position.set(1, 1, 1)
-        SceneManager.scene.add(x)
+        this.x = new THREE.Line( geometry, material )
+        this.x.position.set(0, 0, 0)
+        SceneManager.scene.add(this.x)
         
         // Y
-        geometry = new THREE.BufferGeometry()
-        vertices = new Float32Array( [ 0, 200 ] )
-        geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) )
-        let y = new THREE.Line( geometry, material )
-        SceneManager.scene.add(y)
+        points = []
+        points.push(new THREE.Vector3(0, -1000, 0))
+        points.push(new THREE.Vector3(0, 1000, 0))
+        geometry = new THREE.BufferGeometry().setFromPoints(points)
+        material = new THREE.LineBasicMaterial( { color: 0x000000 } )
+        this.y = new THREE.Line( geometry, material )
+        this.y.position.set(0, 0, 0)
+        SceneManager.scene.add(this.y)
 
         // Z
-        geometry = new THREE.BufferGeometry()
-        vertices = new Float32Array( [ 0, 200 ] )
-        geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) )
-        let z = new THREE.Line( geometry, material )
-        SceneManager.scene.add(z)
+        points = []
+        points.push(new THREE.Vector3(0, 0, -1000))
+        points.push(new THREE.Vector3(0, 0, 1000))
+        geometry = new THREE.BufferGeometry().setFromPoints(points)
+        material = new THREE.LineBasicMaterial( { color: 0x000000 } )
+        this.z = new THREE.Line( geometry, material )
+        this.z.position.set(0, 0, 0)
+        SceneManager.scene.add(this.z)
     }
 
-    private addLight() {
+    private createLight() {
 
         let hemi = new THREE.HemisphereLight(0xFFFdEF, 0xFFFedF, .8)
         SceneManager.scene.add(hemi)
     }
 
 
-    public static update() {
+    public update() {
         
-        if(this.activeCamera == CameraType.PERSPECTIVE) 
-            this.renderer.render(this.scene, this.perspective)
-        else if(this.activeCamera == CameraType.ORTHOGRAPHIC)  
-            this.renderer.render(this.scene, this.orthographic)
+        if(SceneManager.activeCamera == CameraType.PERSPECTIVE) 
+            SceneManager.renderer.render(SceneManager.scene, SceneManager.perspective)
+        else if(SceneManager.activeCamera == CameraType.ORTHOGRAPHIC)  
+            SceneManager.renderer.render(SceneManager.scene, SceneManager.orthographic)
 
         // console.log(Theremin.instance.sounds, Theremin3D.instance.sounds3D)
 
     }
 
-    public static distanceToCenter(pos: Vector3) {
+    public distanceToCenter(pos: Vector3) {
 
         return pos.distanceTo(SceneManager.scene.position)
     }
 
     // ROTATE CAMERA ON KEY 1 2 3 or SHIFT 1 2 3 for negative area to be aligned to a axes
-    public static rotateCamera(axis: string) {
+    public rotateCamera(axis: string) {
 
         if(axis == 'x') {
 

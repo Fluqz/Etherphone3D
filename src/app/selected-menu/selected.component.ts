@@ -30,40 +30,47 @@ import { Theremin } from '../theremin/theremin';
 })
 export class Selected implements AfterViewInit {
 
-    @Input('objCtrl') objCtrl: ObjectControl
-    @Input('theremin3D') theremin3D: Theremin3D
+  @Input('theremin3D') theremin3D: Theremin3D
 
-    ngAfterViewInit() {
+  public get selected() { return ObjectControl.selected }
+  public get selectedObjs() { return ObjectControl.selectedObjs }
 
 
-    }
+
+
+
+
+  ngAfterViewInit() {
+
+
+  }
 
   private isSelected(type: string) {
 
-    if(this.objCtrl.selected && this.objCtrl.selected != null)
+    if(ObjectControl.selected && ObjectControl.selected != null)
         return true
     else return false
   }
 
-  public get selectedVolume() { return this.objCtrl.selected.ctrl.volume }
+  public get selectedVolume() { return ObjectControl.selected.ctrl.volume }
   public set selectedVolume(volume: number) { 
 
-    let moveTo = this.objCtrl.selected.ctrl.position.clone()
+    let moveTo = ObjectControl.selected.ctrl.position.clone()
     moveTo.y = volume * Theremin.instance.X.sF // NEEDS TO HAPPEN SOMEWHERE ELSE
-    this.objCtrl.selected.move(moveTo)
+    ObjectControl.selected.move(moveTo)
 
-    this.theremin3D.theremin.updateSound(this.objCtrl.selected.ctrl)
+    this.theremin3D.theremin.updateSound(ObjectControl.selected.ctrl)
   }
 
   
-  public get selectedFrequency() { return this.objCtrl.selected.ctrl.frequency }
+  public get selectedFrequency() { return ObjectControl.selected.ctrl.frequency }
   public set selectedFrequency(frequency: number) { 
 
-    let moveTo = this.objCtrl.selected.ctrl.position.clone()
+    let moveTo = ObjectControl.selected.ctrl.position.clone()
     moveTo.x = frequency // NEEDS TO HAPPEN SOMEWHERE ELSE
-    this.objCtrl.selected.move(moveTo)
+    ObjectControl.selected.move(moveTo)
 
-    this.theremin3D.theremin.updateSound(this.objCtrl.selected.ctrl)
+    this.theremin3D.theremin.updateSound(ObjectControl.selected.ctrl)
   }
  
   public changeVolume() {
@@ -74,35 +81,18 @@ export class Selected implements AfterViewInit {
 
   public toggleMuteSelected() {
 
-    if(this.objCtrl.selected.ctrl.muted)
-      this.objCtrl.selected.unmute()
-    else this.objCtrl.selected.mute()
+    if(ObjectControl.selected.ctrl.muted)
+      ObjectControl.selected.unmute()
+    else ObjectControl.selected.mute()
     
   }
 
-  public toggleAxesLabel() {
-
-    this.objCtrl.selected.axesLabel.enabled = !this.objCtrl.selected.axesLabel.enabled
-    this.objCtrl.selected.axesLabel.update()
-  }
-  
-  public toggleMemoryLabel() {
-
-    this.objCtrl.selected.memoryLabel.enabled = !this.objCtrl.selected.memoryLabel.enabled
-    this.objCtrl.selected.memoryLabel.update()
-  }
-  
-  public toggleDistanceLabel() {
-
-    this.objCtrl.selected.distanceLabel.enabled = !this.objCtrl.selected.distanceLabel.enabled
-    this.objCtrl.selected.distanceLabel.update()
-  }
 
   public groupSoundEntities() {
 
     let ses: Sound[] = []
     let ses3D: Sound3D[] = []
-    this.objCtrl.selectedObjs.forEach(obj => {
+    ObjectControl.selectedObjs.forEach(obj => {
 
       // Collect all selected Sounds
       ses.push(this.theremin3D.getNoteByObj(obj).ctrl)
@@ -121,7 +111,7 @@ export class Selected implements AfterViewInit {
 
     let ses: Sound[] = []
     let ses3D: Sound3D[] = []
-    this.objCtrl.selectedObjs.forEach(obj => {
+    ObjectControl.selectedObjs.forEach(obj => {
 
       ses3D.push(this.theremin3D.getNoteByObj(obj))
       ses.push(this.theremin3D.getNoteByObj(obj).ctrl)

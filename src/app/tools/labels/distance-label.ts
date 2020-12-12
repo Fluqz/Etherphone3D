@@ -37,10 +37,6 @@ export class DistanceLabel {
         this.raycaster.far = 1000
 
         this.createLabel()
-
-        SceneManager.renderer.domElement.addEventListener('mousedown', this.onMouseDown.bind(this), false)
-        SceneManager.renderer.domElement.addEventListener('mouseup', this.onMouseUp.bind(this), false)
-        SceneManager.renderer.domElement.addEventListener('mousemove', this.onMouseMove.bind(this), false)
     }
 
 
@@ -92,8 +88,6 @@ export class DistanceLabel {
         })
 
         SceneManager.scene.add(this.obj)
-
-        console.log(SceneManager.scene)
     }
 
     public getLabelBySide(side: string) {
@@ -117,23 +111,5 @@ export class DistanceLabel {
         })
 
         return this.getLabelBySide(oLabel)
-    }
-
-
-
-
-
-
-    private onMouseDown(e) {
-        
-        
-    }
-
-    private onMouseUp(e) {
-
-    }
-    
-    private onMouseMove(e) {
-        
     }
 }

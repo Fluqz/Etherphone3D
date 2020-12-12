@@ -25,7 +25,7 @@ export class AxesLine {
         this.p2 = new THREE.Vector3()
 
         this.lineGeo = new THREE.BufferGeometry()
-        console.log(color)
+
         this.obj = new THREE.Line(this.lineGeo, new THREE.LineBasicMaterial({ color: new THREE.Color(this.color) }))
     }
 

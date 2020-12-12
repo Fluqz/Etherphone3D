@@ -3,7 +3,9 @@ import { Note } from './note'
 import { AxisBehaviour } from '../AxisBehaviours/axis-behaviour'
 import { FrequencyShift } from '../AxisBehaviours/frequency-shfit'
 import { VolumeShift } from '../AxisBehaviours/volume-shift'
+import { AdditiveSynthesis } from '../AxisBehaviours/additive-synthesis'
 import { Chord } from './chord'
+import { Theremin3D } from './theremin3D'
 
 export class Theremin {
 
@@ -20,6 +22,10 @@ export class Theremin {
     public Y: AxisBehaviour
     public Z: AxisBehaviour
 
+    public axisBehaviors: AxisBehaviour[] = []
+
+    public isPlaying: boolean = false
+
 
     constructor() {
 
@@ -33,19 +39,18 @@ export class Theremin {
         this.masterVolume.connect(Theremin.audioContext.destination)
         this.storedVolume = this.masterVolume.gain.value
 
-        // this.createNote(200)
-        // this.createNote(300)
-        // this.createNote(475)
-
         this.X = new FrequencyShift('x')
         this.Y = new VolumeShift('y')
+        // this.Z = new AdditiveSynthesis('z')
     }
 
-    public addNote(frequency: number) : Sound{
+    public addNote(frequency: number) : Sound {
 
-        let sn = new Note(frequency)
+        let sn = new Note(frequency, Theremin.audioContext)
 
         this.sounds.push(sn)
+
+        sn.play()
 
         return sn
     }
@@ -61,7 +66,7 @@ export class Theremin {
 
     public groupNotesToChord(_ses: Sound[]) {
 
-        let chord = new Chord(_ses)
+        let chord = new Chord(_ses, Theremin.audioContext)
 
         this.sounds.push(chord)
 
@@ -103,13 +108,16 @@ export class Theremin {
 
         this.X.updateSound(se)
         this.Y.updateSound(se)
+        // this.Z.updateSound(se)
     }
 
-    public toggleOnOff(isPlaying: boolean) {
+    public toggleOnOff(play: boolean) {
+
+        this.isPlaying = play
 
         this.sounds.forEach(sound => {
 
-            if(isPlaying) {
+            if(play) {
 
                 sound.gainNode.gain.setValueAtTime(0, Theremin.audioContext.currentTime)
             }

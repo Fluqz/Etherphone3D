@@ -82,20 +82,17 @@ import { Note3D } from '../theremin/note3D';
 })
 export class Dashboard implements AfterViewInit{
 
-    @Input('objCtrl') objCtrl: ObjectControl 
-    // @Input('theremin3D') theremin3D: Theremin3D
-    
     private host: HTMLElement
 
     private _selectedSound: Sound3D
     public set selectedSound(val: Sound3D) {
 
       this._selectedSound = val
-      this.objCtrl.selectedObj = val.obj
+      ObjectControl.selectedObj = val.obj
     }
     public get selectedSound() {
 
-      if(this.objCtrl.selected != null) return this.objCtrl.selected 
+      if(ObjectControl.selected != null) return ObjectControl.selected 
 
       return this._selectedSound = null
     }
@@ -113,8 +110,6 @@ export class Dashboard implements AfterViewInit{
 
 
     public selectSound(e, sound: Sound3D) {
-
-      console.log(e, e.target, e.currentTarget)
 
       if(sound instanceof Chord3D) {
 

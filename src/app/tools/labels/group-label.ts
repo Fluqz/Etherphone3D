@@ -1,7 +1,7 @@
 import *  as THREE from 'three'
 
 import { SceneManager } from '../../scene-manager'
-import { Chord3D } from 'src/app/theremin/chord3D'
+import { Chord3D } from '../../theremin/chord3D'
 
 
 export class GroupLabel {

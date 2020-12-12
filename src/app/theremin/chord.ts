@@ -49,14 +49,14 @@ export class Chord extends Sound {
         
     }
 
-    constructor(_sounds: Sound[]) {
+    constructor(_sounds: Sound[], context: AudioContext) {
         super()
 
         this.id = Math.random() * 100 + new Date().getTime()
 
         this.position = new Vector3()
 
-        this.audioContext = Theremin.audioContext
+        this.audioContext = context
 
         this.gainNode = this.audioContext.createGain()
 
@@ -94,7 +94,7 @@ export class Chord extends Sound {
     
     public playFrequent(length: number) {
 
-        this.isPlaying = false
+        this.isPlaying = true
 
         this.sounds.forEach(sound => {
 

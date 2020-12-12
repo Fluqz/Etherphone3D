@@ -7,7 +7,7 @@ export class Tools {
 
         let i = array.indexOf(element)
 
-        if(i > 0 ) {
+        if(i >= 0 ) {
 
             return array.splice(i, 1)
         } 

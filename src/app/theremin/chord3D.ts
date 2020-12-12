@@ -1,4 +1,4 @@
-import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, Object3D, BufferGeometry, LineBasicMaterial, Line, TetrahedronBufferGeometry, Box3 } from 'three'
+import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, Object3D, BufferGeometry, LineBasicMaterial, Line, TetrahedronBufferGeometry, Box3, Color } from 'three'
 import { Sound3D } from './sound-entity-3d'
 import { Chord } from './chord'
 import { Sound } from './sound-entity'
@@ -47,8 +47,12 @@ export class Chord3D extends Sound3D{
 
         // this.createLabel()
 
-
         SceneManager.scene.add(this.obj)
+        
+        let color = new Color()
+        color.setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 )
+
+        this.ctrl.color = color
         
         this.distanceLabel = new DistanceLabel(this)
         this.memoryLabel = new MemoryLabel(this)

@@ -1,14 +1,11 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 
-import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-
 import { Theremin } from './theremin/theremin';
 import { SceneManager, CameraType } from './scene-manager';
 import { Theremin3D } from './theremin/theremin3D';
 import { ObjectControl } from './object-control';
-import { Sound3D } from './theremin/sound-entity-3d';
 import { DragWindow } from './tools/drag-window';
+
 
 @Component({
   selector: 'app-root',
@@ -20,24 +17,18 @@ import { DragWindow } from './tools/drag-window';
 
         <div class="drag-bar"></div>
 
-        <button (click)="addOsc()">Add Osc</button>
-        
-        <!--<button (click)="setCamera('perspective')">Perspective Camera</button>-->
-        <!--<button (click)="setCamera('orthographic')">Orthographic Camera</button>-->
+        <theremin *ngIf="theremin && theremin3D" [theremin]="theremin" [theremin3D]="theremin3D"></theremin>
 
+        <selected-menu *ngIf="theremin3D" [theremin3D]="theremin3D"></selected-menu>
 
-        <!--<button (click)="rotateCamera($event)" axis="z">ROTATE CAM</button>-->
-
-        <selected-menu *ngIf="objCtrl && theremin3D" [objCtrl]="objCtrl" [theremin3D]="theremin3D"></selected-menu>
-
-        <timeline *ngIf="theremin3D" class="drag-window" [objCtrl]="objCtrl" [theremin3D]="theremin3D"></timeline>
+        <timeline *ngIf="theremin3D" class="drag-window" [theremin3D]="theremin3D"></timeline>
 
     </div>
 
 
-    <!--<mixer *ngIf="objCtrl && theremin3D" class="drag-window" [objCtrl]="objCtrl" [theremin3D]="theremin3D"></mixer>-->
+    <!--<mixer *ngIf="theremin3D" class="drag-window" [theremin3D]="theremin3D"></mixer>-->
 
-    <dashboard *ngIf="objCtrl && theremin3D" class="drag-window" [objCtrl]="objCtrl"></dashboard>
+    <dashboard *ngIf="theremin3D" class="drag-window"></dashboard>
 
         
   `,
@@ -46,20 +37,15 @@ import { DragWindow } from './tools/drag-window';
 export class AppComponent implements AfterViewInit{
 
   private container: HTMLElement
+
   public theremin: Theremin
   public theremin3D: Theremin3D
   public objCtrl: ObjectControl
-
-  private xOffset: number
-  private yOffset: number
+  public sm: SceneManager
 
   private mouseDownEvent: any
   private mouseUpEvent: any
   private mouseMovevent: any
-
-  private mouseDown: boolean = false
-
-  private selected: HTMLElement
 
   private dragWindow: DragWindow
 
@@ -73,11 +59,9 @@ export class AppComponent implements AfterViewInit{
 
     this.container = document.querySelector('#webGL')
 
-    new SceneManager()
+    this.sm = new SceneManager(this.container)
 
-    this.container.append(SceneManager.renderer.domElement)
-
-    setTimeout(()=> {
+    window.setTimeout(()=>{
 
       this.theremin = new Theremin()
 
@@ -85,11 +69,12 @@ export class AppComponent implements AfterViewInit{
 
       this.objCtrl = new ObjectControl(this.theremin3D)
 
+
       this.theremin.toggleOnOff(false)
+
+
+      this.loop()
     })
-
-
-    this.loop()
 
     // Channel html element addaevent
     this.mouseDownEvent = this.onMouseDown.bind(this)
@@ -106,8 +91,7 @@ export class AppComponent implements AfterViewInit{
 
     requestAnimationFrame(this.loop.bind(this))
 
-    SceneManager.update()
-
+    this.sm.update()
   }
 
 
@@ -119,7 +103,7 @@ export class AppComponent implements AfterViewInit{
     else if(axis == 'y') axis = 'z'
     else if(axis == 'z') axis = 'x'
 
-    SceneManager.rotateCamera(axis)
+    this.rotateCamera(axis)
 
     e.target.setAttribute('axis', axis)
   }
@@ -132,19 +116,10 @@ export class AppComponent implements AfterViewInit{
     else if(type == 'perspective') 
       SceneManager.activeCamera = CameraType.PERSPECTIVE
 
-    this.objCtrl.orbitCamera = SceneManager.currentCamera
-  }
-
-  public addOsc(frequency?: number) {
-
-    let note = this.theremin.addNote(frequency == undefined ? 100 : frequency)
-    let note3D = this.theremin3D.addSoungEntity3D(note)
-    this.objCtrl.selectedObj = note3D.obj
+    SceneManager.orbitCamera = SceneManager.currentCamera
   }
 
   public onMouseDown(e) {
-
-    this.mouseDown = true
 
     this.dragWindow.onMouseDown(e)
     
