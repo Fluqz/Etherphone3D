@@ -6,6 +6,7 @@ import { DistanceLabel } from '../tools/labels/distance-label'
 import { MemoryLabel } from '../tools/labels/memory-label'
 import { AxesLabel } from '../tools/labels/axes-label'
 import { SceneManager } from '../scene-manager'
+import { Tools } from '../tools/tools'
 
 export class Note3D extends Sound3D{
 
@@ -20,23 +21,16 @@ export class Note3D extends Sound3D{
 
         this.ctrl = note
 
-        let color = new Color();
-        color.setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 );
-
-        this.ctrl.color = color
-
         this.obj = new Mesh(
             new SphereBufferGeometry(2, 20, 20), 
             new MeshBasicMaterial({
-                color: color,
+                color: this.ctrl.color,
             })
         )
         this.obj.name = 'osc.3D'
         this.obj.userData.id = note.id
 
         this.obj.position.copy(this.ctrl.position)
-
-        SceneManager.scene.add(this.obj)
 
         this.distanceLabel = new DistanceLabel(this)
         this.memoryLabel = new MemoryLabel(this)
@@ -74,6 +68,22 @@ export class Note3D extends Sound3D{
     public unselect() {
 
     }
+
+    public play(length?: number) {
+
+        console.log('length', length * 1000)
+        this.obj.scale.set(2, 2, 2)
+
+        window.setTimeout(()=> {
+
+            this.obj.scale.set(1, 1, 1)
+
+        }, length * 1000)
+    }
+
+
+
+
     public mouseUp() {
         
     }
@@ -91,6 +101,20 @@ export class Note3D extends Sound3D{
     
     public destroy() {
 
+        if(this.distanceLabel) {
+            this.distanceLabel.enabled = false
+            this.distanceLabel = null
+        }
+        if(this.memoryLabel) {
+            this.memoryLabel.enabled = false
+            this.memoryLabel = null
+        }
+        if(this.axesLabel) {
+            this.axesLabel.enabled = false
+            this.axesLabel = null
+        }
+
+        Tools.dispose(this.obj)
     }
 
 }

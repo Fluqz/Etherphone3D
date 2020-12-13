@@ -12,7 +12,7 @@ import { Sound3D } from '../theremin/sound-entity-3d';
   selector: 'track',
   template: `
   
-    <div class="sound-title">{{ sound.ctrl.type }}</div>
+    <div class="sound-title" [style.backgroundColor]="color">{{ sound.ctrl.type }}</div>
 
     <div class="creation-click-zone">
 
@@ -156,7 +156,7 @@ export class TrackView implements AfterViewInit{
 
     let sample: Sample = {
       id: Math.random() * 100,
-      sound: this.sound.ctrl,
+      sound: this.sound,
       scheduleTime: scheduleTime,
       length: 1
     }

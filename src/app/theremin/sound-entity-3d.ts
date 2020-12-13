@@ -16,6 +16,7 @@ export abstract class Sound3D {
     public abstract move(moveTo: Vector3, X?: boolean, Y?: boolean, Z?: boolean)
     public abstract select() 
     public abstract unselect() 
+    public abstract play(length?: number)
     public abstract mouseUp() 
     public abstract unmute() 
     public abstract mute() 

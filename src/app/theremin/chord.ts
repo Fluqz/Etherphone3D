@@ -104,4 +104,32 @@ export class Chord extends Sound {
 
         this.gainNode.gain.value = 1
     }
+
+
+    public destroy() {
+    
+    }
+
+    public serializeOut() {
+
+        let sounds: {}[] = []
+        this.sounds.forEach(sound => {
+
+            sounds.push(sound.serializeOut())
+        })
+
+        return {
+            id: this.id,
+            color: this.color.getHex(),
+            volume: this.volume,
+            position: this.position,
+            sounds: sounds,
+            parent: this.parent
+        }
+    }
+
+    public serializeIn(file: {}) {
+
+
+    }
 }

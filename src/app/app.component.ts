@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
 
 import { Theremin } from './theremin/theremin';
 import { SceneManager, CameraType } from './scene-manager';
@@ -6,6 +6,8 @@ import { Theremin3D } from './theremin/theremin3D';
 import { ObjectControl } from './object-control';
 import { DragWindow } from './tools/drag-window';
 
+import { Storage } from './storage'
+import { BeatMachine } from './beatmachine/beat-machine';
 
 @Component({
   selector: 'app-root',
@@ -13,28 +15,41 @@ import { DragWindow } from './tools/drag-window';
 
     <div id="webGL"></div>
 
-    <div id="obj-menu" class="drag-window">
 
-        <div class="drag-bar"></div>
+    <div *ngIf="!UIHidden" id="ui-wrapper" (mouseenter)="mouseenterUI()" (mouseleave)="mouseenterUI()">
 
-        <theremin *ngIf="theremin && theremin3D" [theremin]="theremin" [theremin3D]="theremin3D"></theremin>
+      <div>
 
-        <selected-menu *ngIf="theremin3D" [theremin3D]="theremin3D"></selected-menu>
+        <div class="btn" (click)="setCamera('perspective')">P</div>
 
-        <beatmachine *ngIf="theremin3D" class="drag-window" [theremin3D]="theremin3D"></beatmachine>
+        <div class="btn" (click)="setCamera('orthographic')">O</div>
+
+      </div>
+
+
+      <div id="obj-menu" class="drag-window">
+
+          <div class="drag-bar"></div>
+
+          <theremin *ngIf="theremin && theremin3D" [theremin]="theremin" [theremin3D]="theremin3D"></theremin>
+
+          <selected-menu *ngIf="theremin3D" [theremin3D]="theremin3D"></selected-menu>
+
+          <beatmachine *ngIf="theremin3D" class="drag-window" [theremin3D]="theremin3D"></beatmachine>
+
+      </div>
+
+
+      <!--<mixer *ngIf="theremin3D" class="drag-window" [theremin3D]="theremin3D"></mixer>-->
+
+      <dashboard *ngIf="theremin3D" class="drag-window" [theremin]="theremin" [theremin3D]="theremin3D"></dashboard>
 
     </div>
-
-
-    <!--<mixer *ngIf="theremin3D" class="drag-window" [theremin3D]="theremin3D"></mixer>-->
-
-    <dashboard *ngIf="theremin3D" class="drag-window"></dashboard>
-
         
   `,
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit{
+export class AppComponent implements AfterViewInit, OnDestroy{
 
   private container: HTMLElement
 
@@ -49,6 +64,8 @@ export class AppComponent implements AfterViewInit{
   private resizeEvent: any
 
   private dragWindow: DragWindow
+
+  public UIHidden: boolean = false
 
   constructor() {
 
@@ -65,6 +82,8 @@ export class AppComponent implements AfterViewInit{
     window.setTimeout(()=>{
 
       this.theremin = new Theremin()
+      
+      this.serializeIn(Storage.load())
 
       this.theremin3D = new Theremin3D(this.theremin)
 
@@ -76,6 +95,7 @@ export class AppComponent implements AfterViewInit{
 
       this.loop()
     })
+
 
 
 
@@ -108,20 +128,27 @@ export class AppComponent implements AfterViewInit{
     else if(axis == 'y') axis = 'z'
     else if(axis == 'z') axis = 'x'
 
-    this.rotateCamera(axis)
+    // this.rotateCamera(axis)
 
     e.target.setAttribute('axis', axis)
   }
 
   public setCamera(type:string) {
 
-    if(type == 'orthographic') 
+    if(type == 'orthographic') {
       SceneManager.activeCamera = CameraType.ORTHOGRAPHIC
-      
+      SceneManager.orthographic.position.set(0, 0, 2)
+    }
     else if(type == 'perspective') 
       SceneManager.activeCamera = CameraType.PERSPECTIVE
 
     SceneManager.orbitCamera = SceneManager.currentCamera
+  }
+
+
+  public mouseenterUI() {
+    
+    this.UIHidden = this.objCtrl.dragObj
   }
 
   public onMouseDown(e) {
@@ -144,5 +171,48 @@ export class AppComponent implements AfterViewInit{
   public onResize() {
 
     this.sm.resize()
+  }
+
+
+
+  private serializeIn(file: string) {
+
+    let obj: {} = JSON.parse(file)
+
+    if(obj['theremin']) this.theremin.serializeIn(obj['theremin'])
+
+    if(obj['beatmachine']) {
+
+      BeatMachine.bpm = obj['beatmachine']['bpm']
+      BeatMachine.beats = obj['beatmachine']['beats']
+      BeatMachine.noteDuration = obj['beatmachine']['noteDuration']
+    }
+  }
+
+  private serializeOut() {
+    
+    let obj: {} = {
+      theremin: this.theremin.serializeOut(),
+      beatmachine: {
+        bpm: BeatMachine.bpm,
+        beats: BeatMachine.beats,
+        noteDuration: BeatMachine.noteDuration,
+      }
+    }
+
+    return JSON.stringify(obj)
+  }
+
+
+
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any) {
+
+    this.ngOnDestroy()
+  }
+    
+  ngOnDestroy() {
+
+    Storage.save(this.serializeOut())
   }
 }

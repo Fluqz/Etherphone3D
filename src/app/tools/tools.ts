@@ -15,7 +15,7 @@ export class Tools {
         else return null
     }
 
-    public static disposeObj(obj: any) {
+    public static dispose(obj: any) {
 
         obj.traverse(object => {
             if (object !instanceof Object3D || object !instanceof Mesh || object !instanceof Group || object !instanceof Scene) return

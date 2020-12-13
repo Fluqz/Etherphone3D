@@ -14,6 +14,7 @@ export class ObjectControl {
     public static _selectedObj: Object3D
 
     private mouseDown: boolean
+    public dragObj: boolean = false
     private mouse: Vector3
 
     private raycaster: Raycaster
@@ -157,6 +158,8 @@ export class ObjectControl {
 
                 if(ObjectControl.selected) {
 
+                    this.dragObj = true
+
                     // If no shift key
                     if(!event.shiftKey) {
 
@@ -213,6 +216,8 @@ export class ObjectControl {
         
         this.mouseDown = false
 
+        this.dragObj = false
+
         SceneManager.orbit.enabled = true
 
         if(!event.shiftKey) {
@@ -247,6 +252,10 @@ export class ObjectControl {
             // When selected calc position
             if (ObjectControl.selectedObjs.length == 1 && ObjectControl.selected) {
 
+                // HIDE MENU
+
+
+
                 this.raycaster.ray.intersectPlane(this.plane, this.ip)
 
                 this.moveTo.copy(this.ip.sub(this.offset))
@@ -255,6 +264,8 @@ export class ObjectControl {
                 ObjectControl.selected.move(this.moveTo, this.XKey, this.YKey, this.ZKey)
                 // this.selectedObjs.position.copy(this.moveTo)
                 ObjectControl.theremin3D.theremin.updateSound(ObjectControl.selected.ctrl)
+
+
 
             }
         }

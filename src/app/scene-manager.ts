@@ -75,8 +75,8 @@ export class SceneManager {
         SceneManager.perspective.position.set(90, 90, 90)
 
         SceneManager.orthographic = new THREE.OrthographicCamera(SceneManager.w / -2, SceneManager.w / 2, SceneManager.h / 2, SceneManager.h / -2, .1, 1000)
-        SceneManager.orthographic.position.set(5, 5, 5)
-        SceneManager.orthographic.zoom = 20
+        SceneManager.orthographic.position.set(0, 0, 5)
+        SceneManager.orthographic.zoom = 50
 
         SceneManager.scene = new THREE.Scene()
         SceneManager.scene.background = new THREE.Color(Color.BG)
@@ -86,7 +86,7 @@ export class SceneManager {
         SceneManager.orbitCamera = SceneManager.perspective
 
         this.createAxes()
-        this.createEnvironment()
+        // this.createEnvironment()
         this.createLight()
     }
 
@@ -104,10 +104,17 @@ export class SceneManager {
             SceneManager.orbit.dispose()
         }
         
-        if(camera instanceof PerspectiveCamera)
+        if(camera instanceof PerspectiveCamera){
             SceneManager.orbit = new OrbitControls(camera, SceneManager.renderer.domElement)
-        if(camera instanceof OrthographicCamera)
+            SceneManager.orbit.enableDamping = true
+            SceneManager.orbit.dampingFactor = .2
+        }
+        else if(camera instanceof OrthographicCamera) {
             SceneManager.orbit = new OrbitControls(camera, SceneManager.renderer.domElement)
+            SceneManager.orbit.enableDamping = true
+            SceneManager.orbit.dampingFactor = .2
+            SceneManager.orbit.enableRotate = false
+        }
     }
 
     private createAxes() {
@@ -146,15 +153,15 @@ export class SceneManager {
     
     public createEnvironment() {
 
-        let sGeo = new THREE.SphereBufferGeometry(1000, 1000, 1000)
-        let sMat = new THREE.MeshStandardMaterial({
-            color: Color.BG,
-            metalness: .1,
-            roughness: .1,
-            side: THREE.DoubleSide
-        })
-        this.sphere = new THREE.Mesh(sGeo, sMat)
-        SceneManager.scene.add(this.sphere)
+        // let sGeo = new THREE.SphereBufferGeometry(1000, 1000, 1000)
+        // let sMat = new THREE.MeshStandardMaterial({
+        //     color: Color.BG,
+        //     metalness: .1,
+        //     roughness: .1,
+        //     side: THREE.DoubleSide
+        // })
+        // this.sphere = new THREE.Mesh(sGeo, sMat)
+        // SceneManager.scene.add(this.sphere)
 
         
         let geo = new THREE.CircleBufferGeometry(1000, 100)
@@ -191,6 +198,8 @@ export class SceneManager {
 
 
     public update() {
+
+        if(SceneManager.orbit) SceneManager.orbit.update()
         
         if(SceneManager.activeCamera == CameraType.PERSPECTIVE) 
             SceneManager.renderer.render(SceneManager.scene, SceneManager.perspective)

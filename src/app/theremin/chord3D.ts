@@ -127,6 +127,15 @@ export class Chord3D extends Sound3D{
         })
     }
 
+
+    public play(length?: number) {
+        
+        this.sounds3D.forEach(note => {
+
+            note.play(length)
+        })
+    }
+
     public mouseUp() {}
 
 

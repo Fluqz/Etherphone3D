@@ -26,9 +26,15 @@ export class VolumeShift extends AxesBehaviour {
 
         if(this.axis == null) return
         if(this.muted) return
+        
+        console.log('VOLUMEN SHIFT', entity instanceof Note)
 
         if(entity instanceof Note) {
 
+
+        console.log('VOLUMEN SHIFT SET')
+
+            console.log(entity.volume, entity.position[this.axis] / this.sF)
             entity.volume = entity.position[this.axis] / this.sF
 
         }

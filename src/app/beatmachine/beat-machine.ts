@@ -95,9 +95,10 @@ export class BeatMachine {
 
             if(sample.scheduleTime == beatNumber) {
 
-                console.log('play', sample.scheduleTime, sample.length, time + sample.length)
+                console.log('play', sample.scheduleTime, sample.length * BeatMachine.secondsPerBeat)
 
-                sample.sound.playFrequent(time + (sample.length * BeatMachine.secondsPerBeat))
+                sample.sound.play(sample.length * BeatMachine.secondsPerBeat)
+                sample.sound.ctrl.playFrequent(sample.length * BeatMachine.secondsPerBeat)
             }
         })
     }

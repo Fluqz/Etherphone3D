@@ -30,29 +30,11 @@ export class Theremin3D {
         this.obj = new Object3D()
         this.obj.name = 'theremin.3D'
 
-        // let geo = new CircleBufferGeometry(1000, 100)
-        // let mat = new MeshPhongMaterial({
-        //     color: 0xa3d1c2,
-        //     reflectivity: 0
-        // })
-        // let mesh = new Mesh(geo, mat)
-        // mesh.rotateX(-Math.PI / 2)
 
-        // SceneManager.scene.add(mesh)
+        this.theremin.sounds.forEach(sound => {
 
-        // ctrl.sounds.forEach((sound, i) => {
-
-        //     if(sound instanceof Note) {
-
-        //         let note = sound as Note
-
-        //         this.sounds3D.push(new Note3D(note))
-
-        //         this.objs.push(this.sounds3D[i].obj)
-        //     }
-        // })
-
-        // new Grid3D(this.theremin.X.max, 10, this.theremin.Y.max, 5)
+            this.addSound3D(sound)
+        })
     }
 
 
@@ -82,7 +64,7 @@ export class Theremin3D {
         return null
     }
 
-    public addSoundEntity3D(Sound: Sound) {
+    public addSound3D(Sound: Sound) : Note3D {
 
         let note = Sound as Note
 
@@ -92,7 +74,26 @@ export class Theremin3D {
 
         this.objs.push(note3D.obj)
 
+        SceneManager.scene.add(note3D.obj)
+
         return note3D
+    }
+
+    public removeSound3D(sound: Sound3D) : boolean {
+
+        if(!sound) return false
+
+        let i = this.sounds3D.indexOf(sound)
+
+        if(i != -1) {
+
+            this.sounds3D.splice(i, 1)
+            SceneManager.scene.remove(sound.obj)
+            sound.destroy()
+            return true
+        }
+
+        return false
     }
 
     public groupNotesToChord(chord: Chord, _ses: Sound3D[]) : Chord3D {
@@ -119,6 +120,15 @@ export class Theremin3D {
                     chord.removeNote(note)
                 }
             }
+        })
+    }
+
+    public reset() {
+
+        let sounds: Sound3D[] = []
+        this.sounds3D.forEach(sound => { sounds.push(sound)})
+        sounds.forEach(sound => {
+            this.removeSound3D(sound)
         })
     }
 }

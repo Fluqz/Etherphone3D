@@ -40,13 +40,13 @@ import { TrackView } from './track.component';
 
     <div id="timeline-wrapper">
 
-        <div id="timeline-pointer" [style.left]=""></div>
+        <div id="timeline-pointer" [style.left]="0"></div>
 
         <div id="timeline">
             <div *ngFor="let beat of beatsArray" class="beat-marking" [style.left.%]="beat*(100/beats)"></div>
         </div>
         
-        <div>
+        <div id="tracks-wrapper">
           <track #tracks *ngFor="let sound of sounds" [sound]="sound" [beats]="beats" class="track-timeline" />
         </div>
 
@@ -104,6 +104,15 @@ import { TrackView } from './track.component';
       width: 1px;
       height: 100%;
       background-color: #000;
+    }
+
+    #tracks-wrapper {
+
+      overflow-x: hidden;
+      overflow-y: auto;
+      max-height: 150px;
+      height: 100%;
+      width: 100%
     }
 
 

@@ -1,9 +1,7 @@
 import { Sound } from './sound-entity'
-import { Vector3, Color, ReverseSubtractEquation } from 'three'
+import { Vector3, Color } from 'three'
 import { Theremin } from './theremin'
-
-import '../effects/effects'
-import { reverb } from '../effects/effects'
+import { NullTemplateVisitor } from '@angular/compiler'
 
 export class Note extends Sound{
     
@@ -15,6 +13,9 @@ export class Note extends Sound{
     public audioContext: AudioContext
     public gainNode: GainNode
     public osc: OscillatorNode
+    public wave: string
+
+    private _volume: number
 
     public isPlaying: boolean = false
     public muted: boolean = false
@@ -30,6 +31,7 @@ export class Note extends Sound{
 
     public get volume() : number { return this.gainNode.gain.value }
     public set volume(val: number) { 
+        this._volume = val
         this.gainNode.gain.setValueAtTime(val, this.audioContext.currentTime)
     }
 
@@ -42,11 +44,12 @@ export class Note extends Sound{
         this.id = Math.random() * 100 + new Date().getTime()
         this.type = 'note'
         this.parent = null
+        this.color = new Color().setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 );
 
         this.gainNode = this.audioContext.createGain()
 
         this.osc = this.audioContext.createOscillator()
-        this.osc.type = 'sine'
+        this.osc.type = this.wave = 'sine'
         this.osc.connect(this.gainNode)
         this.gainNode.connect(this.audioContext.destination)
 
@@ -75,9 +78,30 @@ export class Note extends Sound{
 
     public destroy() {
 
-        this.osc.disconnect()
+        // this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, this.audioContext.currentTime)
 
-        this.gainNode.disconnect()
+        // this.gainNode.gain.exponentialRampToValueAtTime(.0000001, length + .03)
+
+        window.setTimeout(()=> {
+
+            this.osc.disconnect()
+            this.gainNode.disconnect()
+            
+            this.gainNode = null
+            this.osc = null
+        }, 40)
+
+
+
+        this.wave = null
+        this._volume = null
+        this.color = null
+        this.parent = null
+        this.position = null
+        this.type = null
+        this.id = null
+        this.isPlaying = null
+        this.muted = null
     }
     
     public play() {
@@ -108,7 +132,7 @@ export class Note extends Sound{
 
         // this.gainNode.gain.exponentialRampToValueAtTime(.0001, length + .03)
 
-        this.osc.stop(length + .03)
+        this.osc.stop(this.audioContext.currentTime + length + .03)
     }
 
     public stop() {
@@ -117,9 +141,9 @@ export class Note extends Sound{
 
         if(!this.osc) return
 
-        this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, this.audioContext.currentTime)
+        // this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, this.audioContext.currentTime)
 
-        this.gainNode.gain.exponentialRampToValueAtTime(.0001, this.audioContext.currentTime + .03)
+        // this.gainNode.gain.exponentialRampToValueAtTime(.0001, this.audioContext.currentTime + .03)
 
         this.osc.stop(this.audioContext.currentTime + .03)
     }
@@ -128,7 +152,9 @@ export class Note extends Sound{
 
         this.muted = true
 
-        this.osc.stop()
+        this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, this.audioContext.currentTime)
+
+        this.gainNode.gain.exponentialRampToValueAtTime(.0001, this.audioContext.currentTime + .03)
     }
 
     public addReverb() {
@@ -139,6 +165,30 @@ export class Note extends Sound{
 
         this.muted = false
 
-        this.osc.start()
+        this.gainNode.gain.setValueAtTime(this._volume, this.audioContext.currentTime)
+    }
+
+    public serializeOut() {
+
+        return {
+            id: this.id,
+            color: this.color.getHex(),
+            frequency: this.frequency,
+            volume: this.volume,
+            wave: this.wave,
+            position: this.position,
+            parent: this.parent
+        }
+    }
+
+    public serializeIn(obj: {}) {
+
+        this.id = obj['id']
+        this.color.setHex(obj['color'])
+        this.frequency = obj['frequency']
+        this.volume = obj['volume']
+        this.wave = obj['wave']
+        this.position.set(obj['position']['x'], obj['position']['y'], obj['position']['z'])
+        this.parent = null
     }
 }

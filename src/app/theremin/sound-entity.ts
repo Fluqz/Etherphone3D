@@ -35,4 +35,8 @@ export abstract class Sound {
     public abstract play()
     public abstract playFrequent(length:number)
     public abstract stop()
+    public abstract destroy()
+
+    public abstract serializeOut()
+    public abstract serializeIn(file: {})
 } 

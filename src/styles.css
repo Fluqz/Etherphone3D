@@ -3,6 +3,7 @@
     padding: 0px; 
     box-sizing: border-box;
     font-family: 'Courier New', Courier, monospace;
+    color: #FFFFFF;
 }
 
 body { overflow: hidden;}
@@ -55,6 +56,16 @@ option {
     color: #FFFFFF;
 }
 
+.btn.b {
+
+    width: auto;
+}
+
+.btn.gap-r {
+
+    margin-right: 5px;
+}
+
 .btn.play {
     background: url('./assets/images/play.svg');
     background-size: 70%;
@@ -74,19 +85,16 @@ option {
     background-position: center center;
 }
 
-
-
-
-#obj-menu {
+#ui-wrapper {
 
     position: absolute;
 
     bottom: 0px;
 
     width: 100%;
-
-    color: #fefefe;
+    height: auto;
 }
+
 
 
 .drag-bar {

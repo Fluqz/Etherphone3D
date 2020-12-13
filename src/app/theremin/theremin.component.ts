@@ -8,10 +8,12 @@ import { Theremin3D } from './theremin3D'
 @Component({
     selector: 'theremin',
     template: `
-    
-        <div class="btn add" (click)="addOsc()"></div>
 
-        <label for="x">X</label>
+        <div class="btn" (click)="reset()">New</div>
+
+        <div class="btn" (click)="addOsc()">Plus</div>
+
+        <!--<label for="x">X</label>
         <select name="x">
             <option *ngFor="let b of behaviours; let i = index" value="i">{{ b.name }}</option>
         </select>
@@ -24,11 +26,11 @@ import { Theremin3D } from './theremin3D'
         <label for="z">Z</label>
         <select name="z">
             <option *ngFor="let b of behaviours; let i = index" value="i">{{ b.name }}</option>
-        </select>
+        </select>-->
         
-        <button (click)="toggleMemoryLabel()">Memory Label</button>
-        <button (click)="toggleDistanceLabel()">Distance Label</button>
-        <button (click)="toggleAxesLabel()">Axes Label</button>
+        <div class="btn b gap-r" (click)="toggleMemoryLabel()">Memory Label</div>
+        <div class="btn b gap-r" (click)="toggleDistanceLabel()">Distance Label</div>
+        <div class="btn b gap-r" (click)="toggleAxesLabel()">Axes Label</div>
 
     `,
     styles: [
@@ -39,41 +41,45 @@ import { Theremin3D } from './theremin3D'
     
   })
   export class ThereminView {
-  
-      @Input('theremin') public theremin: Theremin
-      @Input('theremin3D') public theremin3D: Theremin3D
-  
-      private host: HTMLElement
+
+    @Input('theremin') public theremin: Theremin
+    @Input('theremin3D') public theremin3D: Theremin3D
+
+    private host: HTMLElement
 
 
-      constructor(private hostRef:ElementRef) {
-  
-        this.host = this.hostRef.nativeElement
-  
-      }
+    constructor(private hostRef:ElementRef) {
 
-      get behaviours() { return Theremin.axesBehaviours }
+    this.host = this.hostRef.nativeElement
 
-      getBehaviourByAxis(axis: Axis) {
+    }
 
-        for(let b of Theremin.axesBehaviours) {
+    get behaviours() { return Theremin.axesBehaviours }
 
-            if(b.axis == axis) return b
-        }
-      }
+    getBehaviourByAxis(axis: Axis) {
 
+    for(let b of Theremin.axesBehaviours) {
 
-  
-      ngAfterViewInit() {
-  
-      }
+        if(b.axis == axis) return b
+    }
+    }
 
 
+
+    ngAfterViewInit() {
+
+    }
+
+    public reset() {
+
+        this.theremin3D.reset()
+        this.theremin.reset()
+    }
       
     public addOsc(frequency?: number, cb?: Function) {
 
         let note = this.theremin.addNote(frequency == undefined ? 100 : frequency)
-        let note3D = this.theremin3D.addSoundEntity3D(note)
+        let note3D = this.theremin3D.addSound3D(note)
 
         if(cb) cb(note3D)
     }

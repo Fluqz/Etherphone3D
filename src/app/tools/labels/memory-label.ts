@@ -44,8 +44,11 @@ export class MemoryLabel {
 
         this.obj.visible = val
 
-        this.start.copy(this.SE.ctrl.position)
-        this.storedStart.copy(this.SE.ctrl.position)
+        if(val) {
+
+            this.start.copy(this.SE.ctrl.position)
+            this.storedStart.copy(this.SE.ctrl.position)
+        }
 
         this.update()
     }

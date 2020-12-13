@@ -4,6 +4,9 @@ import { Theremin3D } from '../theremin/theremin3D';
 import { Sound3D } from '../theremin/sound-entity-3d';
 import { Chord3D } from '../theremin/chord3D';
 import { Note3D } from '../theremin/note3D';
+import { Sound } from '../theremin/sound-entity';
+import { Note } from '../theremin/note';
+import { Theremin } from '../theremin/theremin';
 
 
 
@@ -20,6 +23,8 @@ import { Note3D } from '../theremin/note3D';
           <div *ngIf="isNote(sound)" [id]="sound.ctrl.id" (click)="selectSound($event, sound)" class="dashboard-item" [class.active]="selectedSound == sound">
               Note
               <div  class="dashboard-item-inner">{{sound.ctrl.id}}</div>
+              <div class="btn mute" (click)="toggleMute(sound)">M</div>
+              <div class="btn delete" (click)="delete(sound)">X</div>
               
           </div>
           
@@ -63,6 +68,10 @@ import { Note3D } from '../theremin/note3D';
         width: 100%;
         height: auto;
 
+        max-height: 150px;
+
+        overflow-y: auto;
+
         padding: 5px;
     }
 
@@ -81,53 +90,68 @@ import { Note3D } from '../theremin/note3D';
 })
 export class Dashboard implements AfterViewInit{
 
-    private host: HTMLElement
+  @Input('theremin') public theremin: Theremin
+  @Input('theremin3D') public theremin3D: Theremin3D
 
-    private _selectedSound: Sound3D
-    public set selectedSound(val: Sound3D) {
+  private host: HTMLElement
 
-      this._selectedSound = val
-      ObjectControl.selectedObj = val.obj
+  private _selectedSound: Sound3D
+  public set selectedSound(val: Sound3D) {
+
+    this._selectedSound = val
+    ObjectControl.selectedObj = val.obj
+  }
+  public get selectedSound() {
+
+    if(ObjectControl.selected != null) return ObjectControl.selected 
+
+    return this._selectedSound = null
+  }
+
+  public get sounds() { return this.theremin3D.sounds3D }
+
+  constructor(private hostRef:ElementRef) {
+
+    this.host = this.hostRef.nativeElement
+  }
+
+  ngAfterViewInit() {
+
+  }
+
+
+  public selectSound(e, sound: Sound3D) {
+
+    if(sound instanceof Chord3D) {
+
+      let dashItem = document.querySelectorAll('dashboard-item')
+
+      dashItem.forEach(item => {
+
+        if(item.getAttribute('id') == sound.ctrl.id.toString()) {
+
+
+        }
+      })
     }
-    public get selectedSound() {
 
-      if(ObjectControl.selected != null) return ObjectControl.selected 
+    this.selectedSound = sound
+  }
 
-      return this._selectedSound = null
-    }
+  public toggleMute(sound: Sound3D) {
 
-    public get sounds() { return Theremin3D.instance.sounds3D }
+    if(sound.ctrl.muted) sound.ctrl.unmute()
+    else sound.ctrl.mute()
+  }
 
-    constructor(private hostRef:ElementRef) {
+  public delete(sound: Sound3D) {
 
-      this.host = this.hostRef.nativeElement
-    }
+    this.theremin3D.removeSound3D(sound)
 
-    ngAfterViewInit() {
+    this.theremin.deleteNote(sound.ctrl)
+  }
 
-    }
-
-
-    public selectSound(e, sound: Sound3D) {
-
-      if(sound instanceof Chord3D) {
-
-        let dashItem = document.querySelectorAll('dashboard-item')
-
-        dashItem.forEach(item => {
-
-          if(item.getAttribute('id') == sound.ctrl.id.toString()) {
-
-
-          }
-        })
-      }
-
-      this.selectedSound = sound
-    }
-
-
-    public isNote(sound: Sound3D) { return sound instanceof Note3D }
-    public isChord(sound: Sound3D) { return sound instanceof Chord3D }
-    public getSoundAsChord(sound: Sound3D) { return sound as Chord3D }
+  public isNote(sound: Sound3D) { return sound instanceof Note3D }
+  public isChord(sound: Sound3D) { return sound instanceof Chord3D }
+  public getSoundAsChord(sound: Sound3D) { return sound as Chord3D }
 }  
