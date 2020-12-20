@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, Input, ViewChildren } from '@angular/core';
 import { Sound3D } from '../theremin/sound-entity-3d';
+import { Theremin } from '../theremin/theremin';
 import { Theremin3D } from '../theremin/theremin3D';
 import { BeatMachine } from './beat-machine';
 import { Sample } from './sample';
@@ -40,7 +41,7 @@ import { TrackView } from './track.component';
 
     <div id="timeline-wrapper">
 
-        <div id="timeline-pointer" [style.left]="0"></div>
+        <div id="timeline-pointer" [style.left.%]="time"></div>
 
         <div id="timeline">
             <div *ngFor="let beat of beatsArray" class="beat-marking" [style.left.%]="beat*(100/beats)"></div>
@@ -175,6 +176,12 @@ export class BeatMachineView implements AfterViewInit {
       })
       
       return sounds
+  }
+
+  public get time() {
+
+    // console.log ((BeatMachine.currentNote * 100 ) / BeatMachine.beats)
+    return (BeatMachine.currentNote * 100 ) / BeatMachine.beats
   }
 
   // public get currentBeat() { return BeatMachine.currentNote }

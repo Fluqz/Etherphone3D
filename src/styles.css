@@ -49,8 +49,11 @@ option {
 
     cursor: pointer;
 
-    width: 30px;
+    min-width:  30px;
+    width: auto;
     height: 30px;
+
+    margin-right: 5px;
 
     background-color: transparent;
     color: #FFFFFF;
@@ -61,6 +64,9 @@ option {
     width: auto;
 }
 
+.btn.no-gap {
+    margin: 0px;
+}
 .btn.gap-r {
 
     margin-right: 5px;

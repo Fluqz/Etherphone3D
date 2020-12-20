@@ -6,7 +6,7 @@ export class BeatMachine {
 
     private static _instance: BeatMachine
     public static bpm:number = 200
-    public static beats:number = 8
+    public static beats:number = 16
     public static noteDuration:string = '1'
 
     public static masterNode: GainNode
@@ -22,6 +22,9 @@ export class BeatMachine {
     public static nextNoteTime = 0 // 1/4 Note
 
     public static secondsPerBeat: number = 0
+
+    public static startTime: number = 0
+    public static time: number = 0
 
     constructor() {
         
@@ -59,7 +62,11 @@ export class BeatMachine {
 
         if(samples != null) BeatMachine.samplesInQueue = samples
 
+        if(BeatMachine.isPlaying) BeatMachine.stop()
+
         BeatMachine.isPlaying = true
+
+        BeatMachine.startTime = Theremin.audioContext.currentTime
 
         // check if context is in suspended state (autoplay policy)
         if (Theremin.audioContext.state === 'suspended') {
@@ -89,13 +96,13 @@ export class BeatMachine {
     
     private static scheduleNote(beatNumber: number, time: number) {
 
-        console.log(beatNumber, time)
+        // console.log(beatNumber, time)
 
         BeatMachine.samplesInQueue.forEach(sample => {
 
             if(sample.scheduleTime == beatNumber) {
 
-                console.log('play', sample.scheduleTime, sample.length * BeatMachine.secondsPerBeat)
+                // console.log('play', sample.scheduleTime, sample.length * BeatMachine.secondsPerBeat)
 
                 sample.sound.play(sample.length * BeatMachine.secondsPerBeat)
                 sample.sound.ctrl.playFrequent(sample.length * BeatMachine.secondsPerBeat)
@@ -107,6 +114,8 @@ export class BeatMachine {
     public static scheduler() {
         
         while(BeatMachine.nextNoteTime < Theremin.audioContext.currentTime + BeatMachine.scheduleAhead) {
+
+            BeatMachine.time = Theremin.audioContext.currentTime - BeatMachine.startTime
             BeatMachine.scheduleNote(BeatMachine.currentNote, BeatMachine.nextNoteTime)
             BeatMachine.nextNote()
             // console.log(BeatMachine.currentNote)

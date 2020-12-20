@@ -2,7 +2,17 @@
 <div id="selected-menu" *ngIf="selected">
 
     <div>
-        <h4> {{ selected.ctrl.type + ' id:' + selected.ctrl.id }}</h4>
+        <div> {{ selected.ctrl.type + ' id:' + selected.ctrl.id }}</div>
+
+        <label for="wave">Wave</label>
+        <select *ngIf="isNote" id="wave" name="wave" (change)="setWave($event.target.value)">
+            <option value="sine">Sine</option>
+            <option value="square">Square</option>
+            <option value="sawtooth">Sawtooth</option>
+            <option value="triangle">Triangle</option>
+        </select>
+
+
 <!-- 
         <label for="volume">Volume {{ selectedVolume }}</label>
         <input type="range" min="0" max="1" step=".01" class="slider" id="volume" name="volume" [(ngModel)]="selectedVolume">

@@ -1,4 +1,4 @@
-import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, MeshBasicMaterial, Color, Object3D } from 'three'
+import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, MeshBasicMaterial, Color, Object3D, MeshStandardMaterial } from 'three'
 import { Sound } from './sound-entity'
 import { Note } from './note'
 import { Sound3D } from './sound-entity-3d'
@@ -23,7 +23,7 @@ export class Note3D extends Sound3D{
 
         this.obj = new Mesh(
             new SphereBufferGeometry(2, 20, 20), 
-            new MeshBasicMaterial({
+            new MeshStandardMaterial({
                 color: this.ctrl.color,
             })
         )

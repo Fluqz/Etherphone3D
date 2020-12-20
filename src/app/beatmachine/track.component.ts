@@ -155,7 +155,7 @@ export class TrackView implements AfterViewInit{
   public createSample(length: number, scheduleTime: number) {
 
     let sample: Sample = {
-      id: Math.random() * 100,
+      id: this.sound.ctrl.id,
       sound: this.sound,
       scheduleTime: scheduleTime,
       length: 1

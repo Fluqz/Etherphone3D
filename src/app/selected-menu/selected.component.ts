@@ -7,6 +7,7 @@ import { Theremin3D } from '../theremin/theremin3D';
 import { Note } from '../theremin/note';
 import { Sound } from '../theremin/sound-entity';
 import { Theremin } from '../theremin/theremin';
+import { Note3D } from '../theremin/note3D';
 
 
 @Component({
@@ -34,7 +35,7 @@ export class Selected implements AfterViewInit {
   public get selected() { return ObjectControl.selected }
   public get selectedObjs() { return ObjectControl.selectedObjs }
 
-
+  public get isNote() { return this.selected instanceof Note3D }
 
 
 
@@ -53,9 +54,12 @@ export class Selected implements AfterViewInit {
 
   public changeVolume() {
 
-    
   }
 
+  public setWave(wave: OscillatorType) {
+
+    (this.selected.ctrl as Note).wave = wave
+  }
 
   public toggleMuteSelected() {
 

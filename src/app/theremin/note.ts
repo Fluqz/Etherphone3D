@@ -13,7 +13,7 @@ export class Note extends Sound{
     public audioContext: AudioContext
     public gainNode: GainNode
     public osc: OscillatorNode
-    public wave: string
+    public _wave: OscillatorType
 
     private _volume: number
 
@@ -30,11 +30,16 @@ export class Note extends Sound{
     }
 
     public get volume() : number { return this.gainNode.gain.value }
-    public set volume(val: number) { 
+    public set volume(val: number) {
         this._volume = val
         this.gainNode.gain.setValueAtTime(val, this.audioContext.currentTime)
     }
 
+    public get wave() : OscillatorType { return this._wave }
+    public set wave(val: OscillatorType) { 
+        this._wave = val
+        if(val && this.osc) this.osc.type = this._wave
+    }
 
     constructor(context: AudioContext) {
         super()
@@ -122,7 +127,7 @@ export class Note extends Sound{
         this.osc.disconnect()
 
         this.osc = this.audioContext.createOscillator()
-        this.osc.type = 'sine'
+        this.osc.type = this.wave
         this.osc.connect(this.gainNode)
         Theremin.instance.updateSound(this)
 

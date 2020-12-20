@@ -16,7 +16,7 @@ import { BeatMachine } from './beatmachine/beat-machine';
     <div id="webGL"></div>
 
 
-    <div *ngIf="!UIHidden" id="ui-wrapper" (mouseenter)="mouseenterUI()" (mouseleave)="mouseenterUI()">
+    <div *ngIf="true" id="ui-wrapper" (mouseenter)="mouseenterUI()" (mouseleave)="mouseenterUI()">
 
       <div>
 
@@ -61,6 +61,8 @@ export class AppComponent implements AfterViewInit, OnDestroy{
   private mouseDownEvent: any
   private mouseUpEvent: any
   private mouseMovevent: any
+  private keydownEvent: any
+  private keyupEvent: any
   private resizeEvent: any
 
   private dragWindow: DragWindow
@@ -110,6 +112,13 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     
     this.mouseMovevent = this.onMouseMove.bind(this)
     document.addEventListener('mousemove', this.mouseMovevent, false)
+
+    
+    this.keydownEvent = this.onkeydown.bind(this)
+    document.addEventListener('keydown', this.keydownEvent, false)
+
+    this.keyupEvent = this.onkeyup.bind(this)
+    document.addEventListener('keyup', this.keyupEvent, false)
   }
 
   private loop() {
@@ -167,6 +176,26 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     this.dragWindow.onMouseUp(e)
   }
 
+  
+  public onkeydown(e) {
+
+
+  }
+
+  
+  public onkeyup(e: KeyboardEvent) {
+
+    console.log(e)
+    if(e.key == ' ' && e.code == 'Space') {
+
+      this.theremin.toggleOnOff()
+    }
+    else if(e.key == 'p' && e.code == 'KeyP') {
+
+      this.theremin.toggleOnOff()
+    }
+  }
+
 
   public onResize() {
 
@@ -190,7 +219,9 @@ export class AppComponent implements AfterViewInit, OnDestroy{
   }
 
   private serializeOut() {
-    
+
+    let samples: {}[] = []
+
     let obj: {} = {
       theremin: this.theremin.serializeOut(),
       beatmachine: {

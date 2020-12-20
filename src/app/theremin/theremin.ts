@@ -161,7 +161,9 @@ export class Theremin {
         if(Theremin.z) Theremin.z.updateSound(sound)
     }
 
-    public toggleOnOff(play: boolean) {
+    public toggleOnOff(play?: boolean) {
+
+        if(play == undefined) play = !this.isPlaying
 
         this.isPlaying = play
 

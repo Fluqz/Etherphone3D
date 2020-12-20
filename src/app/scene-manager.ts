@@ -88,6 +88,8 @@ export class SceneManager {
         this.createAxes()
         // this.createEnvironment()
         this.createLight()
+
+        this.addCubeMap()
     }
 
     public static get currentCamera(){
@@ -196,6 +198,19 @@ export class SceneManager {
         SceneManager.scene.add(hemi)
     }
 
+    private addCubeMap() {
+
+        SceneManager.scene.background = new THREE.CubeTextureLoader()
+            .setPath( '/assets/images/milky-way/' )
+            .load( [
+                'px.png',
+                'nx.png',
+                'py.png',
+                'ny.png',
+                'pz.png',
+                'nz.png'
+            ] );
+    }
 
     public update() {
 
