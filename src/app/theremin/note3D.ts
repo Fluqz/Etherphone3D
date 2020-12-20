@@ -1,4 +1,4 @@
-import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, MeshBasicMaterial, Color, Object3D, MeshStandardMaterial } from 'three'
+import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, MeshBasicMaterial, Color, Object3D, MeshStandardMaterial, ShaderMaterial, Clock } from 'three'
 import { Sound } from './sound-entity'
 import { Note } from './note'
 import { Sound3D } from './sound-entity-3d'
@@ -7,6 +7,11 @@ import { MemoryLabel } from '../tools/labels/memory-label'
 import { AxesLabel } from '../tools/labels/axes-label'
 import { SceneManager } from '../scene-manager'
 import { Tools } from '../tools/tools'
+import { LoadingManager } from '../tools/loading-manager'
+
+import { FragmentShader } from '../shaders/fragment-shaders'
+import { VertexShader } from '../shaders/vertex-shaders'
+import { Theremin } from './theremin'
 
 export class Note3D extends Sound3D{
 
@@ -32,6 +37,7 @@ export class Note3D extends Sound3D{
 
         this.obj.position.copy(this.ctrl.position)
 
+
         this.distanceLabel = new DistanceLabel(this)
         this.memoryLabel = new MemoryLabel(this)
         this.axesLabel = new AxesLabel(this)
@@ -39,6 +45,35 @@ export class Note3D extends Sound3D{
         this.distanceLabel.enabled = false
         this.memoryLabel.enabled = false
         this.axesLabel.enabled = true
+
+        
+        // LoadingManager.loadGLTF('/assets/models/shape.glb', (gltf)=> {
+            
+        //     const uniform = {
+        //         uColor : {
+        //             value: new Color(1, 1, 0)
+        //         },
+        //         time: {
+        //             type: 'f',
+        //             value: Theremin.audioContext.currentTime
+        //         }
+        //     }
+
+        //     this.obj.geometry = gltf.children[0].geometry
+        //     this.obj.material = new ShaderMaterial({
+        //         // wireframe: true,
+        //         uniforms: uniform,
+        //         vertexShader: VertexShader.distortion,
+        //         fragmentShader: FragmentShader.meshbasicmaterial
+        //     })
+        // })
+    }
+
+    public update() {
+
+        if(this.obj && this.obj.material['uniforms'])
+            this.obj.material['uniforms'].time.value = Theremin.audioContext.currentTime
+
     }
 
     public move(moveTo: Vector3, X?: boolean, Y?: boolean, Z?: boolean) {

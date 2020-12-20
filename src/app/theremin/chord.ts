@@ -52,7 +52,7 @@ export class Chord extends Sound {
             sound.gainNode.connect(this.gainNode)
         })
 
-        this.gainNode.connect(this.audioContext.destination)
+        this.gainNode.connect(Theremin.masterVolume)
 
         this.volume = 1 // VOLUME EQUALS THE INITIAL Y POSITION OF 3D OBJ
         

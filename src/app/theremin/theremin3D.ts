@@ -38,6 +38,13 @@ export class Theremin3D {
     }
 
 
+    public update() {
+
+        for(let sound of this.sounds3D) { sound.update()}
+    }
+
+
+
     public getNoteByObj(obj: Object3D) : Sound3D {
        
         for(let i = 0; i < this.sounds3D.length; i++) {

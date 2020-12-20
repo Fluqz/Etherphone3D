@@ -56,7 +56,7 @@ export class Note extends Sound{
         this.osc = this.audioContext.createOscillator()
         this.osc.type = this.wave = 'sine'
         this.osc.connect(this.gainNode)
-        this.gainNode.connect(this.audioContext.destination)
+        this.gainNode.connect(Theremin.masterVolume)
 
         this.volume = .25
 
@@ -64,6 +64,7 @@ export class Note extends Sound{
 
         this.position = new Vector3(0, 0, 0)
     }
+    public update() {}
 
     // public createOsc() {
 

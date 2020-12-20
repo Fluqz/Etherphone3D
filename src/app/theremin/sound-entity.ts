@@ -29,7 +29,7 @@ export abstract class Sound {
     // public abstract set setSustain(sustain: number)
     // public abstract set setRelease(release: number)
 
-    public update() {}
+    public abstract update() 
     public abstract mute()
     public abstract unmute()
     public abstract play()

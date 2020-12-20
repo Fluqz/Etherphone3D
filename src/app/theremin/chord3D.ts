@@ -64,6 +64,7 @@ export class Chord3D extends Sound3D{
     }
 
 
+    public update() {}
     
     public move(moveTo: Vector3, X?: boolean, Y?: boolean, Z?: boolean) {
 

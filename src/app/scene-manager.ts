@@ -72,7 +72,7 @@ export class SceneManager {
         this.container.append(SceneManager.renderer.domElement)
 
         SceneManager.perspective = new THREE.PerspectiveCamera(50, SceneManager.w / SceneManager.h, .1, 10000)
-        SceneManager.perspective.position.set(90, 90, 90)
+        SceneManager.perspective.position.set(50, 50, 50)
 
         SceneManager.orthographic = new THREE.OrthographicCamera(SceneManager.w / -2, SceneManager.w / 2, SceneManager.h / 2, SceneManager.h / -2, .1, 1000)
         SceneManager.orthographic.position.set(0, 0, 5)
@@ -86,10 +86,9 @@ export class SceneManager {
         SceneManager.orbitCamera = SceneManager.perspective
 
         this.createAxes()
-        // this.createEnvironment()
         this.createLight()
 
-        this.addCubeMap()
+        // this.addCubeMap()
     }
 
     public static get currentCamera(){
@@ -153,43 +152,6 @@ export class SceneManager {
         SceneManager.scene.add(this.z)
     }
     
-    public createEnvironment() {
-
-        // let sGeo = new THREE.SphereBufferGeometry(1000, 1000, 1000)
-        // let sMat = new THREE.MeshStandardMaterial({
-        //     color: Color.BG,
-        //     metalness: .1,
-        //     roughness: .1,
-        //     side: THREE.DoubleSide
-        // })
-        // this.sphere = new THREE.Mesh(sGeo, sMat)
-        // SceneManager.scene.add(this.sphere)
-
-        
-        let geo = new THREE.CircleBufferGeometry(1000, 100)
-        geo.rotateX(-Math.PI / 2)
-        let mat = new THREE.MeshBasicMaterial({ visible: false })
-
-        this.xzPlane = new THREE.Mesh(geo, mat)
-        this.xzPlane.name = 'xz'
-
-        this.yzPlane = this.xzPlane.clone()
-        this.yzPlane.name = 'yz'
-        this.yzPlane.rotateX(-Math.PI / 2)
-
-        this.xyPlane = this.xzPlane.clone()
-        this.xyPlane.name = 'xy'
-        this.xyPlane.rotateZ(-Math.PI / 2)
-
-
-        SceneManager.scene.add(this.xzPlane)
-        SceneManager.scene.add(this.yzPlane)
-        SceneManager.scene.add(this.xyPlane)
-
-        SceneManager.environmentObjs.push(this.xzPlane)
-        SceneManager.environmentObjs.push(this.yzPlane)
-        SceneManager.environmentObjs.push(this.xyPlane)
-    }
         
 
     private createLight() {

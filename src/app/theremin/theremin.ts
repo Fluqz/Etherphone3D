@@ -14,8 +14,9 @@ export class Theremin {
 
     static instance: Theremin
 
-    masterVolume: GainNode
+    static masterVolume: GainNode
     storedVolume: number
+    private muted: boolean = false
 
     public static audioContext: AudioContext
 
@@ -57,16 +58,23 @@ export class Theremin {
 
         Theremin.audioContext = new AudioContext()
 
-        this.masterVolume = Theremin.audioContext.createGain()
+        Theremin.masterVolume = Theremin.audioContext.createGain()
 
-        this.masterVolume.gain.value = .3
-        this.masterVolume.connect(Theremin.audioContext.destination)
-        this.storedVolume = this.masterVolume.gain.value
+        Theremin.masterVolume.gain.value = .3
+        Theremin.masterVolume.connect(Theremin.audioContext.destination)
+        this.storedVolume = Theremin.masterVolume.gain.value
 
         Theremin.x = new FrequencyShift()
         Theremin.y = new VolumeShift()
         Theremin.z = new Octivator()
     }
+
+
+    public update() {
+
+        for(let sound of this.sounds) { sound.update() }
+    }
+
 
     public setAxisbehaviour(axis: string, behaviour: AxesBehaviour) {
 
@@ -80,7 +88,7 @@ export class Theremin {
         sounds.forEach(sound => this.deleteNote(sound))
 
         this.sounds = []
-        this.masterVolume.gain.setValueAtTime(.8, Theremin.audioContext.currentTime)
+        Theremin.masterVolume.gain.setValueAtTime(.8, Theremin.audioContext.currentTime)
 
         Theremin.x = new FrequencyShift()
         Theremin.y = new VolumeShift()
@@ -161,6 +169,13 @@ export class Theremin {
         if(Theremin.z) Theremin.z.updateSound(sound)
     }
 
+    public mute() {
+
+        this.muted = true
+
+        Theremin.masterVolume.gain.setValueAtTime(0, Theremin.audioContext.currentTime)
+    }
+
     public toggleOnOff(play?: boolean) {
 
         if(play == undefined) play = !this.isPlaying
@@ -171,11 +186,11 @@ export class Theremin {
 
             if(play) {
 
-                sound.gainNode.gain.setValueAtTime(0, Theremin.audioContext.currentTime)
+                Theremin.masterVolume.gain.setValueAtTime(this.storedVolume, Theremin.audioContext.currentTime)
             }
             else {
-                
-                sound.gainNode.gain.setValueAtTime(this.storedVolume, Theremin.audioContext.currentTime)
+
+                Theremin.masterVolume.gain.setValueAtTime(0, Theremin.audioContext.currentTime)
             }
         })
     }
@@ -193,7 +208,7 @@ export class Theremin {
 
         return {
             sounds: _sounds,
-            masterVolume: this.masterVolume.gain.value,
+            masterVolume: Theremin.masterVolume.gain.value,
             x: Theremin.x.name,
             y: Theremin.y.name,
             z: Theremin.z.name,
@@ -215,7 +230,7 @@ export class Theremin {
         }
 
         if(obj['masterVolume']) 
-            this.masterVolume.gain.setValueAtTime(obj['masterVolume'], Theremin.audioContext.currentTime)
+            Theremin.masterVolume.gain.setValueAtTime(obj['masterVolume'], Theremin.audioContext.currentTime)
 
         if(obj['x']) {
 

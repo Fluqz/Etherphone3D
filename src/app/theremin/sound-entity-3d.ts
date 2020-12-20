@@ -13,6 +13,7 @@ export abstract class Sound3D {
     public abstract memoryLabel: MemoryLabel
     public abstract axesLabel: AxesLabel
 
+    public abstract update() 
     public abstract move(moveTo: Vector3, X?: boolean, Y?: boolean, Z?: boolean)
     public abstract select() 
     public abstract unselect() 

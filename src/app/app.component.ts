@@ -84,6 +84,7 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     window.setTimeout(()=>{
 
       this.theremin = new Theremin()
+      this.theremin.toggleOnOff(false)
       
       this.serializeIn(Storage.load())
 
@@ -126,6 +127,9 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     requestAnimationFrame(this.loop.bind(this))
 
     this.sm.update()
+
+    this.theremin.update()
+    this.theremin3D.update()
   }
 
 
