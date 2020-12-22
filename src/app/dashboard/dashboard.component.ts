@@ -1,10 +1,7 @@
 import { Component, AfterViewInit, ElementRef, Input } from '@angular/core';
 import { ObjectControl } from '../object-control';
 import { Theremin3D } from '../theremin/theremin3D';
-import { Sound3D } from '../theremin/sound-entity-3d';
-import { Chord3D } from '../theremin/chord3D';
 import { Note3D } from '../theremin/note3D';
-import { Sound } from '../theremin/sound-entity';
 import { Note } from '../theremin/note';
 import { Theremin } from '../theremin/theremin';
 
@@ -18,32 +15,16 @@ import { Theremin } from '../theremin/theremin';
 
   <div class="dashboard-cont">
 
-      <div *ngFor="let sound of sounds">
+      <div *ngFor="let note of notes">
 
-          <div *ngIf="isNote(sound)" [id]="sound.ctrl.id" (click)="selectSound($event, sound)" class="dashboard-item" [class.active]="selectedSound == sound">
+          <div *ngIf="isNote(note)" [id]="note.ctrl.id" (click)="selectNote($event, note)" class="dashboard-item" [class.active]="selectedNote == note">
               Note
-              <div  class="dashboard-item-inner">{{sound.ctrl.id}}</div>
-              <div class="btn mute" (click)="toggleMute(sound)">M</div>
-              <div class="btn delete" (click)="delete(sound)">X</div>
+              <div  class="dashboard-item-inner">{{note.ctrl.id}}</div>
+              <div class="btn mute" (click)="toggleMute(note)">M</div>
+              <div class="btn delete" (click)="delete(note)">X</div>
               
           </div>
           
-          <div *ngIf="isChord(sound)" [id]="sound.ctrl.id" (click)="selectSound($event, sound)" class="dashboard-item" [class.active]="selectedSound == sound">
-              Chord
-              <div  class="dashboard-item-inner">{{sound.ctrl.id}}</div>
-                          
-          </div>
-
-          <div *ngIf="isChord(sound)">
-
-              <div *ngFor="let chordNote of getSoundAsChord(sound).sounds3D"  (click)="selectSound($event, chordNote)" class="dashboard-item" [class.active]="selectedSound == chordNote">
-                  Note
-                  <div  class="dashboard-item-inner">{{chordNote.ctrl.id}}</div>
-
-              </div>
-
-          </div>
-
       </div>
       
   </div>
@@ -95,20 +76,20 @@ export class Dashboard implements AfterViewInit{
 
   private host: HTMLElement
 
-  private _selectedSound: Sound3D
-  public set selectedSound(val: Sound3D) {
+  private _selectedNote: Note3D
+  public set selectedNote(val: Note3D) {
 
-    this._selectedSound = val
+    this._selectedNote = val
     ObjectControl.selectedObj = val.obj
   }
-  public get selectedSound() {
+  public get selectedNote() {
 
     if(ObjectControl.selected != null) return ObjectControl.selected 
 
-    return this._selectedSound = null
+    return this._selectedNote = null
   }
 
-  public get sounds() { return this.theremin3D.sounds3D }
+  public get notes() { return this.theremin3D.notes3D }
 
   constructor(private hostRef:ElementRef) {
 
@@ -120,38 +101,23 @@ export class Dashboard implements AfterViewInit{
   }
 
 
-  public selectSound(e, sound: Sound3D) {
+  public selectNote(e, note: Note3D) {
 
-    if(sound instanceof Chord3D) {
-
-      let dashItem = document.querySelectorAll('dashboard-item')
-
-      dashItem.forEach(item => {
-
-        if(item.getAttribute('id') == sound.ctrl.id.toString()) {
-
-
-        }
-      })
-    }
-
-    this.selectedSound = sound
+    this.selectedNote = note
   }
 
-  public toggleMute(sound: Sound3D) {
+  public toggleMute(note: Note3D) {
 
-    if(sound.ctrl.muted) sound.ctrl.unmute()
-    else sound.ctrl.mute()
+    if(note.ctrl.muted) note.ctrl.unmute()
+    else note.ctrl.mute()
   }
 
-  public delete(sound: Sound3D) {
+  public delete(note: Note3D) {
 
-    this.theremin3D.removeSound3D(sound)
+    this.theremin3D.removeNote3D(note)
 
-    this.theremin.deleteNote(sound.ctrl)
+    this.theremin.deleteNote(note.ctrl)
   }
 
-  public isNote(sound: Sound3D) { return sound instanceof Note3D }
-  public isChord(sound: Sound3D) { return sound instanceof Chord3D }
-  public getSoundAsChord(sound: Sound3D) { return sound as Chord3D }
+  public isNote(note: Note3D) { return note instanceof Note3D }
 }  

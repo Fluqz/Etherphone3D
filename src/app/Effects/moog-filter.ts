@@ -10,7 +10,7 @@ import { Theremin } from '../theremin/theremin'
 //     public static create() {
 
 //         let bufferSize = 4096;
-//         let node = Theremin.audioContext.createScriptProcessor(bufferSize, 1, 1);
+//         let node = Tone.context.createScriptProcessor(bufferSize, 1, 1);
 //         let in1, in2, in3, in4, out1, out2, out3, out4;
 //         in1 = in2 = in3 = in4 = out1 = out2 = out3 = out4 = 0.0;
 //         node.cutoff = 0.065; // between 0.0 and 1.0

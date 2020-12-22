@@ -4,15 +4,15 @@ import * as THREE from 'three'
 import { ObjectControl } from '../object-control';
 import { Theremin3D } from '../theremin/theremin3D';
 import { Sample } from './sample';
-import { Sound } from '../theremin/sound-entity';
 import { BeatMachine } from './beat-machine';
-import { Sound3D } from '../theremin/sound-entity-3d';
+import { Note3D } from '../theremin/note3D';
+import { Tools } from '../tools/tools';
 
 @Component({
   selector: 'track',
   template: `
   
-    <div class="sound-title" [style.backgroundColor]="color">{{ sound.ctrl.type }}</div>
+    <div class="note-title" [style.backgroundColor]="color">{{ note.ctrl.type }}</div>
 
     <div class="creation-click-zone">
 
@@ -52,7 +52,7 @@ import { Sound3D } from '../theremin/sound-entity-3d';
         border-bottom: none;
     }
 
-    .sound-title {
+    .note-title {
         display: inline-block;
         width: 50px;
         height: 100%;
@@ -110,7 +110,7 @@ export class TrackView implements AfterViewInit{
 
   // @Input('objCtrl') objCtrl: ObjectControl 
   // @Input('theremin3D') theremin3D: Theremin3D
-  @Input('sound') public sound: Sound3D
+  @Input('note') public note: Note3D
 
   @Input('beats') public beats: number
 
@@ -136,13 +136,13 @@ export class TrackView implements AfterViewInit{
 
   get color() {
 
-    return '#' + this.sound.ctrl.color.getHexString()
+    return '#' + this.note.ctrl.color.getHexString()
   }
 
   ngAfterViewInit() {
 
 
-    console.log('track sound', this.sound)
+    console.log('track note', this.note)
 
     this.doubleClickEvent = this.onDoubleClick.bind(this)
     this.host.addEventListener('dblclick', this.doubleClickEvent, false)
@@ -155,8 +155,8 @@ export class TrackView implements AfterViewInit{
   public createSample(length: number, scheduleTime: number) {
 
     let sample: Sample = {
-      id: this.sound.ctrl.id,
-      sound: this.sound,
+      id: Tools.getUniqueID(),
+      note: this.note,
       scheduleTime: scheduleTime,
       length: 1
     }
@@ -209,7 +209,7 @@ export class TrackView implements AfterViewInit{
 
   private onClick(e) {
 
-    ObjectControl.selectedObj = this.sound.obj
+    ObjectControl.selectedObj = this.note.obj
   }
 
 

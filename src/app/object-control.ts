@@ -1,16 +1,15 @@
 import { Raycaster, Vector3, Object3D, Plane, Ray, Intersection, MOUSE, PerspectiveCamera, OrthographicCamera, Scene } from 'three'
 import { Theremin3D } from './theremin/theremin3D'
-import { Sound3D } from './theremin/sound-entity-3d'
-import { Note3D } from './theremin/note3D'
-import { Chord3D } from './theremin/chord3D'
 import { SceneManager } from './scene-manager'
+import { Note3D } from './theremin/note3D'
+import { Theremin } from './theremin/theremin'
 
 export class ObjectControl {
 
     private static theremin3D: Theremin3D
 
     public static selectedObjs: Object3D[] = []
-    public static selected: Sound3D
+    public static selected: Note3D
     public static _selectedObj: Object3D
 
     private mouseDown: boolean
@@ -44,6 +43,8 @@ export class ObjectControl {
         SceneManager.renderer.domElement.addEventListener('mousedown', this.onMouseDown.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('mouseup', this.onMouseUp.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('mousemove', this.onMouseMove.bind(this), false)
+
+        // document.addEventListener('mouseleave', this.onLeaveContainer.bind(this), false)
 
         SceneManager.renderer.domElement.addEventListener('touchstart', this.onTouchStart.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('touchend', this.onTouchEnd.bind(this), false)
@@ -110,20 +111,9 @@ export class ObjectControl {
     private collectRaycastObjs() {
         
         let objs: Object3D[] = []
-        ObjectControl.theremin3D.sounds3D.forEach(sound => {
+        ObjectControl.theremin3D.notes3D.forEach(note => {
 
-            if(sound instanceof Note3D) {
-
-                objs.push(sound.obj)
-            }
-            else if(sound instanceof Chord3D) {
-
-                objs.push(sound.obj)
-
-                sound.sounds3D.forEach(note => {
-                    objs.push(note.obj)
-                })
-            }
+            objs.push(note.obj)
         })
 
         return objs
@@ -250,23 +240,20 @@ export class ObjectControl {
         if(this.mouseDown) {
             
             // When selected calc position
-            if (ObjectControl.selectedObjs.length == 1 && ObjectControl.selected) {
+            if (ObjectControl.selectedObjs.length == 1 && ObjectControl.selected) { // MULTIPLE? WHY length = 1
 
                 // HIDE MENU
-
-
 
                 this.raycaster.ray.intersectPlane(this.plane, this.ip)
 
                 this.moveTo.copy(this.ip.sub(this.offset))
 
+                // if(this.XKey) this.moveTo.x = this.moveTo.x
+                // if(Y || Y == undefined) tmpPos.y = (moveTo.y)
+                // if(Z || Z == undefined) tmpPos.z = (moveTo.z)
+
                 // Move SELECTED
-                ObjectControl.selected.move(this.moveTo, this.XKey, this.YKey, this.ZKey)
-                // this.selectedObjs.position.copy(this.moveTo)
-                ObjectControl.theremin3D.theremin.updateSound(ObjectControl.selected.ctrl)
-
-
-
+                Theremin3D.moveNote(ObjectControl.selected, this.moveTo)
             }
         }
         else {
@@ -297,6 +284,13 @@ export class ObjectControl {
         this.onMouseMove(event)
     }
 
+    private onLeaveContainer() {
+
+        console.log('left')
+        ObjectControl.selected = null
+
+        this.mouseDown = false
+    }
 
     // onkeydown = onkeyup = {
     //     e = e || event; // to deal with IE

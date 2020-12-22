@@ -1,13 +1,13 @@
 import *  as THREE from 'three'
 
-import { Sound3D } from '../../theremin/sound-entity-3d'
 import { SceneManager } from '../../scene-manager'
 import { Color } from 'src/app/color'
+import { Note3D } from 'src/app/theremin/note3D'
 
 
 export class MemoryLabel {
 
-    private SE: Sound3D
+    private note: Note3D
 
     private storedStart: THREE.Vector3
 
@@ -24,9 +24,9 @@ export class MemoryLabel {
     private _enabled: boolean = false
 
 
-    constructor(_SE: Sound3D) {
+    constructor(note: Note3D) {
 
-        this.SE = _SE
+        this.note = note
 
         this.storedStart = new THREE.Vector3()
         this.start = new THREE.Vector3()
@@ -46,8 +46,8 @@ export class MemoryLabel {
 
         if(val) {
 
-            this.start.copy(this.SE.ctrl.position)
-            this.storedStart.copy(this.SE.ctrl.position)
+            this.start.copy(this.note.ctrl.position)
+            this.storedStart.copy(this.note.ctrl.position)
         }
 
         this.update()
@@ -61,7 +61,7 @@ export class MemoryLabel {
 
         this.sphere.position.copy(this.storedStart)
 
-        this.end.copy(this.SE.ctrl.position)
+        this.end.copy(this.note.ctrl.position)
 
         this.lineGeo.setFromPoints([this.storedStart, this.end])
     }

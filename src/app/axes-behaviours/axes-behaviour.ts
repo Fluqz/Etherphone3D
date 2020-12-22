@@ -1,5 +1,6 @@
+import { Vector3 } from 'three'
 import { Axis } from '../theremin/axis'
-import { Sound } from '../theremin/sound-entity'
+import { Note } from '../theremin/note'
 
 
 export class AxesBehaviour {
@@ -20,8 +21,8 @@ export class AxesBehaviour {
         this.axis = axis
     }
 
-    public updateSound(entity: Sound) {
+    public compute1DPosition(note: Note) {}
 
-        console.log('Parent')
-    }
+    public processAlongDimension(note: Note, position: Vector3) {}
+
 }

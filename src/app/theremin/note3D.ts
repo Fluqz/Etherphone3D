@@ -1,30 +1,39 @@
 import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, MeshBasicMaterial, Color, Object3D, MeshStandardMaterial, ShaderMaterial, Clock } from 'three'
-import { Sound } from './sound-entity'
 import { Note } from './note'
-import { Sound3D } from './sound-entity-3d'
 import { DistanceLabel } from '../tools/labels/distance-label'
 import { MemoryLabel } from '../tools/labels/memory-label'
 import { AxesLabel } from '../tools/labels/axes-label'
-import { SceneManager } from '../scene-manager'
 import { Tools } from '../tools/tools'
 import { LoadingManager } from '../tools/loading-manager'
 
 import { FragmentShader } from '../shaders/fragment-shaders'
 import { VertexShader } from '../shaders/vertex-shaders'
-import { Theremin } from './theremin'
+import * as Tone from 'tone'
 
-export class Note3D extends Sound3D{
+
+export class Note3D{
 
     public ctrl: Note
     public obj: Mesh
+
     public distanceLabel: DistanceLabel
     public memoryLabel: MemoryLabel
     public axesLabel: AxesLabel
 
+    public get position() { return this.obj.position }
+    public set position(val:Vector3) { 
+
+        if(val == null) return
+
+        this.obj.position.copy(val)
+    }
+
+
+
     constructor(note: Note) {
-        super() 
 
         this.ctrl = note
+
 
         this.obj = new Mesh(
             new SphereBufferGeometry(2, 20, 20), 
@@ -35,8 +44,7 @@ export class Note3D extends Sound3D{
         this.obj.name = 'osc.3D'
         this.obj.userData.id = note.id
 
-        this.obj.position.copy(this.ctrl.position)
-
+        this.position = new Vector3()
 
         this.distanceLabel = new DistanceLabel(this)
         this.memoryLabel = new MemoryLabel(this)
@@ -55,7 +63,7 @@ export class Note3D extends Sound3D{
         //         },
         //         time: {
         //             type: 'f',
-        //             value: Theremin.audioContext.currentTime
+        //             value: Tone.context.currentTime
         //         }
         //     }
 
@@ -67,24 +75,15 @@ export class Note3D extends Sound3D{
         //         fragmentShader: FragmentShader.meshbasicmaterial
         //     })
         // })
+
+
+        this.move(this.ctrl.position)
     }
 
     public update() {
 
-        if(this.obj && this.obj.material['uniforms'])
-            this.obj.material['uniforms'].time.value = Theremin.audioContext.currentTime
+        this.move(this.ctrl.position)
 
-    }
-
-    public move(moveTo: Vector3, X?: boolean, Y?: boolean, Z?: boolean) {
-
-        if(X || X == undefined) this.ctrl.position.x = (moveTo.x)
-        if(Y || Y == undefined) this.ctrl.position.y = (moveTo.y)
-        if(Z || Z == undefined) this.ctrl.position.z = (moveTo.z)
-
-        this.obj.position.copy(this.ctrl.position)
-
-        this.obj.getWorldPosition(this.ctrl.position)
 
         this.distanceLabel.update()
 
@@ -92,7 +91,13 @@ export class Note3D extends Sound3D{
 
         this.axesLabel.update()
 
-        this.ctrl.muted = false
+        if(this.obj && this.obj.material['uniforms'])
+            this.obj.material['uniforms'].time.value = Tone.context.currentTime
+    }
+
+    public move(moveTo: Vector3) {
+
+        this.position = moveTo
     }
 
     public select() {

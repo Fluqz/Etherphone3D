@@ -2,6 +2,13 @@ import { Object3D, Mesh, Group, Scene } from 'three'
 
 export class Tools {
 
+    private static uid:number = 0
+    public static getUniqueID() {
+
+        Tools.uid += 1
+
+        return Tools.uid
+    }
 
     public static spliceElementFromArray(element: any, array: any[]) {
 

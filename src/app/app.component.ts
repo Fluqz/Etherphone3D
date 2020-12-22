@@ -84,16 +84,16 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     window.setTimeout(()=>{
 
       this.theremin = new Theremin()
-      this.theremin.toggleOnOff(false)
-      
+
       this.serializeIn(Storage.load())
+      
+      this.theremin.toggleOnOff(false)
 
       this.theremin3D = new Theremin3D(this.theremin)
-
       this.objCtrl = new ObjectControl(this.theremin3D)
 
 
-      this.theremin.toggleOnOff(false)
+      // this.theremin.toggleOnOff(false)
 
 
       this.loop()
@@ -122,14 +122,39 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     document.addEventListener('keyup', this.keyupEvent, false)
   }
 
-  private loop() {
 
-    requestAnimationFrame(this.loop.bind(this))
+  // private fixedUpdateTiming: number = 20;
+  // private physicsTimeSimulated:number = Date.now();
+  // private _deltaTime: number = 0;
+  // private lastUpdate: number = Date.now();
 
-    this.sm.update()
+  public loop(): void {
+
+    // while(this.physicsTimeSimulated < Date.now()){
+
+    //   this.fixedUpdate()
+    //   this.physicsTimeSimulated += this.fixedUpdateTiming
+    // }
+
+    this.update()
+
+    // this._deltaTime = Date.now() - this.lastUpdate;
+    // this.lastUpdate = Date.now();
+
+    window.requestAnimationFrame(this.loop.bind(this))
+  }
+
+  private update() {
+    // console.log('update')
 
     this.theremin.update()
     this.theremin3D.update()
+
+    this.sm.update()
+  }
+
+  private fixedUpdate() {
+    // console.log('fixed update')
   }
 
 

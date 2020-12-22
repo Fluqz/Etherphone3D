@@ -1,26 +1,23 @@
-import { Sound } from './sound-entity'
 import { Note } from './note'
 import { AxesBehaviour } from '../axes-behaviours/axes-behaviour'
 import { FrequencyShift } from '../axes-behaviours/frequency-shfit'
 import { VolumeShift } from '../axes-behaviours/volume-shift'
 import { Octivator } from '../axes-behaviours/octivator'
 import { AdditiveSynthesis } from '../axes-behaviours/additive-synthesis'
-import { Chord } from './chord'
 import { Axis } from './axis'
-import { OctahedronBufferGeometry } from 'three'
-import { Sound3D } from './sound-entity-3d'
+import { OctahedronBufferGeometry, Vector3 } from 'three'
+import * as Tone from 'tone'
 
 export class Theremin {
 
     static instance: Theremin
 
-    static masterVolume: GainNode
-    storedVolume: number
+    static masterVolume: Tone.Gain
+    public storedVolume: number
+    public volume: number
     private muted: boolean = false
 
-    public static audioContext: AudioContext
-
-    public sounds: Sound[] = []
+    public notes: Note[] = []
 
     public static _x: AxesBehaviour
     public static get x() { return Theremin._x }
@@ -49,20 +46,20 @@ export class Theremin {
 
     public static axesBehaviours: AxesBehaviour[] = []
 
-    public isPlaying: boolean = false
+    public isPlaying: boolean = true
 
 
     constructor() {
 
         Theremin.instance = this
 
-        Theremin.audioContext = new AudioContext()
+        this.volume = .7
 
-        Theremin.masterVolume = Theremin.audioContext.createGain()
+        Theremin.masterVolume = new Tone.Gain(this.volume).toDestination()
 
-        Theremin.masterVolume.gain.value = .3
-        Theremin.masterVolume.connect(Theremin.audioContext.destination)
         this.storedVolume = Theremin.masterVolume.gain.value
+
+        Theremin.masterVolume.gain.value = this.volume
 
         Theremin.x = new FrequencyShift()
         Theremin.y = new VolumeShift()
@@ -72,7 +69,10 @@ export class Theremin {
 
     public update() {
 
-        for(let sound of this.sounds) { sound.update() }
+        for(let note of this.notes) {
+
+            Theremin.computePosition(note)
+        }
     }
 
 
@@ -82,13 +82,13 @@ export class Theremin {
 
     public reset() {
 
-        let sounds: Sound[] = []
+        let notes: Note[] = []
 
-        this.sounds.forEach(sound => { sounds.push(sound)})
-        sounds.forEach(sound => this.deleteNote(sound))
+        this.notes.forEach(note => { notes.push(note)})
+        notes.forEach(note => this.deleteNote(note))
 
-        this.sounds = []
-        Theremin.masterVolume.gain.setValueAtTime(.8, Theremin.audioContext.currentTime)
+        this.notes = []
+        Theremin.masterVolume.gain.setValueAtTime(.8, Tone.context.currentTime)
 
         Theremin.x = new FrequencyShift()
         Theremin.y = new VolumeShift()
@@ -97,49 +97,49 @@ export class Theremin {
 
     public addNote(frequency?: number) : Note {
 
-        let sn = new Note(Theremin.audioContext)
+        let sn = new Note()
 
-        this.sounds.push(sn)
+        this.notes.push(sn)
 
         sn.play()
 
         return sn
     }
 
-    public deleteNote(sound: Sound) : boolean {
+    public deleteNote(note: Note) : boolean {
 
-        if(!sound) return false
+        if(!note) return false
 
-        let i = this.sounds.indexOf(sound)
+        let i = this.notes.indexOf(note)
 
         if(i != -1) {
 
-            sound.destroy()
-            this.sounds.splice(i, 1)
+            note.destroy()
+            this.notes.splice(i, 1)
             return true
         }
 
         return false
     }
 
-    public groupNotesToChord(_ses: Sound[]) {
+    public groupNotesToChord(_ses: Note[]) {
 
-        let chord = new Chord(_ses, Theremin.audioContext)
+        // let chord = new Chord(_ses)
 
-        this.sounds.push(chord)
+        // this.notes.push(chord)
 
-        chord.sounds.forEach(se => {
+        // chord.notes.forEach(se => {
 
-            se.parent = chord
+        //     se.parent = chord
 
-            // if(se.parent) {
-            // }
-        })
+        //     // if(se.parent) {
+        //     // }
+        // })
 
-        return chord
+        // return chord
     }
 
-    public ungroupNotes(_ses: Sound[]) {
+    public ungroupNotes(_ses: Note[]) {
 
         return null
     }
@@ -150,30 +150,37 @@ export class Theremin {
 
     //     if(i >= 0) chord.notes.splice(i, 1)
         
-    //     this.sounds.push(note)
+    //     this.notes.push(note)
     // }
 
     // public splitChord(chord: Chord) {
 
     //     chord.notes.forEach(note => {
 
-    //         this.sounds.push(note)
+    //         this.notes.push(note)
     //     })
     // }
 
     
-    public updateSound(sound: Sound) {
+    public static computePosition(note: Note) {
 
-        if(Theremin.x) Theremin.x.updateSound(sound)
-        if(Theremin.y) Theremin.y.updateSound(sound)
-        if(Theremin.z) Theremin.z.updateSound(sound)
+        if(Theremin.x) Theremin.x.compute1DPosition(note)
+        if(Theremin.y) Theremin.y.compute1DPosition(note)
+        if(Theremin.z) Theremin.z.compute1DPosition(note)
+    }
+
+    public static computeFromPosition(note: Note, position: Vector3) {
+
+        if(Theremin.x) Theremin.x.processAlongDimension(note, position)
+        if(Theremin.y) Theremin.y.processAlongDimension(note, position)
+        if(Theremin.z) Theremin.z.processAlongDimension(note, position)
     }
 
     public mute() {
 
         this.muted = true
 
-        Theremin.masterVolume.gain.setValueAtTime(0, Theremin.audioContext.currentTime)
+        Theremin.masterVolume.gain.setValueAtTime(0, Tone.context.currentTime)
     }
 
     public toggleOnOff(play?: boolean) {
@@ -182,32 +189,27 @@ export class Theremin {
 
         this.isPlaying = play
 
-        this.sounds.forEach(sound => {
+        Theremin.masterVolume.gain.setValueAtTime(
 
-            if(play) {
-
-                Theremin.masterVolume.gain.setValueAtTime(this.storedVolume, Theremin.audioContext.currentTime)
-            }
-            else {
-
-                Theremin.masterVolume.gain.setValueAtTime(0, Theremin.audioContext.currentTime)
-            }
-        })
+                play ? this.storedVolume : 0, 
+                
+                Tone.context.currentTime
+            )
     }
 
 
 
     public serializeOut() : {} {
 
-        let _sounds: {}[] = []
+        let _notes: {}[] = []
  
-        this.sounds.forEach(sound => {
+        this.notes.forEach(note => {
 
-            _sounds.push(sound.serializeOut())
+            _notes.push(note.serializeOut())
         })
 
         return {
-            sounds: _sounds,
+            notes: _notes,
             masterVolume: Theremin.masterVolume.gain.value,
             x: Theremin.x.name,
             y: Theremin.y.name,
@@ -217,20 +219,20 @@ export class Theremin {
 
     public serializeIn(obj: {}) {
 
-        if(obj['sounds'] && obj['sounds'].length > 0) {
+        if(obj['notes'] && obj['notes'].length > 0) {
 
-            for(let sound of obj['sounds']) {
+            for(let note of obj['notes']) {
 
                 let n = this.addNote()
 
-                n.serializeIn(sound)
+                n.serializeIn(note)
 
-                this.updateSound(n)
+                Theremin.computePosition(n)
             }
         }
 
         if(obj['masterVolume']) 
-            Theremin.masterVolume.gain.setValueAtTime(obj['masterVolume'], Theremin.audioContext.currentTime)
+            Theremin.masterVolume.gain.setValueAtTime(obj['masterVolume'], Tone.context.currentTime)
 
         if(obj['x']) {
 

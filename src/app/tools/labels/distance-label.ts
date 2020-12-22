@@ -1,12 +1,12 @@
 import { SceneManager } from '../../scene-manager';
 
 import * as THREE from 'three'
-import { Sound3D } from '../../theremin/sound-entity-3d';
 import { Color } from 'src/app/color';
+import { Note3D } from 'src/app/theremin/note3D';
 
 export class DistanceLabel {
 
-    private SE: Sound3D
+    private note: Note3D
 
     private raycaster: THREE.Raycaster
 
@@ -28,9 +28,9 @@ export class DistanceLabel {
 
 
 
-    constructor(_SE: Sound3D) {
+    constructor(_note: Note3D) {
 
-        this.SE = _SE
+        this.note = _note
 
         this.raycaster = new THREE.Raycaster()
         this.raycaster.near = .001
@@ -82,7 +82,7 @@ export class DistanceLabel {
         let label: DistanceLine
         this.sides.forEach(side => {
 
-            label = new DistanceLine(side, this.SE.ctrl.position)
+            label = new DistanceLine(side, this.note.ctrl.position)
             this.labels.push(label)
             this.obj.add(label.obj)
         })

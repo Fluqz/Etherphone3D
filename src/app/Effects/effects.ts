@@ -7,9 +7,9 @@ export function reverb() {
 
     function impulseResponse( duration: number, decay: number, reverse: boolean ) {
 
-        var sampleRate = Theremin.audioContext.sampleRate;
+        var sampleRate = Tone.context.sampleRate;
         var length = sampleRate * duration;
-        var impulse = Theremin.audioContext.createBuffer(2, length, sampleRate);
+        var impulse = Tone.context.createBuffer(2, length, sampleRate);
         var impulseL = impulse.getChannelData(0);
         var impulseR = impulse.getChannelData(1);
     
@@ -23,7 +23,7 @@ export function reverb() {
         return impulse;
     }
 
-    const convolver = Theremin.audioContext.createConvolver()
+    const convolver = Tone.context.createConvolver()
 
     convolver.buffer = impulseResponse(100, 100, false)
 

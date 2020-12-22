@@ -1,6 +1,4 @@
 import { Component, AfterViewInit, Input, ViewChildren } from '@angular/core';
-import { Sound3D } from '../theremin/sound-entity-3d';
-import { Theremin } from '../theremin/theremin';
 import { Theremin3D } from '../theremin/theremin3D';
 import { BeatMachine } from './beat-machine';
 import { Sample } from './sample';
@@ -48,7 +46,7 @@ import { TrackView } from './track.component';
         </div>
         
         <div id="tracks-wrapper">
-          <track #tracks *ngFor="let sound of sounds" [sound]="sound" [beats]="beats" class="track-timeline" />
+          <track #tracks *ngFor="let note of notes" [note]="note" [beats]="beats" class="track-timeline" />
         </div>
 
     </div>
@@ -138,9 +136,9 @@ export class BeatMachineView implements AfterViewInit {
 
     //Theremin.togglePlay(false)
 
-    this.sounds.forEach(sound => {
+    this.notes.forEach(note => {
 
-      sound.ctrl.stop()
+      note.ctrl.stop()
     })
     BeatMachine.stop()
     BeatMachine.start(this.samples)
@@ -166,22 +164,20 @@ export class BeatMachineView implements AfterViewInit {
     return this._samples
   }
 
-  get sounds() {
+  get notes() {
 
-      let sounds: Sound3D[] = []
-
-      this.theremin3D.sounds3D.forEach(sound => {
-
-          if(sound.ctrl.parent == null) sounds.push(sound)
-      })
-      
-      return sounds
+    return this.theremin3D.notes3D
   }
 
   public get time() {
 
+    let percentage = ((BeatMachine.time % (BeatMachine.secondsPerBeat * BeatMachine.beats)) / (BeatMachine.secondsPerBeat * BeatMachine.beats)) * 100
+
+    console.log(percentage)
+
     // console.log ((BeatMachine.currentNote * 100 ) / BeatMachine.beats)
-    return (BeatMachine.currentNote * 100 ) / BeatMachine.beats
+    // console.log('time',BeatMachine.time % (BeatMachine.secondsPerBeat * BeatMachine.beats), (BeatMachine.secondsPerBeat * BeatMachine.beats))
+    return percentage
   }
 
   // public get currentBeat() { return BeatMachine.currentNote }

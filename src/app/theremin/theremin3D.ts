@@ -1,14 +1,8 @@
 import { Theremin } from './theremin';
-import { Object3D, PlaneBufferGeometry, ShaderMaterial, MeshPhongMaterial, Mesh, CircleBufferGeometry } from 'three';
-import { Sound3D } from './sound-entity-3d';
+import { Object3D, PlaneBufferGeometry, ShaderMaterial, MeshPhongMaterial, Mesh, CircleBufferGeometry, Vector3 } from 'three';
 import { Note3D } from './note3D';
 import { Note } from './note';
-import { Sound } from './sound-entity';
 import { SceneManager } from '../scene-manager';
-import { Chord3D } from './chord3D';
-import { Chord } from './chord';
-import { Tools } from '../tools/tools';
-import { Grid3D } from '../tools/labels/grid-3d';
 
 
 export class Theremin3D {
@@ -16,7 +10,7 @@ export class Theremin3D {
     static instance: Theremin3D
     public theremin: Theremin
 
-    public sounds3D: Sound3D[] = []
+    public notes3D: Note3D[] = []
     public objs: Object3D[] = []
 
     public obj: Object3D
@@ -31,53 +25,60 @@ export class Theremin3D {
         this.obj.name = 'theremin.3D'
 
 
-        this.theremin.sounds.forEach(sound => {
+        this.theremin.notes.forEach(note3D => {
 
-            this.addSound3D(sound)
+            this.addNote3D(note3D)
         })
     }
 
 
     public update() {
 
-        for(let sound of this.sounds3D) { sound.update()}
+        for(let note3D of this.notes3D) { 
+         
+            note3D.update()
+        }
+    }
+
+    public static moveNote(note3D: Note3D, position: Vector3) {
+
+        Theremin.computeFromPosition(note3D.ctrl, position)
+
+        note3D.update()
     }
 
 
-
-    public getNoteByObj(obj: Object3D) : Sound3D {
+    public getNoteByObj(obj: Object3D) : Note3D {
        
-        for(let i = 0; i < this.sounds3D.length; i++) {
+        for(let i = 0; i < this.notes3D.length; i++) {
 
-            if(this.sounds3D[i].obj === obj) {
+            if(this.notes3D[i].obj === obj) {
 
-                return this.sounds3D[i]
+                return this.notes3D[i]
             }
         }
 
         return null
     }
 
-    public getNoteByID(id: number) : Sound3D {
+    public getNoteByID(id: number) : Note3D {
        
-        for(let i = 0; i < this.sounds3D.length; i++) {
+        for(let i = 0; i < this.notes3D.length; i++) {
 
-            if(this.sounds3D[i].ctrl.id === id) {
+            if(this.notes3D[i].ctrl.id === id) {
 
-                return this.sounds3D[i]
+                return this.notes3D[i]
             }
         }
 
         return null
     }
 
-    public addSound3D(Sound: Sound) : Note3D {
-
-        let note = Sound as Note
+    public addNote3D(note: Note) : Note3D {
 
         let note3D = new Note3D(note)
 
-        this.sounds3D.push(note3D)
+        this.notes3D.push(note3D)
 
         this.objs.push(note3D.obj)
 
@@ -86,56 +87,56 @@ export class Theremin3D {
         return note3D
     }
 
-    public removeSound3D(sound: Sound3D) : boolean {
+    public removeNote3D(note3D: Note3D) : boolean {
 
-        if(!sound) return false
+        if(!note3D) return false
 
-        let i = this.sounds3D.indexOf(sound)
+        let i = this.notes3D.indexOf(note3D)
 
         if(i != -1) {
 
-            this.sounds3D.splice(i, 1)
-            SceneManager.scene.remove(sound.obj)
-            sound.destroy()
+            this.notes3D.splice(i, 1)
+            SceneManager.scene.remove(note3D.obj)
+            note3D.destroy()
             return true
         }
 
         return false
     }
+    
+    // public groupNotesToChord(chord: Chord, _ses: Note3D[]) : Chord3D {
 
-    public groupNotesToChord(chord: Chord, _ses: Sound3D[]) : Chord3D {
+    //     let chord3D = new Chord3D(chord, _ses)
 
-        let chord3D = new Chord3D(chord, _ses)
+    //     this.notes3D.push(chord3D)
 
-        this.sounds3D.push(chord3D)
+    //     this.objs.push(chord3D.obj)
 
-        this.objs.push(chord3D.obj)
+    //     return chord3D
+    // }
 
-        return chord3D
-    }
+    // public ungroupNotes(_ses: Note3D[], chord: Chord3D) {
 
-    public ungroupNotes(_ses: Sound3D[], chord: Chord3D) {
+    //     _ses.forEach(se => {
 
-        _ses.forEach(se => {
+    //         if(se instanceof Note3D) {
 
-            if(se instanceof Note3D) {
+    //             let note = (se as Note3D)
 
-                let note = (se as Note3D)
+    //             if((note.ctrl as Note).parent) {
 
-                if((note.ctrl as Note).parent) {
-
-                    chord.removeNote(note)
-                }
-            }
-        })
-    }
+    //                 chord.removeNote(note)
+    //             }
+    //         }
+    //     })
+    // }
 
     public reset() {
 
-        let sounds: Sound3D[] = []
-        this.sounds3D.forEach(sound => { sounds.push(sound)})
-        sounds.forEach(sound => {
-            this.removeSound3D(sound)
+        let note3Ds: Note3D[] = []
+        this.notes3D.forEach(note3D => { note3Ds.push(note3D)})
+        note3Ds.forEach(note3D => {
+            this.removeNote3D(note3D)
         })
     }
 }

@@ -1,8 +1,7 @@
 import { SceneManager } from '../../scene-manager';
 
 import * as THREE from 'three'
-import { Sound3D } from '../../theremin/sound-entity-3d';
-import { Color } from 'src/app/color';
+import { Note3D } from 'src/app/theremin/note3D';
 
 export class AxesLine {
 
@@ -39,7 +38,7 @@ export class AxesLine {
 export class AxesLabel {
 
     
-    private SE: Sound3D
+    private note: Note3D
 
     private start: THREE.Vector3
     private end: THREE.Vector3
@@ -53,9 +52,9 @@ export class AxesLabel {
     private _enabled: boolean = false
 
 
-    constructor(_SE: Sound3D) {
+    constructor(_note: Note3D) {
 
-        this.SE = _SE
+        this.note = _note
 
         this.start = new THREE.Vector3()
         this.end = new THREE.Vector3()
@@ -77,7 +76,7 @@ export class AxesLabel {
 
     public reset() {
 
-        this.end.copy(this.SE.ctrl.position)
+        this.end.copy(this.note.ctrl.position)
 
         this.update()
     }
@@ -88,7 +87,7 @@ export class AxesLabel {
 
         if(!this._enabled) return
 
-        this.end.copy(this.SE.ctrl.position)
+        this.end.copy(this.note.ctrl.position)
 
         this.x.p1.setX(this.start.x)
         this.x.p1.setY(this.end.y)
@@ -119,13 +118,13 @@ export class AxesLabel {
         this.obj.name = 'distancelabel.obj'
         this.obj.visible = this._enabled
 
-        this.x = new AxesLine(this.SE.ctrl.color.getHex(), 'x')
+        this.x = new AxesLine(this.note.ctrl.color.getHex(), 'x')
         this.obj.add(this.x.obj)
         
-        this.y = new AxesLine(this.SE.ctrl.color.getHex(), 'y')
+        this.y = new AxesLine(this.note.ctrl.color.getHex(), 'y')
         this.obj.add(this.y.obj)
         
-        this.z = new AxesLine(this.SE.ctrl.color.getHex(), 'z')
+        this.z = new AxesLine(this.note.ctrl.color.getHex(), 'z')
         this.obj.add(this.z.obj)
 
         SceneManager.scene.add(this.obj)

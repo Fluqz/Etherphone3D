@@ -1,9 +1,8 @@
 import { AxesBehaviour } from './axes-behaviour';
 import { Note } from '../theremin/note';
-import { Sound } from '../theremin/sound-entity';
-import { Chord } from '../theremin/chord';
 import { Axis } from '../theremin/axis'
-import { Theremin } from '../theremin/theremin';
+import * as Tone from 'tone'
+import { Vector3 } from 'three';
 
 export class Octivator extends AxesBehaviour {
 
@@ -25,54 +24,51 @@ export class Octivator extends AxesBehaviour {
         this.muted = false
     }
 
-    // Minus value go low, plus go high
 
-    public updateSound(entity: Sound) {
+
+    public compute1DPosition(note: Note) {
+
+    }
+
+    // Minus value go low, plus go high
+    public processAlongDimension(note: Note, position: Vector3) {
 
 
         if(this.axis == null) return
         if(this.muted) return
 
-        if(entity instanceof Note) {
+        let count:number = Math.round(note.position[this.axis] / this.sF)
+        let multipier:number = count +1
 
-            let count:number = Math.round(entity.position[this.axis] / this.sF)
-            let multipier:number = count +1
+        count = Math.abs(count)
 
-            count = Math.abs(count)
+        // if(this.currentMultiplier == multipier) return
 
-            // if(this.currentMultiplier == multipier) return
+        this.currentMultiplier = multipier
+        
+        this.oscs.forEach(osc => {
 
-            this.currentMultiplier = multipier
-            
-            this.oscs.forEach(osc => {
+            osc.stop()
+            osc.disconnect()
+        })
+        this.oscs = []
 
-                osc.stop()
-                osc.disconnect()
-            })
-            this.oscs = []
+        let neg: boolean = false
+        if(multipier < 0) neg = true
 
-            let neg: boolean = false
-            if(multipier < 0) neg = true
+        for(let i = 1; i <= count; i++) {
 
-            for(let i = 1; i <= count; i++) {
-                console.log('octivator', count, multipier * entity.frequency)
+            let osc = Tone.context.createOscillator()
+            // osc.type = node.wave
+            // osc.type = 'sine'
+            // osc.connect(entity.gain)
+            // if(neg)
+            //     osc.frequency.setValueAtTime(entity.frequency / multipier, Tone.context.currentTime)
+            // else osc.frequency.setValueAtTime(multipier * entity.frequency, Tone.context.currentTime)
 
-                let osc = Theremin.audioContext.createOscillator()
-                // osc.type = node.wave
-                // osc.type = 'sine'
-                osc.connect(entity.gainNode)
-                if(neg)
-                    osc.frequency.setValueAtTime(entity.frequency / multipier, Theremin.audioContext.currentTime)
-                else osc.frequency.setValueAtTime(multipier * entity.frequency, Theremin.audioContext.currentTime)
+            osc.start()
 
-                osc.start()
-
-                this.oscs.push(osc)
-            }
-        }
-        else if(entity instanceof Chord) {
-
-            entity.sounds.forEach(note => note.volume = Math.round((note.position[this.axis] / this.sF) * 100) / 100)
+            this.oscs.push(osc)
         }
     }
 

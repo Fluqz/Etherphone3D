@@ -1,20 +1,17 @@
-import { Sound } from './sound-entity'
 import { Vector3, Color } from 'three'
 import { Theremin } from './theremin'
-import { NullTemplateVisitor } from '@angular/compiler'
+import * as Tone from 'tone'
+import { Tools } from '../tools/tools'
 
-export class Note extends Sound{
+export class Note{
     
     public id: number
     public type: string
 
-    public parent: Sound
-
-    public audioContext: AudioContext
-    public gainNode: GainNode
-    public osc: OscillatorNode
+    public gain: Tone.Gain
+    public osc: Tone.Oscillator
+    public _frequency: number
     public _wave: OscillatorType
-
     private _volume: number
 
     public isPlaying: boolean = false
@@ -24,15 +21,23 @@ export class Note extends Sound{
 
     public position: Vector3
 
-    public get frequency() : number { return this.osc.frequency.value }
-    public set frequency(val: number) { 
-        this.osc.frequency.setValueAtTime(val, this.audioContext.currentTime)
+    public get frequency() { return this._frequency }
+    public set frequency(val) { 
+
+        if(val == null) return
+
+        this._frequency = Math.abs(val)
+
+        this.osc.frequency.setValueAtTime(this._frequency, Tone.context.currentTime)
     }
 
-    public get volume() : number { return this.gainNode.gain.value }
+    public get volume() : number { return this._volume }
     public set volume(val: number) {
-        this._volume = val
-        this.gainNode.gain.setValueAtTime(val, this.audioContext.currentTime)
+        if(val == null) return
+
+        this._volume = Math.abs(val)
+
+        this.gain.gain.value = val
     }
 
     public get wave() : OscillatorType { return this._wave }
@@ -41,30 +46,30 @@ export class Note extends Sound{
         if(val && this.osc) this.osc.type = this._wave
     }
 
-    constructor(context: AudioContext) {
-        super()
+    constructor() {
 
-        this.audioContext = context
-
-        this.id = Math.random() * 100 + new Date().getTime()
+        this.id = Tools.getUniqueID()
         this.type = 'note'
-        this.parent = null
         this.color = new Color().setHSL( Math.random(), 0.7, Math.random() * 0.2 + 0.05 );
 
-        this.gainNode = this.audioContext.createGain()
+        this.gain = new Tone.Gain()
+        this.volume = 0
+        this.gain.connect(Theremin.masterVolume)
 
-        this.osc = this.audioContext.createOscillator()
-        this.osc.type = this.wave = 'sine'
-        this.osc.connect(this.gainNode)
-        this.gainNode.connect(Theremin.masterVolume)
-
-        this.volume = .25
-
+        this.osc = new Tone.Oscillator(this.frequency)
+        this.osc.connect(this.gain)
         this.frequency = 0
 
         this.position = new Vector3(0, 0, 0)
     }
-    public update() {}
+
+    public update() {
+
+
+
+
+
+    }
 
     // public createOsc() {
 
@@ -91,9 +96,6 @@ export class Note extends Sound{
         window.setTimeout(()=> {
 
             this.osc.disconnect()
-            this.gainNode.disconnect()
-            
-            this.gainNode = null
             this.osc = null
         }, 40)
 
@@ -102,7 +104,6 @@ export class Note extends Sound{
         this.wave = null
         this._volume = null
         this.color = null
-        this.parent = null
         this.position = null
         this.type = null
         this.id = null
@@ -110,35 +111,25 @@ export class Note extends Sound{
         this.muted = null
     }
     
-    public play() {
+    public play(length?: number) {
 
         this.isPlaying = true
+
+        this.osc.stop(Tone.context.currentTime)
+        this.osc.start(Tone.context.currentTime)
 
         // let convolver = reverb()
 
         // this.osc.connect(convolver)
 
-        this.osc.start()
-    }
-    
-    public playFrequent(length: number) {
-
-        this.isPlaying = true
-
-        this.osc.disconnect()
-
-        this.osc = this.audioContext.createOscillator()
-        this.osc.type = this.wave
-        this.osc.connect(this.gainNode)
-        Theremin.instance.updateSound(this)
-
-        this.osc.start(this.audioContext.currentTime)
-
         // this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, this.audioContext.currentTime)
 
         // this.gainNode.gain.exponentialRampToValueAtTime(.0001, length + .03)
 
-        this.osc.stop(this.audioContext.currentTime + length + .03)
+        // this.osc.stop(Tone.context.currentTime + length + .03)
+
+        if(length != undefined)
+            this.osc.stop(Tone.context.currentTime + length)
     }
 
     public stop() {
@@ -151,16 +142,12 @@ export class Note extends Sound{
 
         // this.gainNode.gain.exponentialRampToValueAtTime(.0001, this.audioContext.currentTime + .03)
 
-        this.osc.stop(this.audioContext.currentTime + .03)
+        this.osc.stop(Tone.context.currentTime + .03)
     }
     
     public mute() {
 
         this.muted = true
-
-        this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, this.audioContext.currentTime)
-
-        this.gainNode.gain.exponentialRampToValueAtTime(.0001, this.audioContext.currentTime + .03)
     }
 
     public addReverb() {
@@ -171,7 +158,7 @@ export class Note extends Sound{
 
         this.muted = false
 
-        this.gainNode.gain.setValueAtTime(this._volume, this.audioContext.currentTime)
+        this.gain.gain.setValueAtTime(this._volume, Tone.context.currentTime)
     }
 
     public serializeOut() {
@@ -182,19 +169,15 @@ export class Note extends Sound{
             frequency: this.frequency,
             volume: this.volume,
             wave: this.wave,
-            position: this.position,
-            parent: this.parent
         }
     }
 
     public serializeIn(obj: {}) {
-
+        console.log('obj', obj)
         this.id = obj['id']
         this.color.setHex(obj['color'])
         this.frequency = obj['frequency']
         this.volume = obj['volume']
-        this.wave = obj['wave']
-        this.position.set(obj['position']['x'], obj['position']['y'], obj['position']['z'])
-        this.parent = null
+        // this.wave = obj['wave']
     }
 }

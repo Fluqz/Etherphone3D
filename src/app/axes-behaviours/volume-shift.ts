@@ -1,8 +1,7 @@
 import { AxesBehaviour } from './axes-behaviour';
 import { Note } from '../theremin/note';
-import { Sound } from '../theremin/sound-entity';
-import { Chord } from '../theremin/chord';
 import { Axis } from '../theremin/axis'
+import { Vector3 } from 'three';
 
 export class VolumeShift extends AxesBehaviour {
 
@@ -22,25 +21,17 @@ export class VolumeShift extends AxesBehaviour {
 
 
 
-    public updateSound(entity: Sound) {
+    public compute1DPosition(note: Note) {
+
+        if(note instanceof Note) 
+            note.position[this.axis] = note.volume * this.sF
+    }
+
+    public processAlongDimension(note: Note, position: Vector3) {
 
         if(this.axis == null) return
         if(this.muted) return
         
-        console.log('VOLUMEN SHIFT', entity instanceof Note)
-
-        if(entity instanceof Note) {
-
-
-        console.log('VOLUMEN SHIFT SET')
-
-            console.log(entity.volume, entity.position[this.axis] / this.sF)
-            entity.volume = entity.position[this.axis] / this.sF
-
-        }
-        else if(entity instanceof Chord) {
-
-            entity.sounds.forEach(note => note.volume = Math.round((note.position[this.axis] / this.sF) * 100) / 100)
-        }
+        note.volume = position[this.axis] / this.sF
     }
 }

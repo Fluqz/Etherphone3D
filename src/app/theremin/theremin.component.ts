@@ -79,7 +79,7 @@ import { Theremin3D } from './theremin3D'
     public addOsc(frequency?: number, cb?: Function) {
 
         let note = this.theremin.addNote(frequency == undefined ? 100 : frequency)
-        let note3D = this.theremin3D.addSound3D(note)
+        let note3D = this.theremin3D.addNote3D(note)
 
         if(cb) cb(note3D)
     }
@@ -88,28 +88,28 @@ import { Theremin3D } from './theremin3D'
         
     public toggleAxesLabel() {
 
-        this.theremin3D.sounds3D.forEach(sound => {
+        this.theremin3D.notes3D.forEach(note => {
 
-            sound.axesLabel.enabled = !sound.axesLabel.enabled
-            sound.axesLabel.update()
+            note.axesLabel.enabled = !note.axesLabel.enabled
+            note.axesLabel.update()
         })
     }
     
     public toggleMemoryLabel() {
 
-        this.theremin3D.sounds3D.forEach(sound => {
+        this.theremin3D.notes3D.forEach(note => {
 
-            sound.memoryLabel.enabled = !sound.memoryLabel.enabled
-            sound.memoryLabel.update()
+            note.memoryLabel.enabled = !note.memoryLabel.enabled
+            note.memoryLabel.update()
         })
     }
     
     public toggleDistanceLabel() {
 
-        this.theremin3D.sounds3D.forEach(sound => {
+        this.theremin3D.notes3D.forEach(note => {
 
-            sound.distanceLabel.enabled = !sound.distanceLabel.enabled
-            sound.distanceLabel.update()
+            note.distanceLabel.enabled = !note.distanceLabel.enabled
+            note.distanceLabel.update()
         })
     }
   } 

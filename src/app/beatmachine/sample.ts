@@ -1,11 +1,10 @@
-import { Sound3D } from '../theremin/sound-entity-3d'
-
+import { Note3D } from "../theremin/note3D";
 
 export interface Sample {
  
     id: number
 
-    sound: Sound3D
+    note: Note3D
 
     scheduleTime: number
 

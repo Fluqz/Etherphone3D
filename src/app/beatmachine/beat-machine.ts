@@ -1,5 +1,5 @@
 import { Sample } from './sample'
-import { Theremin } from '../theremin/theremin'
+import * as Tone from 'tone'
 
 
 export class BeatMachine {
@@ -24,16 +24,15 @@ export class BeatMachine {
     public static secondsPerBeat: number = 0
 
     public static startTime: number = 0
-    public static time: number = 0
 
     constructor() {
         
-        // Theremin.audioContext = new AudioContext()
+        // Tone.context = new AudioContext()
 
-        // BeatMachine.masterNode = Theremin.audioContext.createGain()
+        // BeatMachine.masterNode = Tone.context.createGain()
 
         // BeatMachine.masterNode.gain.value = .3
-        // BeatMachine.masterNode.connect(Theremin.audioContext.destination)
+        // BeatMachine.masterNode.connect(Tone.context.destination)
     }
 
     public static get instance() {
@@ -47,6 +46,8 @@ export class BeatMachine {
 
         BeatMachine.samplesInQueue = val
     }
+
+    public static get time() { return Tone.context.currentTime - BeatMachine.startTime }
 
     public static add(sample: Sample) {
 
@@ -66,11 +67,11 @@ export class BeatMachine {
 
         BeatMachine.isPlaying = true
 
-        BeatMachine.startTime = Theremin.audioContext.currentTime
+        BeatMachine.startTime = Tone.context.currentTime
 
         // check if context is in suspended state (autoplay policy)
-        if (Theremin.audioContext.state === 'suspended') {
-            Theremin.audioContext.resume();
+        if (Tone.context.state === 'suspended') {
+            Tone.context.resume();
         }
 
         BeatMachine.scheduler(); // kick off scheduling
@@ -104,8 +105,8 @@ export class BeatMachine {
 
                 // console.log('play', sample.scheduleTime, sample.length * BeatMachine.secondsPerBeat)
 
-                sample.sound.play(sample.length * BeatMachine.secondsPerBeat)
-                sample.sound.ctrl.playFrequent(sample.length * BeatMachine.secondsPerBeat)
+                sample.note.play(sample.length * BeatMachine.secondsPerBeat)
+                sample.note.ctrl.play(sample.length * BeatMachine.secondsPerBeat)
             }
         })
     }
@@ -113,9 +114,8 @@ export class BeatMachine {
     static TOID: number
     public static scheduler() {
         
-        while(BeatMachine.nextNoteTime < Theremin.audioContext.currentTime + BeatMachine.scheduleAhead) {
+        while(BeatMachine.nextNoteTime < BeatMachine.time + BeatMachine.scheduleAhead) {
 
-            BeatMachine.time = Theremin.audioContext.currentTime - BeatMachine.startTime
             BeatMachine.scheduleNote(BeatMachine.currentNote, BeatMachine.nextNoteTime)
             BeatMachine.nextNote()
             // console.log(BeatMachine.currentNote)
