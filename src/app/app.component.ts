@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, HostListener, NgZone } from '@angular/core';
 
 import { Theremin } from './theremin/theremin';
 import { SceneManager, CameraType } from './scene-manager';
@@ -69,7 +69,9 @@ export class AppComponent implements AfterViewInit, OnDestroy{
 
   public UIHidden: boolean = false
 
-  constructor() {
+  private AFID: number
+
+  constructor(public zone: NgZone) {
 
     this.dragWindow = new DragWindow()
   }
@@ -141,7 +143,9 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     // this._deltaTime = Date.now() - this.lastUpdate;
     // this.lastUpdate = Date.now();
 
-    window.requestAnimationFrame(this.loop.bind(this))
+    this.zone.runOutsideAngular(()=> {
+      this.AFID = window.requestAnimationFrame(this.loop.bind(this))
+    })
   }
 
   private update() {
@@ -272,6 +276,8 @@ export class AppComponent implements AfterViewInit, OnDestroy{
   }
     
   ngOnDestroy() {
+
+    window.cancelAnimationFrame(this.AFID)
 
     Storage.save(this.serializeOut())
   }

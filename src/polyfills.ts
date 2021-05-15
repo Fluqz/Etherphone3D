@@ -57,6 +57,10 @@
  */
 import 'zone.js/dist/zone';  // Included with Angular CLI.
 
+// Blacklist of events to trigger
+import './ngzone-flags'
+
+
 
 /***************************************************************************************************
  * APPLICATION IMPORTS

@@ -17,7 +17,6 @@ Volca Keys FOs
 
 remove selection when dragging window
 
-Recognize Notes (even snap to notes ?) 
 Z Axes with Chords of Note ( Also snapping or is there a possible gradient between chords ?)
 
 
@@ -49,3 +48,6 @@ Inside the channel you can make samples from chords
 Make shader or whatever, that drops paint from the spheres or waves away from them.
 Anything cool. Maybe like radioactive rays 
 Also deform the spheres with their beats
+
+
+// Make it possible to draw curves, polygons or points to run through. Basicly a animation of a melody

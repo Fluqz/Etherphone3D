@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChildren } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChildren, OnDestroy, NgZone } from '@angular/core';
 import { Theremin3D } from '../theremin/theremin3D';
 import { BeatMachine } from './beat-machine';
 import { Sample } from './sample';
@@ -119,12 +119,18 @@ import { TrackView } from './track.component';
   ],
 
 })
-export class BeatMachineView implements AfterViewInit {
+export class BeatMachineView implements AfterViewInit, OnDestroy {
 
   @Input('theremin3D') theremin3D: Theremin3D
   @ViewChildren('tracks', {read: TrackView}) private tracks: TrackView[]
 
   public _samples: Sample[] = []
+
+  public time:number
+
+  constructor(private zone: NgZone) {
+
+  }
 
   ngAfterViewInit() {
     
@@ -132,6 +138,7 @@ export class BeatMachineView implements AfterViewInit {
 
 
 
+  private playTO:number
   public play() {
 
     //Theremin.togglePlay(false)
@@ -141,12 +148,21 @@ export class BeatMachineView implements AfterViewInit {
       note.ctrl.stop()
     })
     BeatMachine.stop()
+
+
+    // this.zone.runOutsideAngular(()=> {
+
+    //   this.playTO = window.setInterval(()=> { this.computeTime() }, 20)
+    // })
+
     BeatMachine.start(this.samples)
   }
 
   public pause() {
 
       BeatMachine.stop()
+
+      window.clearInterval(this.playTO)
   }
 
   // SAMPLE DOESNT KNOW ITS LENGTH OR SCHEDULE TIME ??
@@ -169,15 +185,10 @@ export class BeatMachineView implements AfterViewInit {
     return this.theremin3D.notes3D
   }
 
-  public get time() {
+  public computeTime() {
 
-    let percentage = ((BeatMachine.time % (BeatMachine.secondsPerBeat * BeatMachine.beats)) / (BeatMachine.secondsPerBeat * BeatMachine.beats)) * 100
-
-    console.log(percentage)
-
-    // console.log ((BeatMachine.currentNote * 100 ) / BeatMachine.beats)
-    // console.log('time',BeatMachine.time % (BeatMachine.secondsPerBeat * BeatMachine.beats), (BeatMachine.secondsPerBeat * BeatMachine.beats))
-    return percentage
+    this.time = ((BeatMachine.time % (BeatMachine.secondsPerBeat * BeatMachine.beats)) / (BeatMachine.secondsPerBeat * BeatMachine.beats)) * 100
+    return this.time
   }
 
   // public get currentBeat() { return BeatMachine.currentNote }
@@ -214,5 +225,10 @@ export class BeatMachineView implements AfterViewInit {
           BeatMachine.noteDuration = duration
         break
     }
+  }
+
+  ngOnDestroy() {
+
+    this.pause()
   }
 } 
