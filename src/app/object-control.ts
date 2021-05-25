@@ -23,9 +23,9 @@ export class ObjectControl {
     private plane: Plane
 
     private keyMap: Map<string, boolean> = new Map()
-    private XKey: boolean
-    private YKey: boolean
-    private ZKey: boolean
+    private XKey: boolean = true
+    private YKey: boolean = true
+    private ZKey: boolean = true
     
     constructor(_theremin3D: Theremin3D) {
 
@@ -248,7 +248,11 @@ export class ObjectControl {
 
                 this.moveTo.copy(this.ip.sub(this.offset))
 
-                // if(this.XKey) this.moveTo.x = this.moveTo.x
+
+                if(!this.XKey) this.moveTo.x = ObjectControl.selected.position.x
+                if(!this.YKey) this.moveTo.y = ObjectControl.selected.position.y
+                if(!this.ZKey) this.moveTo.z = ObjectControl.selected.position.z
+
                 // if(Y || Y == undefined) tmpPos.y = (moveTo.y)
                 // if(Z || Z == undefined) tmpPos.z = (moveTo.z)
 

@@ -88,7 +88,7 @@ export class SceneManager {
         this.createAxes()
         this.createLight()
 
-        // this.addCubeMap()
+        this.addCubeMap()
     }
 
     public static get currentCamera(){
