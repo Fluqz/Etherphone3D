@@ -158,6 +158,9 @@ export class SceneManager {
 
         let hemi = new THREE.HemisphereLight(0xFFFdEF, 0xFFFedF, .8)
         SceneManager.scene.add(hemi)
+
+        let direct = new THREE.DirectionalLight(0xFFFdEF, .4)
+        SceneManager.scene.add(direct)
     }
 
     private addCubeMap() {

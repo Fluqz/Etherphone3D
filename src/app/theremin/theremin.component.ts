@@ -50,18 +50,18 @@ import { Theremin3D } from './theremin3D'
 
     constructor(private hostRef:ElementRef) {
 
-    this.host = this.hostRef.nativeElement
+        this.host = this.hostRef.nativeElement
 
     }
 
     get behaviours() { return Theremin.axesBehaviours }
 
-    getBehaviourByAxis(axis: Axis) {
+        getBehaviourByAxis(axis: Axis) {
 
-    for(let b of Theremin.axesBehaviours) {
+        for(let b of Theremin.axesBehaviours) {
 
-        if(b.axis == axis) return b
-    }
+            if(b.axis == axis) return b
+        }
     }
 
 

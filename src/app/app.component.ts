@@ -16,7 +16,50 @@ import { BeatMachine } from './beatmachine/beat-machine';
     <div id="webGL"></div>
 
 
+    <div id="axes-menu">
+
+      <div class="axes-item">
+        
+        <div class="axes-label">X</div>
+
+        <select class="axes-options">
+          <option>Hight Pass Filter</option>
+          <option>Distortion</option>
+          <option>Delay</option>
+          <option>Chords</option>
+        </select>
+
+      </div>
+
+      <div class="axes-item">
+        
+        <div class="axes-label">Y</div>
+
+        <select class="axes-options">
+          <option>Hight Pass Filter</option>
+          <option>Distortion</option>
+          <option>Delay</option>
+          <option>Chords</option>
+        </select>
+
+      </div>
+      
+      <div class="axes-item">
+        
+        <div class="axes-label">Z</div>
+
+        <select class="axes-options">
+          <option>Hight Pass Filter</option>
+          <option>Distortion</option>
+          <option>Delay</option>
+          <option>Chords</option>
+        </select>
+
+      </div>
+    </div>
+
     <div *ngIf="true" id="ui-wrapper" (mouseenter)="mouseenterUI()" (mouseleave)="mouseenterUI()">
+
 
       <div>
 
@@ -94,9 +137,7 @@ export class AppComponent implements AfterViewInit, OnDestroy{
       this.theremin3D = new Theremin3D(this.theremin)
       this.objCtrl = new ObjectControl(this.theremin3D)
 
-
       // this.theremin.toggleOnOff(false)
-
 
       this.loop()
     })

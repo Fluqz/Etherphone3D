@@ -3,7 +3,7 @@ import { Theremin } from './theremin'
 import * as Tone from 'tone'
 import { Tools } from '../tools/tools'
 
-export class Note{
+export class Note {
     
     public id: number
     public type: string

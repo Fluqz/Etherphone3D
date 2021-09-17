@@ -1,7 +1,6 @@
 import { CatmullRomCurve3, Vector3, Curve, Mesh, Line, BufferGeometry, LineBasicMaterial } from 'three'
-import { Sound } from '../theremin/sound-entity'
 
-
+import { Note } from '../theremin/note'
 
 
 export class CurveAnimation {
@@ -18,7 +17,7 @@ export class CurveAnimation {
 
     public points: Vector3[] = []
 
-    public static currentSound: Sound
+    public static currentSound: Note
 
     constructor() {
 
