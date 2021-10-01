@@ -68,7 +68,7 @@ export class SceneManager {
         SceneManager.renderer = new THREE.WebGLRenderer({ antialias: true })
         SceneManager.renderer.setSize(SceneManager.w, SceneManager.h)
         SceneManager.renderer.setClearColor(Color.BG)
-        SceneManager.renderer.toneMapping = THREE.Uncharted2ToneMapping
+        // SceneManager.renderer.toneMapping = THREE.Uncharted2ToneMapping
         this.container.append(SceneManager.renderer.domElement)
 
         SceneManager.perspective = new THREE.PerspectiveCamera(50, SceneManager.w / SceneManager.h, .1, 10000)
@@ -128,6 +128,7 @@ export class SceneManager {
         let geometry = new THREE.BufferGeometry().setFromPoints(points)
         let material = new THREE.LineBasicMaterial( { color: Color.X } )
         this.x = new THREE.Line( geometry, material )
+        this.x.matrixAutoUpdate = false
         this.x.position.set(0, 0, 0)
         SceneManager.scene.add(this.x)
         
@@ -138,6 +139,7 @@ export class SceneManager {
         geometry = new THREE.BufferGeometry().setFromPoints(points)
         material = new THREE.LineBasicMaterial( { color: Color.Y } )
         this.y = new THREE.Line( geometry, material )
+        this.y.matrixAutoUpdate = false
         this.y.position.set(0, 0, 0)
         SceneManager.scene.add(this.y)
 
@@ -148,6 +150,7 @@ export class SceneManager {
         geometry = new THREE.BufferGeometry().setFromPoints(points)
         material = new THREE.LineBasicMaterial( { color: Color.Z } )
         this.z = new THREE.Line( geometry, material )
+        this.z.matrixAutoUpdate = false
         this.z.position.set(0, 0, 0)
         SceneManager.scene.add(this.z)
     }

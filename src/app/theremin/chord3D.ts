@@ -11,8 +11,9 @@ import { VertexShader } from '../shaders/vertex-shaders'
 import * as Tone from 'tone'
 
 
-export class Note3D{
+export class Chord3D{
 
+    sounds3D
     public ctrl: Note
     public obj: Mesh
 
@@ -26,7 +27,6 @@ export class Note3D{
         if(val == null) return
 
         this.obj.position.copy(val)
-        this.obj.updateMatrix()
     }
 
 
@@ -84,6 +84,7 @@ export class Note3D{
     public update() {
 
         this.move(this.ctrl.position)
+
 
         this.distanceLabel.update()
 

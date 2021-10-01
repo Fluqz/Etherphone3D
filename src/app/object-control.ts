@@ -40,9 +40,9 @@ export class ObjectControl {
         
         this.plane = new Plane(new Vector3(0, 1, 0), 0)
 
-        SceneManager.renderer.domElement.addEventListener('mousedown', this.onMouseDown.bind(this), false)
-        SceneManager.renderer.domElement.addEventListener('mouseup', this.onMouseUp.bind(this), false)
-        SceneManager.renderer.domElement.addEventListener('mousemove', this.onMouseMove.bind(this), false)
+        SceneManager.renderer.domElement.addEventListener('pointerdown', this.onMouseDown.bind(this), false)
+        SceneManager.renderer.domElement.addEventListener('pointerup', this.onMouseUp.bind(this), false)
+        SceneManager.renderer.domElement.addEventListener('pointermove', this.onMouseMove.bind(this), false)
 
         // document.addEventListener('mouseleave', this.onLeaveContainer.bind(this), false)
 

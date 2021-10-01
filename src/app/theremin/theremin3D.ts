@@ -23,7 +23,7 @@ export class Theremin3D {
 
         this.obj = new Object3D()
         this.obj.name = 'theremin.3D'
-
+        this.obj.matrixAutoUpdate = false
 
         this.theremin.notes.forEach(note3D => {
 
