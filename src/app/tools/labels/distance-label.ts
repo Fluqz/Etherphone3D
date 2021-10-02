@@ -78,6 +78,7 @@ export class DistanceLabel {
         this.obj = new THREE.Object3D()
         this.obj.name = 'distancelabel.obj'
         this.obj.visible = this._enabled
+        this.obj.matrixAutoUpdate = false
 
         let label: DistanceLine
         this.sides.forEach(side => {
@@ -162,6 +163,7 @@ class DistanceLine {
 
         this.obj = new THREE.Object3D()
         this.obj.name = 'label.obj'
+        this.obj.matrixAutoUpdate = false
 
         this.lineGeo = new THREE.BufferGeometry()
 
@@ -170,6 +172,7 @@ class DistanceLine {
             transparent: true,
             opacity: .4
         }))
+        this.line.matrixAutoUpdate = false
         this.line.name = 'line.mesh'
 
         this.obj.add(this.line)

@@ -10,7 +10,6 @@ import { Note } from './note'
 export class Chord {
   
     public id: number
-    public type: string
 
     public notes: Note[] = []
 
@@ -24,8 +23,6 @@ export class Chord {
     constructor(_notes?: Note[]) {
 
         this.id = Tools.getUniqueID()
-
-        this.type = 'chord'
 
         this.notes = _notes
     }

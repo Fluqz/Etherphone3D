@@ -1,4 +1,5 @@
 import { Component, Input, ElementRef } from '@angular/core'
+import { AxesBehaviour } from '../axes-behaviours/axes-behaviour'
 import { ObjectControl } from '../object-control'
 import { Axis } from './axis'
 import { Theremin } from './theremin'
@@ -13,20 +14,40 @@ import { Theremin3D } from './theremin3D'
 
         <div class="btn" (click)="addOsc()">Plus</div>
 
-        <!--<label for="x">X</label>
-        <select name="x">
-            <option *ngFor="let b of behaviours; let i = index" value="i">{{ b.name }}</option>
-        </select>
-        
-        <label for="y">Y</label>
-        <select name="y">
-            <option *ngFor="let b of behaviours; let i = index" value="i">{{ b.name }}</option>
-        </select>
-        
-        <label for="z">Z</label>
-        <select name="z">
-            <option *ngFor="let b of behaviours; let i = index" value="i">{{ b.name }}</option>
-        </select>-->
+
+          
+  
+
+        <div id="axes-menu">
+
+            <div class="axes-item">
+            
+                <label for="x">X</label>
+                <select name="x">
+                    <option *ngFor="let b of axesBehaviours; let i = index" value="i" (change)="setAxisbehaviour('x', $event.target.value)">{{ b.name }}</option>
+                </select>
+
+            </div>
+            
+            <div class="axes-item">
+
+                <label for="y">Y</label>
+                <select name="y">
+                    <option *ngFor="let b of axesBehaviours; let i = index" value="i" (change)="setAxisbehaviour('y', $event.target.value)">{{ b.name }}</option>
+                </select>
+                
+            </div>
+
+            <div class="axes-item">
+
+                <label for="z">Z</label>
+                <select name="z">
+                    <option *ngFor="let b of axesBehaviours; let i = index" value="i" (change)="setAxisbehaviour('z', $event.target.value)">{{ b.name }}</option>
+                </select>
+            
+            </div>
+
+        </div>
         
         <div class="btn b gap-r" (click)="toggleMemoryLabel()">Memory Label</div>
         <div class="btn b gap-r" (click)="toggleDistanceLabel()">Distance Label</div>
@@ -51,24 +72,14 @@ import { Theremin3D } from './theremin3D'
     constructor(private hostRef:ElementRef) {
 
         this.host = this.hostRef.nativeElement
-
     }
 
-    get behaviours() { return Theremin.axesBehaviours }
+    get axesBehaviours() {
 
-        getBehaviourByAxis(axis: Axis) {
-
-        for(let b of Theremin.axesBehaviours) {
-
-            if(b.axis == axis) return b
-        }
+        return Theremin.axesBehaviours
     }
 
-
-
-    ngAfterViewInit() {
-
-    }
+    ngAfterViewInit() {}
 
     public reset() {
 
@@ -85,6 +96,11 @@ import { Theremin3D } from './theremin3D'
     }
 
 
+    public setAxisbehaviour(a: string, b: AxesBehaviour) {
+
+        console.log(b)
+        this.theremin.setAxisbehaviour(a, b)
+    }
         
     public toggleAxesLabel() {
 

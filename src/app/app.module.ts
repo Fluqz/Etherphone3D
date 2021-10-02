@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 
 import { Selected } from './selected-menu/selected.component'
 import { TrackView } from './beatmachine/track.component'
+import { TimelineView } from './timeline/timeline.component'
 import { Dashboard } from './dashboard/dashboard.component'
 import { ThereminView } from './theremin/theremin.component'
 import { BeatMachineView } from './beatmachine/beat-machine.component'

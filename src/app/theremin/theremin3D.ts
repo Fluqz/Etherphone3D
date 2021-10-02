@@ -34,10 +34,10 @@ export class Theremin3D {
 
     public update() {
 
-        for(let note3D of this.notes3D) { 
+        // for(let note3D of this.notes3D) { 
          
-            note3D.update()
-        }
+        //     note3D.update()
+        // }
     }
 
     public static moveNote(note3D: Note3D, position: Vector3) {
@@ -74,6 +74,15 @@ export class Theremin3D {
         return null
     }
 
+    getNote3D(note: Note) : Note3D {
+
+        for(let n of this.notes3D) {
+
+            if(note == n.ctrl) return n
+        }
+        return null
+    }
+
     public addNote3D(note: Note) : Note3D {
 
         let note3D = new Note3D(note)
@@ -96,7 +105,7 @@ export class Theremin3D {
         if(i != -1) {
 
             this.notes3D.splice(i, 1)
-            SceneManager.scene.remove(note3D.obj)
+            if(note3D.obj.parent) note3D.obj.parent.remove(note3D.obj)
             note3D.destroy()
             return true
         }

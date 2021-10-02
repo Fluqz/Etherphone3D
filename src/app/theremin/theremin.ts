@@ -61,9 +61,13 @@ export class Theremin {
 
         Theremin.masterVolume.gain.value = this.volume
 
-        Theremin.x = new FrequencyShift()
-        Theremin.y = new VolumeShift()
-        Theremin.z = new Octivator()
+        Theremin.axesBehaviours.push(new FrequencyShift())
+        Theremin.axesBehaviours.push(new VolumeShift())
+        Theremin.axesBehaviours.push(new Octivator())
+
+        this.setAxisbehaviour(Axis.x, Theremin.axesBehaviours[0])
+        this.setAxisbehaviour(Axis.y, Theremin.axesBehaviours[1])
+        this.setAxisbehaviour(Axis.z, Theremin.axesBehaviours[2])
     }
 
 
@@ -77,7 +81,9 @@ export class Theremin {
 
 
     public setAxisbehaviour(axis: string, behaviour: AxesBehaviour) {
-
+        
+        behaviour.axis = Axis[axis]
+        Theremin[axis] = behaviour
     }
 
     public reset() {

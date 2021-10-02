@@ -15,49 +15,6 @@ import { BeatMachine } from './beatmachine/beat-machine';
 
     <div id="webGL"></div>
 
-
-    <div id="axes-menu">
-
-      <div class="axes-item">
-        
-        <div class="axes-label">X</div>
-
-        <select class="axes-options">
-          <option>Hight Pass Filter</option>
-          <option>Distortion</option>
-          <option>Delay</option>
-          <option>Chords</option>
-        </select>
-
-      </div>
-
-      <div class="axes-item">
-        
-        <div class="axes-label">Y</div>
-
-        <select class="axes-options">
-          <option>Hight Pass Filter</option>
-          <option>Distortion</option>
-          <option>Delay</option>
-          <option>Chords</option>
-        </select>
-
-      </div>
-      
-      <div class="axes-item">
-        
-        <div class="axes-label">Z</div>
-
-        <select class="axes-options">
-          <option>Hight Pass Filter</option>
-          <option>Distortion</option>
-          <option>Delay</option>
-          <option>Chords</option>
-        </select>
-
-      </div>
-    </div>
-
     <div *ngIf="true" id="ui-wrapper" (mouseenter)="mouseenterUI()" (mouseleave)="mouseenterUI()">
 
 
@@ -149,13 +106,13 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     window.onresize = this.resizeEvent
 
     this.mouseDownEvent = this.onMouseDown.bind(this)
-    document.addEventListener('mousedown', this.mouseDownEvent, false)
+    document.addEventListener('pointerdown', this.mouseDownEvent, false)
 
     this.mouseUpEvent = this.onMouseUp.bind(this)
-    document.addEventListener('mouseup', this.mouseUpEvent, false)
+    document.addEventListener('pointerup', this.mouseUpEvent, false)
     
     this.mouseMovevent = this.onMouseMove.bind(this)
-    document.addEventListener('mousemove', this.mouseMovevent, false)
+    document.addEventListener('pointermove', this.mouseMovevent, false)
 
     
     this.keydownEvent = this.onkeydown.bind(this)
@@ -166,25 +123,12 @@ export class AppComponent implements AfterViewInit, OnDestroy{
   }
 
 
-  // private fixedUpdateTiming: number = 20;
-  // private physicsTimeSimulated:number = Date.now();
-  // private _deltaTime: number = 0;
-  // private lastUpdate: number = Date.now();
-
   public loop(): void {
-
-    // while(this.physicsTimeSimulated < Date.now()){
-
-    //   this.fixedUpdate()
-    //   this.physicsTimeSimulated += this.fixedUpdateTiming
-    // }
 
     this.update()
 
-    // this._deltaTime = Date.now() - this.lastUpdate;
-    // this.lastUpdate = Date.now();
-
     this.zone.runOutsideAngular(()=> {
+      window.cancelAnimationFrame(this.AFID)
       this.AFID = window.requestAnimationFrame(this.loop.bind(this))
     })
   }
@@ -197,11 +141,6 @@ export class AppComponent implements AfterViewInit, OnDestroy{
 
     this.sm.update()
   }
-
-  private fixedUpdate() {
-    // console.log('fixed update')
-  }
-
 
   public rotateCamera(e) {
 
@@ -282,6 +221,8 @@ export class AppComponent implements AfterViewInit, OnDestroy{
 
     let obj: {} = JSON.parse(file)
 
+    console.log('Ser',obj)
+
     if(obj['theremin']) this.theremin.serializeIn(obj['theremin'])
 
     if(obj['beatmachine']) {
@@ -295,6 +236,9 @@ export class AppComponent implements AfterViewInit, OnDestroy{
   private serializeOut() {
 
     let samples: {}[] = []
+    for(let s of BeatMachine.samplesInQueue) {
+      samples.push(s.serializeOut())
+    }
 
     let obj: {} = {
       theremin: this.theremin.serializeOut(),
@@ -302,6 +246,7 @@ export class AppComponent implements AfterViewInit, OnDestroy{
         bpm: BeatMachine.bpm,
         beats: BeatMachine.beats,
         noteDuration: BeatMachine.noteDuration,
+        samples: samples
       }
     }
 
@@ -314,6 +259,18 @@ export class AppComponent implements AfterViewInit, OnDestroy{
   unloadNotification($event: any) {
 
     this.ngOnDestroy()
+  }
+  
+  @HostListener('window:blur', ['$event'])
+  onWindowblur($event: any) {
+
+    window.cancelAnimationFrame(this.AFID)
+  }
+  
+  @HostListener('window:focus', ['$event'])
+  onWindowFocus($event: any) {
+
+    this.loop()
   }
     
   ngOnDestroy() {

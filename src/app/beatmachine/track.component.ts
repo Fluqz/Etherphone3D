@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, Input, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, Input, ElementRef, ChangeDetectorRef } from '@angular/core';
 
 import * as THREE from 'three'
 import { ObjectControl } from '../object-control';
@@ -128,7 +128,7 @@ export class TrackView implements AfterViewInit{
 
 
 
-  constructor(private hostRef:ElementRef) {
+  constructor(private hostRef:ElementRef, cdr: ChangeDetectorRef) {
 
     this.host = this.hostRef.nativeElement
 
@@ -154,12 +154,10 @@ export class TrackView implements AfterViewInit{
 
   public createSample(length: number, scheduleTime: number) {
 
-    let sample: Sample = {
-      id: Tools.getUniqueID(),
-      note: this.note,
-      scheduleTime: scheduleTime,
-      length: 1
-    }
+    let sample = new Sample(this.note.ctrl)
+    sample.scheduleTime = scheduleTime
+    sample.length = 1
+
     console.log('sample', sample)
     this.samples.push(sample)
 

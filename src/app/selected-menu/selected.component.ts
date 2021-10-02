@@ -34,8 +34,6 @@ export class Selected implements AfterViewInit {
   public get isNote() { return this.selected instanceof Note3D }
 
 
-
-
   ngAfterViewInit() {
 
 

@@ -23,12 +23,12 @@ export class FrequencyShift extends AxesBehaviour {
 
         this.muted = false
 
-
         window.addEventListener('keydown', this.onkeydown.bind(this))
         window.addEventListener('keyup', this.onkeyup.bind(this))
     }
 
     private onkeydown(e: KeyboardEvent) {
+        if(e.repeat) return
         if(e.key == 's') this.keydown = true
     }
     private onkeyup(e: KeyboardEvent) {
@@ -42,7 +42,7 @@ export class FrequencyShift extends AxesBehaviour {
         let nearest: number = 1000
         let currentNote: NoteData
 
-        NoteDataClass.data.forEach(data => {
+        for(let data of NoteDataClass.data) {
 
             if(nearest > Math.abs(frequency - data.frequency)) {
 
@@ -50,7 +50,7 @@ export class FrequencyShift extends AxesBehaviour {
 
                 currentNote = data
             }
-        })
+        }
 
         return currentNote.frequency
     }

@@ -183,14 +183,16 @@ export class SceneManager {
     public update() {
 
         if(SceneManager.orbit) SceneManager.orbit.update()
+
+        this.render()
+    }
+
+    public render() {
         
         if(SceneManager.activeCamera == CameraType.PERSPECTIVE) 
             SceneManager.renderer.render(SceneManager.scene, SceneManager.perspective)
         else if(SceneManager.activeCamera == CameraType.ORTHOGRAPHIC)  
             SceneManager.renderer.render(SceneManager.scene, SceneManager.orthographic)
-
-        // console.log(Theremin.instance.sounds, Theremin3D.instance.sounds3D)
-
     }
 
     public distanceToCenter(pos: Vector3) {

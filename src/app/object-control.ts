@@ -40,6 +40,10 @@ export class ObjectControl {
         
         this.plane = new Plane(new Vector3(0, 1, 0), 0)
 
+        this.keyMap.set('x', false)
+        this.keyMap.set('y', false)
+        this.keyMap.set('z', false)
+
         SceneManager.renderer.domElement.addEventListener('pointerdown', this.onMouseDown.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('pointerup', this.onMouseUp.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('pointermove', this.onMouseMove.bind(this), false)
@@ -51,8 +55,8 @@ export class ObjectControl {
         SceneManager.renderer.domElement.addEventListener('touchcancel', this.onTouchCancel.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('touchmove', this.onTouchMove.bind(this), false)
         
-        SceneManager.renderer.domElement.addEventListener('keyup', this.onKeyUp.bind(this), false)
-        SceneManager.renderer.domElement.addEventListener('keydown', this.onKeyDown.bind(this), false)
+        document.body.addEventListener('keyup', this.onKeyUp.bind(this), false)
+        document.body.addEventListener('keydown', this.onKeyDown.bind(this), false)
     }
 
 
@@ -197,7 +201,6 @@ export class ObjectControl {
             ObjectControl.selectedObj = null
         }
 
-        // SceneSetup.instance.onMouseDown(event)
         console.log('CURRENTLY SELECTED: ', ObjectControl.selectedObjs, '  Main: ', ObjectControl.selected)
     }
 
@@ -224,9 +227,6 @@ export class ObjectControl {
         if(ObjectControl.selectedObjs.length > 1) {
 
         }
-
-        // SceneSetup.instance.onMouseUp(event)
-        
     }
 
     public onMouseMove(event) {
@@ -304,30 +304,22 @@ export class ObjectControl {
 
     public onKeyDown(e: KeyboardEvent) {
 
+        if(e.repeat) return
+
         // MAKE POSSIBLE TO CLICK TWO KEYS e.g. X AND Y AND DONT CHANGE Z 
         const key = e.key.toLowerCase()
 
         if(key == 'x' || key == 'y' || key == 'z' || key == '<') {
             
-            this.XKey = false
-            this.YKey = false
-            this.ZKey = false
-            
-            this.keyMap.set(key, e.type == 'keydown')
+            this.keyMap.set(key, true)
 
-            if(this.keyMap.get('x')) {
+            this.XKey = this.keyMap.get('x')
+            this.YKey = this.keyMap.get('y')
+            this.ZKey = this.keyMap.get('z') || this.keyMap.get('<')
 
-                this.XKey = true
-            }
-            if(this.keyMap.get('y')) {
-                
-                this.YKey = true
-            }
-            if(this.keyMap.get('z') || this.keyMap.get('<')) {
-
-                this.ZKey = true
-            }
+            this.offset[key] = this.mouse[key]
         }
+        console.log('keymap',this.keyMap)
     }
 
     public onKeyUp(e) {
@@ -336,25 +328,18 @@ export class ObjectControl {
 
         if(key == 'x' || key == 'y' || key == 'z' || key == '<') {
         
-            this.keyMap.set(key, e.type == 'keydown')
+            this.keyMap.set(key, false)
 
-            if(this.keyMap.get('x') && this.keyMap.get('y') || 
-                this.keyMap.get('x') && (this.keyMap.get('z') || this.keyMap.get('<')) || 
-                this.keyMap.get('y') && (this.keyMap.get('z') || this.keyMap.get('<')) ||
-                this.keyMap.get('x') && this.keyMap.get('y') && (this.keyMap.get('z') || this.keyMap.get('<'))) {
-                
-                if(this.keyMap.get(key)) {
+            this.XKey = this.keyMap.get('x')
+            this.YKey = this.keyMap.get('y')
+            this.ZKey = this.keyMap.get('z') || this.keyMap.get('<')
 
-                    this.XKey = false
-                }
-            }
-            else {
-                
-                this.XKey = true
-                this.YKey = true
-                this.ZKey = true
-            }
+            if(!this.XKey && !this.YKey && !this.ZKey) 
+                this.XKey = this.YKey = this.ZKey = true
+            
         }
+
+        console.log('keymap',this.keyMap)
     }
 
     onResize() {

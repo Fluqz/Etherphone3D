@@ -2,6 +2,8 @@ import { Vector3, Color } from 'three'
 import { Theremin } from './theremin'
 import * as Tone from 'tone'
 import { Tools } from '../tools/tools'
+import { Effect } from './../Effects/Effect'
+
 
 export class Note {
     
@@ -10,9 +12,12 @@ export class Note {
 
     public gain: Tone.Gain
     public osc: Tone.Oscillator
+
     public _frequency: number
-    public _wave: OscillatorType
     private _volume: number
+    public _wave: OscillatorType
+
+    public effectChain: Effect[] = []
 
     public isPlaying: boolean = false
     public muted: boolean = false
@@ -61,55 +66,38 @@ export class Note {
         this.frequency = 0
 
         this.position = new Vector3(0, 0, 0)
+
+        this.addEffect(new Effect())
     }
 
     public update() {
 
-
-
-
-
     }
 
-    // public createOsc() {
+    
+    public addEffect(e: Effect) {
 
-    //     this.gainNode = this.audioContext.createGain()
+        if(this.effectChain.indexOf(e) == -1) return
 
-    //     this.osc = this.audioContext.createOscillator()
-    //     this.osc.type = 'sine'
-    //     this.osc.connect(this.gainNode)
-    //     this.gainNode.connect(this.audioContext.destination)
+        this.effectChain.push(e)
 
-    //     this.osc.frequency.value = this._frequency
-
-    //     this.volume = this.volume
-
-    //     this.position = new Vector3(_frequency / Theremin.instance.X.sF, this.volume * Theremin.instance.Y.sF, 0)
-    // }
-
-    public destroy() {
-
-        // this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, this.audioContext.currentTime)
-
-        // this.gainNode.gain.exponentialRampToValueAtTime(.0000001, length + .03)
-
-        window.setTimeout(()=> {
+        for(e of this.effectChain) {
 
             this.osc.disconnect()
-            this.osc = null
-        }, 40)
-
-
-
-        this.wave = null
-        this._volume = null
-        this.color = null
-        this.position = null
-        this.type = null
-        this.id = null
-        this.isPlaying = null
-        this.muted = null
+            this.osc.connect(e.node).connect(this.gain)
+            e.node.connect(this.gain)
+        }
     }
+    
+    public removeEffect(e: Effect) {
+
+        let i = this.effectChain.indexOf(e)
+
+        if(i == -1) return
+
+        this.effectChain.splice(i, 1)
+    }
+    
     
     public play(length?: number) {
 
@@ -150,10 +138,6 @@ export class Note {
         this.muted = true
     }
 
-    public addReverb() {
-
-    }
-
     public unmute() {
 
         this.muted = false
@@ -169,15 +153,41 @@ export class Note {
             frequency: this.frequency,
             volume: this.volume,
             wave: this.wave,
+            position: this.position
         }
     }
 
     public serializeIn(obj: {}) {
         console.log('obj', obj)
-        this.id = obj['id']
         this.color.setHex(obj['color'])
         this.frequency = obj['frequency']
         this.volume = obj['volume']
-        // this.wave = obj['wave']
+        this.wave = obj['wave']
+        this.position.set(obj['position'].x, obj['position'].y, obj['position'].z)
+    }
+
+    
+    public destroy() {
+
+        // this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, this.audioContext.currentTime)
+
+        // this.gainNode.gain.exponentialRampToValueAtTime(.0000001, length + .03)
+
+        window.setTimeout(()=> {
+
+            this.osc.disconnect()
+            this.osc = null
+        }, 40)
+
+
+
+        this.wave = null
+        this._volume = null
+        this.color = null
+        this.position = null
+        this.type = null
+        this.id = null
+        this.isPlaying = null
+        this.muted = null
     }
 }

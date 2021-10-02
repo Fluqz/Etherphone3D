@@ -6,9 +6,10 @@ import { Vector3 } from 'three';
 
 export class Octivator extends AxesBehaviour {
 
-    private oscs: OscillatorNode[] = []
+    private oscs: Map<number, Tone.Oscillator> = new Map<number, Tone.Oscillator>()
+    private osc: Tone.Oscillator
 
-    private currentMultiplier: number
+    private octaveFactor:number = 2
 
     constructor(axis?: Axis) { 
         
@@ -24,57 +25,43 @@ export class Octivator extends AxesBehaviour {
         this.muted = false
     }
 
-
-
     public compute1DPosition(note: Note) {
 
+        this.osc = this.getOctave(note)
+
+        note.position[this.axis] = ((this.osc.frequency.value as number) / this.sF) / this.octaveFactor 
     }
 
     // Minus value go low, plus go high
     public processAlongDimension(note: Note, position: Vector3) {
 
-
-        if(this.axis == null) return
         if(this.muted) return
 
-        let count:number = Math.round(note.position[this.axis] / this.sF)
-        let multipier:number = count +1
+        this.osc = this.getOctave(note)
 
-        count = Math.abs(count)
+        let frequency = Math.abs(((position[this.axis] * this.sF)))
+        frequency *= this.octaveFactor
 
-        // if(this.currentMultiplier == multipier) return
+        this.osc.frequency.setValueAtTime(frequency, Tone.context.currentTime)
+        this.osc.start()
+    }
 
-        this.currentMultiplier = multipier
-        
-        this.oscs.forEach(osc => {
 
-            osc.stop()
-            osc.disconnect()
-        })
-        this.oscs = []
+    private getOctave(note: Note) : Tone.Oscillator {
 
-        let neg: boolean = false
-        if(multipier < 0) neg = true
+        let osc: Tone.Oscillator = this.oscs.get(note.id)
+        if(!osc) {
 
-        for(let i = 1; i <= count; i++) {
+            osc = new Tone.Oscillator(0)
+            osc.connect(note.gain)
 
-            let osc = Tone.context.createOscillator()
-            // osc.type = node.wave
-            // osc.type = 'sine'
-            // osc.connect(entity.gain)
-            // if(neg)
-            //     osc.frequency.setValueAtTime(entity.frequency / multipier, Tone.context.currentTime)
-            // else osc.frequency.setValueAtTime(multipier * entity.frequency, Tone.context.currentTime)
-
-            osc.start()
-
-            this.oscs.push(osc)
+            this.oscs.set(note.id, osc)
         }
-    }
 
-    private createOctave(frequency: number) {
+        if(osc.type != note.osc.type) osc.type = note.osc.type
+        osc.volume.setValueAtTime(note.osc.volume.value, Tone.context.currentTime)
 
-
-
-    }
+        return osc
+    }    
+    
 }
