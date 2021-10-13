@@ -6,8 +6,12 @@ import { Theremin3D } from './theremin/theremin3D';
 import { ObjectControl } from './object-control';
 import { DragWindow } from './tools/drag-window';
 
+import { VRButton } from 'three/examples/jsm/webxr/VRButton'
+
 import { Storage } from './storage'
 import { BeatMachine } from './beatmachine/beat-machine';
+
+import { Globals } from './globals'
 
 @Component({
   selector: 'app-root',
@@ -100,8 +104,10 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     })
 
 
+    // VR Button
+    this.container.appendChild( VRButton.createButton( SceneManager.renderer ) );
 
-
+    // Events
     this.resizeEvent = this.onResize.bind(this)
     window.onresize = this.resizeEvent
 
@@ -122,19 +128,43 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     document.addEventListener('keyup', this.keyupEvent, false)
   }
 
+  enableVR() {
+
+    if(!this.sm) return
+
+    SceneManager.renderer.xr.enabled = Globals.VR = !Globals.VR
+
+    if(Globals.VR) {
+
+      this.stopLoop()
+      SceneManager.renderer.setAnimationLoop(this.loop.bind(this))
+      SceneManager.createController()
+    } 
+    else {
+
+      this.loop()
+      SceneManager.renderer.setAnimationLoop(null)
+      SceneManager.removeController()
+    }
+
+  }
 
   public loop(): void {
 
     this.update()
 
-    this.zone.runOutsideAngular(()=> {
-      window.cancelAnimationFrame(this.AFID)
+    // this.zone.runOutsideAngular(()=> {
+      this.stopLoop()
       this.AFID = window.requestAnimationFrame(this.loop.bind(this))
-    })
+    // })
   }
 
+  public stopLoop() {
+
+    window.cancelAnimationFrame(this.AFID)
+  }
+  
   private update() {
-    // console.log('update')
 
     this.theremin.update()
     this.theremin3D.update()
@@ -219,6 +249,8 @@ export class AppComponent implements AfterViewInit, OnDestroy{
 
   private serializeIn(file: string) {
 
+    if(file == undefined) return
+
     let obj: {} = JSON.parse(file)
 
     console.log('Ser',obj)
@@ -264,18 +296,18 @@ export class AppComponent implements AfterViewInit, OnDestroy{
   @HostListener('window:blur', ['$event'])
   onWindowblur($event: any) {
 
-    window.cancelAnimationFrame(this.AFID)
+    this.stopLoop()
   }
   
   @HostListener('window:focus', ['$event'])
   onWindowFocus($event: any) {
 
-    this.loop()
+    if(Globals.VR) this.loop()
   }
     
   ngOnDestroy() {
 
-    window.cancelAnimationFrame(this.AFID)
+    this.stopLoop()
 
     Storage.save(this.serializeOut())
   }
