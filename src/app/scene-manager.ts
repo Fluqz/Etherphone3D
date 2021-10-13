@@ -16,6 +16,7 @@ import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerM
 
 
 import { Color } from './color'
+import { Globals } from './globals'
 
 
 export enum CameraType {
@@ -209,7 +210,7 @@ export class SceneManager {
     private addCubeMap() {
 
         SceneManager.scene.background = new THREE.CubeTextureLoader()
-            .setPath( '/assets/images/milky-way/' )
+            .setPath( Globals.PATH + '/assets/images/milky-way/' )
             .load( [
                 'px.png',
                 'nx.png',
