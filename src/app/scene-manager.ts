@@ -75,8 +75,8 @@ export class SceneManager {
         SceneManager.perspective.position.set(50, 50, 50)
 
         SceneManager.orthographic = new THREE.OrthographicCamera(SceneManager.w / -2, SceneManager.w / 2, SceneManager.h / 2, SceneManager.h / -2, .1, 1000)
-        SceneManager.orthographic.position.set(0, 0, 5)
-        SceneManager.orthographic.zoom = 50
+        SceneManager.orthographic.position.set(0, 0, 50)
+        SceneManager.orthographic.zoom = 100
 
         SceneManager.scene = new THREE.Scene()
         SceneManager.scene.background = new THREE.Color(Color.BG)
