@@ -104,8 +104,10 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     })
 
 
+    let vr = VRButton.createButton( SceneManager.renderer )
+    vr.addEventListener('click', this.enableVR.bind(this), false)
     // VR Button
-    this.container.appendChild( VRButton.createButton( SceneManager.renderer ) );
+    this.container.appendChild( vr );
 
     // Events
     this.resizeEvent = this.onResize.bind(this)
