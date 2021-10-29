@@ -42,7 +42,7 @@ export class Note {
 
         this._volume = Math.abs(val)
 
-        this.gain.gain.value = val
+        this.gain.gain.setValueAtTime(val, Tone.context.currentTime)
     }
 
     public get wave() : OscillatorType { return this._wave }

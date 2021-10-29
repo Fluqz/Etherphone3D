@@ -1,7 +1,7 @@
 import { AxesBehaviour } from './axes-behaviour'
-import { Note } from '../theremin/note'
-import { NoteData, NoteDataClass } from "../data/frequency-of-notes"
-import { Axis } from '../theremin/axis'
+import { Note } from '../note'
+import { NoteData, NoteDataClass } from "../../data/frequency-of-notes"
+import { Axis } from '../axis'
 import { Vector3 } from 'three'
 
 export class FrequencyShift extends AxesBehaviour {

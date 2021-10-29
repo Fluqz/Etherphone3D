@@ -7,7 +7,6 @@ import { SceneManager } from '../scene-manager';
 
 export class Theremin3D {
 
-    static instance: Theremin3D
     public theremin: Theremin
 
     public notes3D: Note3D[] = []
@@ -16,8 +15,6 @@ export class Theremin3D {
     public obj: Object3D
 
     constructor(ctrl: Theremin) {
-
-        Theremin3D.instance = this
 
         this.theremin = ctrl
 

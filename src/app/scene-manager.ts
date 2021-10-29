@@ -11,7 +11,6 @@ import { ObjectControl } from './object-control'
 import { Theremin } from './theremin/theremin'
 import { Theremin3D } from './theremin/theremin3D'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 
 
 
@@ -125,38 +124,6 @@ export class SceneManager {
             SceneManager.orbit.dampingFactor = .2
             SceneManager.orbit.enableRotate = false
         }
-    }
-
-    public static createController() {
-
-        const geometry = new THREE.BufferGeometry();
-        geometry.setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 5 ) ] );
-
-        SceneManager.controller1 = SceneManager.renderer.xr.getController( 0 );
-        SceneManager.controller1.add( new THREE.Line( geometry ) );
-        SceneManager.scene.add( SceneManager.controller1 );
-
-        SceneManager.controller2 = SceneManager.renderer.xr.getController( 1 );
-        SceneManager.controller2.add( new THREE.Line( geometry ) );
-        SceneManager.scene.add( SceneManager.controller2 );
-
-        const controllerModelFactory = new XRControllerModelFactory();
-
-        SceneManager.controllerGrip1 = SceneManager.renderer.xr.getControllerGrip( 0 );
-        SceneManager.controllerGrip1.add( controllerModelFactory.createControllerModel( SceneManager.controllerGrip1 ) );
-        SceneManager.scene.add( SceneManager.controllerGrip1 );
-
-        SceneManager.controllerGrip2 = SceneManager.renderer.xr.getControllerGrip( 1 );
-        SceneManager.controllerGrip2.add( controllerModelFactory.createControllerModel( SceneManager.controllerGrip2 ) );
-        SceneManager.scene.add( SceneManager.controllerGrip2 );
-    }
-
-    public static removeController() {
-
-        SceneManager.scene.remove(SceneManager.controller1)
-        SceneManager.scene.remove(SceneManager.controller2)
-        SceneManager.scene.remove(SceneManager.controllerGrip1)
-        SceneManager.scene.remove(SceneManager.controllerGrip2)
     }
 
     private createAxes() {

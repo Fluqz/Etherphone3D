@@ -1,6 +1,7 @@
 import { Sample } from './sample'
 import * as Tone from 'tone'
 import { Theremin3D } from '../theremin/theremin3D'
+import { Subject } from 'rxjs'
 
 
 export class BeatMachine {
@@ -24,7 +25,7 @@ export class BeatMachine {
 
     public static startTime: number = 0
 
-    public static onTrigger: Function
+    public static onTrigger: Subject<Sample> = new Subject()
 
     constructor() {}
 
@@ -99,7 +100,8 @@ export class BeatMachine {
                 // console.log('play', sample.scheduleTime, sample.length * BeatMachine.secondsPerBeat)
 
                 sample.note.play(sample.length * BeatMachine.secondsPerBeat)
-                Theremin3D.instance.getNote3D(sample.note).play(sample.length * BeatMachine.secondsPerBeat) // HOW TO AVOID THIS? CALLBACK? 
+                // Theremin3D.instance.getNote3D(sample.note).play(sample.length * BeatMachine.secondsPerBeat) // HOW TO AVOID THIS? CALLBACK? 
+                this.onTrigger.next(sample)
             }
         })
     }

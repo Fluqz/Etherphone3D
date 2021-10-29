@@ -1,16 +1,14 @@
 import { Note } from './note'
-import { AxesBehaviour } from '../axes-behaviours/axes-behaviour'
-import { FrequencyShift } from '../axes-behaviours/frequency-shfit'
-import { VolumeShift } from '../axes-behaviours/volume-shift'
-import { Octivator } from '../axes-behaviours/octivator'
-import { AdditiveSynthesis } from '../axes-behaviours/additive-synthesis'
+import { AxesBehaviour } from './axes-behaviours/axes-behaviour'
+import { FrequencyShift } from './axes-behaviours/frequency-shfit'
+import { VolumeShift } from './axes-behaviours/volume-shift'
+import { Octivator } from './axes-behaviours/octivator'
+import { AdditiveSynthesis } from './axes-behaviours/additive-synthesis'
 import { Axis } from './axis'
 import { OctahedronBufferGeometry, Vector3 } from 'three'
 import * as Tone from 'tone'
 
 export class Theremin {
-
-    static instance: Theremin
 
     static masterVolume: Tone.Gain
     public storedVolume: number
@@ -50,8 +48,6 @@ export class Theremin {
 
 
     constructor() {
-
-        Theremin.instance = this
 
         this.volume = .7
 

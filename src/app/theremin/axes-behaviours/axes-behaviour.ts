@@ -1,6 +1,6 @@
 import { Vector3 } from 'three'
-import { Axis } from '../theremin/axis'
-import { Note } from '../theremin/note'
+import { Axis } from '../axis'
+import { Note } from '../note'
 
 
 export class AxesBehaviour {

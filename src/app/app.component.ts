@@ -140,13 +140,13 @@ export class AppComponent implements AfterViewInit, OnDestroy{
 
       this.stopLoop()
       SceneManager.renderer.setAnimationLoop(this.loop.bind(this))
-      SceneManager.createController()
+      this.objCtrl.createController()
     } 
     else {
 
       this.loop()
       SceneManager.renderer.setAnimationLoop(null)
-      SceneManager.removeController()
+      this.objCtrl.removeController()
     }
 
   }
@@ -304,9 +304,9 @@ export class AppComponent implements AfterViewInit, OnDestroy{
   @HostListener('window:focus', ['$event'])
   onWindowFocus($event: any) {
 
-    if(Globals.VR) this.loop()
+    if(!Globals.VR) this.loop() 
   }
-    
+  
   ngOnDestroy() {
 
     this.stopLoop()

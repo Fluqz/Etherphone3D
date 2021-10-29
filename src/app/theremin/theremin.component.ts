@@ -1,5 +1,5 @@
 import { Component, Input, ElementRef } from '@angular/core'
-import { AxesBehaviour } from '../axes-behaviours/axes-behaviour'
+import { AxesBehaviour } from './axes-behaviours/axes-behaviour'
 import { ObjectControl } from '../object-control'
 import { Axis } from './axis'
 import { Theremin } from './theremin'

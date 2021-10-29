@@ -1,5 +1,5 @@
 import { AxesBehaviour } from './axes-behaviour'
-import { Axis } from '../theremin/axis'
+import { Axis } from '../axis'
 import { Note } from 'tone/build/esm/core/type/Units'
 
 export class AdditiveSynthesis extends AxesBehaviour {
