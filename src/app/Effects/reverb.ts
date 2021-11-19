@@ -1,4 +1,5 @@
 import { Theremin } from "../theremin/theremin"
+import * as Tone from 'tone'
 
 
 

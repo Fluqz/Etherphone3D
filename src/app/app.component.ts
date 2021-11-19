@@ -6,8 +6,12 @@ import { Theremin3D } from './theremin/theremin3D';
 import { ObjectControl } from './object-control';
 import { DragWindow } from './tools/drag-window';
 
+import { VRButton } from 'three/examples/jsm/webxr/VRButton'
+
 import { Storage } from './storage'
 import { BeatMachine } from './beatmachine/beat-machine';
+
+import { Globals } from './globals'
 
 @Component({
   selector: 'app-root',
@@ -15,8 +19,8 @@ import { BeatMachine } from './beatmachine/beat-machine';
 
     <div id="webGL"></div>
 
-
     <div *ngIf="true" id="ui-wrapper" (mouseenter)="mouseenterUI()" (mouseleave)="mouseenterUI()">
+
 
       <div>
 
@@ -94,27 +98,29 @@ export class AppComponent implements AfterViewInit, OnDestroy{
       this.theremin3D = new Theremin3D(this.theremin)
       this.objCtrl = new ObjectControl(this.theremin3D)
 
-
       // this.theremin.toggleOnOff(false)
-
 
       this.loop()
     })
 
 
+    let vr = VRButton.createButton( SceneManager.renderer )
+    vr.addEventListener('click', this.enableVR.bind(this), false)
+    // VR Button
+    this.container.appendChild( vr );
 
-
+    // Events
     this.resizeEvent = this.onResize.bind(this)
     window.onresize = this.resizeEvent
 
     this.mouseDownEvent = this.onMouseDown.bind(this)
-    document.addEventListener('mousedown', this.mouseDownEvent, false)
+    document.addEventListener('pointerdown', this.mouseDownEvent, false)
 
     this.mouseUpEvent = this.onMouseUp.bind(this)
-    document.addEventListener('mouseup', this.mouseUpEvent, false)
+    document.addEventListener('pointerup', this.mouseUpEvent, false)
     
     this.mouseMovevent = this.onMouseMove.bind(this)
-    document.addEventListener('mousemove', this.mouseMovevent, false)
+    document.addEventListener('pointermove', this.mouseMovevent, false)
 
     
     this.keydownEvent = this.onkeydown.bind(this)
@@ -124,43 +130,49 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     document.addEventListener('keyup', this.keyupEvent, false)
   }
 
+  enableVR() {
 
-  // private fixedUpdateTiming: number = 20;
-  // private physicsTimeSimulated:number = Date.now();
-  // private _deltaTime: number = 0;
-  // private lastUpdate: number = Date.now();
+    if(!this.sm) return
+
+    SceneManager.renderer.xr.enabled = Globals.VR = !Globals.VR
+
+    if(Globals.VR) {
+
+      this.stopLoop()
+      SceneManager.renderer.setAnimationLoop(this.loop.bind(this))
+      this.objCtrl.createController()
+    } 
+    else {
+
+      this.loop()
+      SceneManager.renderer.setAnimationLoop(null)
+      this.objCtrl.removeController()
+    }
+
+  }
 
   public loop(): void {
 
-    // while(this.physicsTimeSimulated < Date.now()){
-
-    //   this.fixedUpdate()
-    //   this.physicsTimeSimulated += this.fixedUpdateTiming
-    // }
-
     this.update()
 
-    // this._deltaTime = Date.now() - this.lastUpdate;
-    // this.lastUpdate = Date.now();
-
-    this.zone.runOutsideAngular(()=> {
+    // this.zone.runOutsideAngular(()=> {
+      this.stopLoop()
       this.AFID = window.requestAnimationFrame(this.loop.bind(this))
-    })
+    // })
   }
 
+  public stopLoop() {
+
+    window.cancelAnimationFrame(this.AFID)
+  }
+  
   private update() {
-    // console.log('update')
 
     this.theremin.update()
     this.theremin3D.update()
 
     this.sm.update()
   }
-
-  private fixedUpdate() {
-    // console.log('fixed update')
-  }
-
 
   public rotateCamera(e) {
 
@@ -239,7 +251,11 @@ export class AppComponent implements AfterViewInit, OnDestroy{
 
   private serializeIn(file: string) {
 
+    if(file == undefined) return
+
     let obj: {} = JSON.parse(file)
+
+    console.log('Ser',obj)
 
     if(obj['theremin']) this.theremin.serializeIn(obj['theremin'])
 
@@ -254,6 +270,9 @@ export class AppComponent implements AfterViewInit, OnDestroy{
   private serializeOut() {
 
     let samples: {}[] = []
+    for(let s of BeatMachine.samplesInQueue) {
+      samples.push(s.serializeOut())
+    }
 
     let obj: {} = {
       theremin: this.theremin.serializeOut(),
@@ -261,6 +280,7 @@ export class AppComponent implements AfterViewInit, OnDestroy{
         bpm: BeatMachine.bpm,
         beats: BeatMachine.beats,
         noteDuration: BeatMachine.noteDuration,
+        samples: samples
       }
     }
 
@@ -274,10 +294,22 @@ export class AppComponent implements AfterViewInit, OnDestroy{
 
     this.ngOnDestroy()
   }
-    
+  
+  @HostListener('window:blur', ['$event'])
+  onWindowblur($event: any) {
+
+    this.stopLoop()
+  }
+  
+  @HostListener('window:focus', ['$event'])
+  onWindowFocus($event: any) {
+
+    if(!Globals.VR) this.loop() 
+  }
+  
   ngOnDestroy() {
 
-    window.cancelAnimationFrame(this.AFID)
+    this.stopLoop()
 
     Storage.save(this.serializeOut())
   }

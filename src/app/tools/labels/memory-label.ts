@@ -14,12 +14,12 @@ export class MemoryLabel {
     private start: THREE.Vector3
     private end: THREE.Vector3
 
-    public obj: THREE.Object3D
+    private obj: THREE.Object3D
 
 
-    public line: THREE.Line
+    private line: THREE.Line
     private lineGeo: THREE.BufferGeometry
-    public sphere: THREE.Mesh
+    private sphere: THREE.Mesh
 
     private _enabled: boolean = false
 
@@ -35,7 +35,7 @@ export class MemoryLabel {
         this.createLabel()
     }
 
-
+    
 
     public get enabled() { return this._enabled }
     public set enabled(val: boolean) {
@@ -60,10 +60,12 @@ export class MemoryLabel {
         if(!this._enabled) return
 
         this.sphere.position.copy(this.storedStart)
+        this.sphere.updateMatrix()
 
         this.end.copy(this.note.ctrl.position)
 
         this.lineGeo.setFromPoints([this.storedStart, this.end])
+        this.line.updateMatrix()
     }
 
     public showHideLabel(side: string, show: boolean) {
@@ -75,19 +77,28 @@ export class MemoryLabel {
         this.obj = new THREE.Object3D()
         this.obj.name = 'memorylabel.obj'
         this.obj.visible = this._enabled
+        this.obj.matrixAutoUpdate = false
 
         this.lineGeo = new THREE.BufferGeometry()
         this.line = new THREE.Line(this.lineGeo, new THREE.LineBasicMaterial({ color: Color.X, transparent: true, opacity: .2 })) 
+        this.line.matrixAutoUpdate = false
         this.line.name = 'line.obj'
 
         this.obj.add(this.line)
 
         this.sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(.1), new THREE.MeshBasicMaterial({ color: Color.X, transparent: true, opacity: .2 }))
         this.sphere.name = 'sphere.obj'
+        this.sphere.matrixAutoUpdate = false
         this.sphere.position.copy(this.start)
         
         this.obj.add(this.sphere)
 
         SceneManager.scene.add(this.obj)
+    }
+
+    public reset() {
+
+        this.start.copy(this.note.ctrl.position)
+        this.storedStart.copy(this.note.ctrl.position)
     }
 }

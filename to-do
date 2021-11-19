@@ -51,3 +51,17 @@ Also deform the spheres with their beats
 
 
 // Make it possible to draw curves, polygons or points to run through. Basicly a animation of a melody
+
+
+
+You put a empty object in the world/room. The object represents a sound source in any form. A Oscillators, Clip, Midi sequence etc are supported. Each source has different properties to control it. You can put different effects on it too. All of the controllable knobs/variables of the source are mappable on an axis. That way you can control 3 dimensions as variable positon at a time. (Is there a way to have more than 3 dimensions? N Dimensions? By lowering the angle between the dimension, instead of 90deg only 45deg. How to make a own coordinate system? x,y,z,t,v,u...., Hyperbolic coordinate system? OR use a cube and have two mappings on one axis, one going from left, to right and one from right to left, or parallel)
+You can create multiple rooms to switch between, put as many sources in the room as you want to. You can group sources too.
+The axes behaviors are predefined mappings, basicly you add a axis behavior and all the dependencies (effect chain) is added to the selected sources and the mapping is set automatically.
+You have X, Y, Z as an UI element showing you the current axes in this room. You can have different mappings on each object, so the room does not define the axes. (Maybe show a list of mappins below each axis)
+
+To activly use the axis controlling, you have to drag a source in the room. This way the axis mapping is triggered, setting the connected value to its axis position.
+Its also possible to draw shapes in the room, for example curves, connected lines, polygons and full meshes.
+This way you can define a start and end point of a animation to run through. 
+Its possible to have a start/end animation or a jumping from points to point, maybe randomly manipulate the positon of dots, like vibriting or so.
+Also able to make a sequence with points set in the world
+

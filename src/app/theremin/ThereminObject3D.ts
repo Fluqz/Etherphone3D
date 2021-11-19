@@ -1,3 +1,4 @@
+
 import { Mesh, SphereBufferGeometry, MeshNormalMaterial, Vector3, MeshBasicMaterial, Color, Object3D, MeshStandardMaterial, ShaderMaterial, Clock } from 'three'
 import { Note } from './note'
 import { DistanceLabel } from '../tools/labels/distance-label'
@@ -10,7 +11,7 @@ import { FragmentShader } from '../shaders/fragment-shaders'
 import { VertexShader } from '../shaders/vertex-shaders'
 import * as Tone from 'tone'
 
-export class Note3D {
+export class ThereminObject3D {
 
     public ctrl: Note
     public obj: Mesh
@@ -46,10 +47,13 @@ export class Note3D {
 
         this.position = new Vector3()
 
-        // this.distanceLabel = new DistanceLabel(this)
+        this.distanceLabel = new DistanceLabel(this)
         this.memoryLabel = new MemoryLabel(this)
         this.axesLabel = new AxesLabel(this)
         
+        this.distanceLabel.enabled = false
+        this.memoryLabel.enabled = true
+        this.axesLabel.enabled = true
 
         
         // LoadingManager.loadGLTF('/assets/models/shape.glb', (gltf)=> {
@@ -79,7 +83,9 @@ export class Note3D {
 
     public update() {
 
-        // this.distanceLabel.update()
+        this.move(this.ctrl.position)
+
+        this.distanceLabel.update()
 
         this.memoryLabel.update()
 
@@ -92,38 +98,25 @@ export class Note3D {
     public move(moveTo: Vector3) {
 
         this.position = moveTo
-
-        this.update()
     }
 
     public select() {
 
-        if(this.axesLabel) {
-            this.axesLabel.enabled = true
-            this.axesLabel.reset()
-        }
-        if(this.memoryLabel) {
-            this.memoryLabel.enabled = true
-            this.memoryLabel.reset()
-        }
+        if(this.axesLabel.enabled) this.axesLabel.reset()
     }
     
     public unselect() {
 
-        if(this.axesLabel) this.axesLabel.enabled = false
-        if(this.memoryLabel) this.memoryLabel.enabled = false
     }
 
     public play(length?: number) {
 
         console.log('length', length * 1000)
         this.obj.scale.set(2, 2, 2)
-        this.obj.updateMatrix()
 
         window.setTimeout(()=> {
 
             this.obj.scale.set(1, 1, 1)
-            this.obj.updateMatrix()
 
         }, length * 1000)
     }

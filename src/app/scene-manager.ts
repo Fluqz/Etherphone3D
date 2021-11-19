@@ -12,7 +12,10 @@ import { Theremin } from './theremin/theremin'
 import { Theremin3D } from './theremin/theremin3D'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
+
+
 import { Color } from './color'
+import { Globals } from './globals'
 
 
 export enum CameraType {
@@ -30,6 +33,11 @@ export class SceneManager {
     public static orthographic: THREE.OrthographicCamera
     public static scene: THREE.Scene
     public static orbit: OrbitControls
+
+    public static controller1: THREE.Group
+    public static controller2: THREE.Group
+    public static controllerGrip1: THREE.Group
+    public static controllerGrip2: THREE.Group
 
     public static activeCamera: CameraType
 
@@ -68,15 +76,15 @@ export class SceneManager {
         SceneManager.renderer = new THREE.WebGLRenderer({ antialias: true })
         SceneManager.renderer.setSize(SceneManager.w, SceneManager.h)
         SceneManager.renderer.setClearColor(Color.BG)
-        SceneManager.renderer.toneMapping = THREE.Uncharted2ToneMapping
+        // SceneManager.renderer.toneMapping = THREE.Uncharted2ToneMapping
         this.container.append(SceneManager.renderer.domElement)
 
         SceneManager.perspective = new THREE.PerspectiveCamera(50, SceneManager.w / SceneManager.h, .1, 10000)
         SceneManager.perspective.position.set(50, 50, 50)
 
         SceneManager.orthographic = new THREE.OrthographicCamera(SceneManager.w / -2, SceneManager.w / 2, SceneManager.h / 2, SceneManager.h / -2, .1, 1000)
-        SceneManager.orthographic.position.set(0, 0, 5)
-        SceneManager.orthographic.zoom = 50
+        SceneManager.orthographic.position.set(0, 0, 50)
+        SceneManager.orthographic.zoom = 100
 
         SceneManager.scene = new THREE.Scene()
         SceneManager.scene.background = new THREE.Color(Color.BG)
@@ -88,7 +96,7 @@ export class SceneManager {
         this.createAxes()
         this.createLight()
 
-        // this.addCubeMap()
+        this.addCubeMap()
     }
 
     public static get currentCamera(){
@@ -128,6 +136,7 @@ export class SceneManager {
         let geometry = new THREE.BufferGeometry().setFromPoints(points)
         let material = new THREE.LineBasicMaterial( { color: Color.X } )
         this.x = new THREE.Line( geometry, material )
+        this.x.matrixAutoUpdate = false
         this.x.position.set(0, 0, 0)
         SceneManager.scene.add(this.x)
         
@@ -138,6 +147,7 @@ export class SceneManager {
         geometry = new THREE.BufferGeometry().setFromPoints(points)
         material = new THREE.LineBasicMaterial( { color: Color.Y } )
         this.y = new THREE.Line( geometry, material )
+        this.y.matrixAutoUpdate = false
         this.y.position.set(0, 0, 0)
         SceneManager.scene.add(this.y)
 
@@ -148,6 +158,7 @@ export class SceneManager {
         geometry = new THREE.BufferGeometry().setFromPoints(points)
         material = new THREE.LineBasicMaterial( { color: Color.Z } )
         this.z = new THREE.Line( geometry, material )
+        this.z.matrixAutoUpdate = false
         this.z.position.set(0, 0, 0)
         SceneManager.scene.add(this.z)
     }
@@ -158,12 +169,15 @@ export class SceneManager {
 
         let hemi = new THREE.HemisphereLight(0xFFFdEF, 0xFFFedF, .8)
         SceneManager.scene.add(hemi)
+
+        let direct = new THREE.DirectionalLight(0xFFFdEF, .4)
+        SceneManager.scene.add(direct)
     }
 
     private addCubeMap() {
 
         SceneManager.scene.background = new THREE.CubeTextureLoader()
-            .setPath( '/assets/images/milky-way/' )
+            .setPath( Globals.PATH + '/assets/images/milky-way/' )
             .load( [
                 'px.png',
                 'nx.png',
@@ -177,14 +191,16 @@ export class SceneManager {
     public update() {
 
         if(SceneManager.orbit) SceneManager.orbit.update()
+
+        this.render()
+    }
+
+    public render() {
         
         if(SceneManager.activeCamera == CameraType.PERSPECTIVE) 
             SceneManager.renderer.render(SceneManager.scene, SceneManager.perspective)
         else if(SceneManager.activeCamera == CameraType.ORTHOGRAPHIC)  
             SceneManager.renderer.render(SceneManager.scene, SceneManager.orthographic)
-
-        // console.log(Theremin.instance.sounds, Theremin3D.instance.sounds3D)
-
     }
 
     public distanceToCenter(pos: Vector3) {

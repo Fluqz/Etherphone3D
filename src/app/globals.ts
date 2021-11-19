@@ -3,5 +3,7 @@
 export class Globals {
 
 
-    public static keys: {}
+    static VR: boolean = false
+    static PATH: string = window.location.origin + window.location.pathname
+    
 }

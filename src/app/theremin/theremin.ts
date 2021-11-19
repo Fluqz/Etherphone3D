@@ -1,16 +1,16 @@
 import { Note } from './note'
-import { AxesBehaviour } from '../axes-behaviours/axes-behaviour'
-import { FrequencyShift } from '../axes-behaviours/frequency-shfit'
-import { VolumeShift } from '../axes-behaviours/volume-shift'
-import { Octivator } from '../axes-behaviours/octivator'
-import { AdditiveSynthesis } from '../axes-behaviours/additive-synthesis'
+import { Chord } from './chord'
+import { Modulation } from './axes-behaviours/modulation'
+import { FrequencyShift } from './axes-behaviours/frequency-shfit'
+import { VolumeShift } from './axes-behaviours/volume-shift'
+import { Octivator } from './axes-behaviours/octivator'
+import { AdditiveSynthesis } from './axes-behaviours/additive-synthesis'
 import { Axis } from './axis'
 import { OctahedronBufferGeometry, Vector3 } from 'three'
 import * as Tone from 'tone'
+import { ThereminObject, TOType } from './ThereminObject'
 
 export class Theremin {
-
-    static instance: Theremin
 
     static masterVolume: Tone.Gain
     public storedVolume: number
@@ -18,25 +18,26 @@ export class Theremin {
     private muted: boolean = false
 
     public notes: Note[] = []
+    public chords: Chord[] = []
 
-    public static _x: AxesBehaviour
+    public static _x: Modulation
     public static get x() { return Theremin._x }
-    public static set x(behaviour: AxesBehaviour) {
+    public static set x(behaviour: Modulation) {
 
         Theremin._x = behaviour
         Theremin._x.axis = Axis.x
     }
 
-    public static _y: AxesBehaviour
+    public static _y: Modulation
     public static get y() { return Theremin._y }
-    public static set y(behaviour: AxesBehaviour) {
+    public static set y(behaviour: Modulation) {
 
         Theremin._y = behaviour
         Theremin._y.axis = Axis.y
     }
-    public static _z: AxesBehaviour
+    public static _z: Modulation
     public static get z() { return Theremin._z }
-    public static set z(behaviour: AxesBehaviour) {
+    public static set z(behaviour: Modulation) {
 
         Theremin._z = behaviour
         Theremin._z.axis = Axis.z
@@ -44,14 +45,12 @@ export class Theremin {
 
 
 
-    public static axesBehaviours: AxesBehaviour[] = []
+    public static Modulations: Modulation[] = []
 
     public isPlaying: boolean = true
 
 
     constructor() {
-
-        Theremin.instance = this
 
         this.volume = .7
 
@@ -61,9 +60,13 @@ export class Theremin {
 
         Theremin.masterVolume.gain.value = this.volume
 
-        Theremin.x = new FrequencyShift()
-        Theremin.y = new VolumeShift()
-        Theremin.z = new Octivator()
+        Theremin.Modulations.push(new FrequencyShift())
+        Theremin.Modulations.push(new VolumeShift())
+        Theremin.Modulations.push(new Octivator())
+
+        Theremin.setAxisbehaviour(Axis.x, Theremin.Modulations[0])
+        Theremin.setAxisbehaviour(Axis.y, Theremin.Modulations[1])
+        Theremin.setAxisbehaviour(Axis.z, Theremin.Modulations[2])
     }
 
 
@@ -75,9 +78,10 @@ export class Theremin {
         }
     }
 
-
-    public setAxisbehaviour(axis: string, behaviour: AxesBehaviour) {
-
+    public static setAxisbehaviour(axis: string, behaviour: Modulation) {
+        
+        behaviour.axis = Axis[axis]
+        Theremin[axis] = behaviour
     }
 
     public reset() {
@@ -97,18 +101,16 @@ export class Theremin {
 
     public addNote(frequency?: number) : Note {
 
-        let sn = new Note()
+        let n = new Note()
 
-        this.notes.push(sn)
+        this.notes.push(n)
 
-        sn.play()
+        n.play()
 
-        return sn
+        return n
     }
 
     public deleteNote(note: Note) : boolean {
-
-        if(!note) return false
 
         let i = this.notes.indexOf(note)
 
@@ -122,21 +124,13 @@ export class Theremin {
         return false
     }
 
-    public groupNotesToChord(_ses: Note[]) {
+    public groupNotesToChord(notes: Note[]) {
 
-        // let chord = new Chord(_ses)
+        let chord = new Chord(notes)
 
-        // this.notes.push(chord)
+        this.chords.push(chord)
 
-        // chord.notes.forEach(se => {
-
-        //     se.parent = chord
-
-        //     // if(se.parent) {
-        //     // }
-        // })
-
-        // return chord
+        return chord
     }
 
     public ungroupNotes(_ses: Note[]) {
@@ -153,27 +147,35 @@ export class Theremin {
     //     this.notes.push(note)
     // }
 
-    // public splitChord(chord: Chord) {
-
-    //     chord.notes.forEach(note => {
-
-    //         this.notes.push(note)
-    //     })
-    // }
-
     
-    public static computePosition(note: Note) {
+    public static computePosition(to: ThereminObject) {
 
-        if(Theremin.x) Theremin.x.compute1DPosition(note)
-        if(Theremin.y) Theremin.y.compute1DPosition(note)
-        if(Theremin.z) Theremin.z.compute1DPosition(note)
+        if(to instanceof Note) compute(to)
+        else if(to instanceof Chord) {
+
+            for(let n of to.notes) compute(n)
+        }
+
+        function compute(to: Note) {
+            if(Theremin.x) Theremin.x.compute1DPosition(to)
+            if(Theremin.y) Theremin.y.compute1DPosition(to)
+            if(Theremin.z) Theremin.z.compute1DPosition(to)
+        }
     }
 
-    public static computeFromPosition(note: Note, position: Vector3) {
+    public static computeFromPosition(to: ThereminObject, position: Vector3) {
 
-        if(Theremin.x) Theremin.x.processAlongDimension(note, position)
-        if(Theremin.y) Theremin.y.processAlongDimension(note, position)
-        if(Theremin.z) Theremin.z.processAlongDimension(note, position)
+        if(to instanceof Note) compute(to)
+        else if(to instanceof Chord) {
+
+            for(let n of to.notes) compute(n)
+        }
+
+        function compute(to: Note) {
+            if(Theremin.x) Theremin.x.processAlongDimension(to, position)
+            if(Theremin.y) Theremin.y.processAlongDimension(to, position)
+            if(Theremin.z) Theremin.z.processAlongDimension(to, position)
+        }
     }
 
     public mute() {

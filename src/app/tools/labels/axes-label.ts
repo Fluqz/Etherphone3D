@@ -27,11 +27,13 @@ export class AxesLine {
         this.lineGeo = new THREE.BufferGeometry()
 
         this.obj = new THREE.Line(this.lineGeo, new THREE.LineBasicMaterial({ color: new THREE.Color(this.color) }))
+        this.obj.matrixAutoUpdate = false
     }
 
     public update() {
 
         this.lineGeo.setFromPoints([this.p1, this.p2])
+        this.obj.updateMatrix()
     }
 }
 
@@ -117,6 +119,7 @@ export class AxesLabel {
         this.obj = new THREE.Object3D()
         this.obj.name = 'distancelabel.obj'
         this.obj.visible = this._enabled
+        this.obj.matrixAutoUpdate = false
 
         this.x = new AxesLine(this.note.ctrl.color.getHex(), 'x')
         this.obj.add(this.x.obj)

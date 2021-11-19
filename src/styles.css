@@ -113,3 +113,35 @@ option {
     user-select: none;
     
 }
+
+
+#axes-menu {
+
+    display: flex;
+    justify-content: space-between ;
+    align-items: center; 
+}
+ 
+#axes-menu .axes-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+
+
+#axes-menu .axes-item {
+}
+
+#axes-menu .axes-item {
+}
+
+
+
+
+
+
+
+
+
+/* TIMELINE */

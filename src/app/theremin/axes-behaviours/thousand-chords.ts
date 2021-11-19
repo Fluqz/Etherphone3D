@@ -1,8 +1,8 @@
-// import { AxesBehaviour } from './axis-behaviour'
+// import { Modulation } from './axis-behaviour'
 // import { Note } from '../note'
 // import { Chord } from '../chord'
 
-// export class ThousandChords implements AxesBehaviour {
+// export class ThousandChords implements Modulation {
 
 //     public sF: number = 0
 

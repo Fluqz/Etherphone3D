@@ -1,15 +1,15 @@
 import { Sample } from './sample'
 import * as Tone from 'tone'
+import { Theremin3D } from '../theremin/theremin3D'
+import { Subject } from 'rxjs'
 
 
 export class BeatMachine {
 
     private static _instance: BeatMachine
-    public static bpm:number = 200
+    public static bpm:number = 120
     public static beats:number = 16
     public static noteDuration:string = '1'
-
-    public static masterNode: GainNode
 
     public static samplesInQueue: Sample[] = []
 
@@ -25,15 +25,9 @@ export class BeatMachine {
 
     public static startTime: number = 0
 
-    constructor() {
-        
-        // Tone.context = new AudioContext()
+    public static onTrigger: Subject<Sample> = new Subject()
 
-        // BeatMachine.masterNode = Tone.context.createGain()
-
-        // BeatMachine.masterNode.gain.value = .3
-        // BeatMachine.masterNode.connect(Tone.context.destination)
-    }
+    constructor() {}
 
     public static get instance() {
 
@@ -106,7 +100,8 @@ export class BeatMachine {
                 // console.log('play', sample.scheduleTime, sample.length * BeatMachine.secondsPerBeat)
 
                 sample.note.play(sample.length * BeatMachine.secondsPerBeat)
-                sample.note.ctrl.play(sample.length * BeatMachine.secondsPerBeat)
+                // Theremin3D.instance.getNote3D(sample.note).play(sample.length * BeatMachine.secondsPerBeat) // HOW TO AVOID THIS? CALLBACK? 
+                this.onTrigger.next(sample)
             }
         })
     }

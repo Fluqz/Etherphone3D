@@ -1,22 +1,21 @@
 import { Vector3 } from 'three'
-import { Axis } from '../theremin/axis'
-import { Note } from '../theremin/note'
+import { Axis } from '../axis'
+import { Note } from '../note'
 
-
-export class AxesBehaviour {
-
-    public name: string = ''
-
-    public sF: number = 10
+export class Modulation {
 
     public axis: Axis
+    public name:string
 
+    public properties: {}[] = []
+
+    public sF: number = 10
     public min: number = 0
     public max: number = 1000
 
     public muted: boolean = false
 
-    constructor(axis?: Axis) {
+    constructor(axis?: Axis, min?:number, max?:number, sF?:number) {
 
         this.axis = axis
     }

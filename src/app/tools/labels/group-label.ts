@@ -55,7 +55,6 @@ export class GroupLabel {
 
         this.chord.sounds3D.forEach((note, index) => {
 
-            console.log(index, note.ctrl.position, this.chord.ctrl.position)
             this.lines[index].geometry.setFromPoints([note.ctrl.position, this.chord.ctrl.position])
         })
     }
@@ -65,11 +64,13 @@ export class GroupLabel {
         this.obj = new THREE.Object3D()
         this.obj.name = 'memorylabel.obj'
         this.obj.visible = this._enabled
+        this.obj.matrixAutoUpdate = false
 
         this.sphere = new THREE.Mesh(
             new THREE.SphereBufferGeometry(.5, 20, 20), 
             new THREE.MeshBasicMaterial({ color : 0xFFFFFF })
         )
+        this.sphere.matrixAutoUpdate = false
         this.obj.add(this.sphere)
 
         let geo = new THREE.BufferGeometry()
@@ -80,6 +81,7 @@ export class GroupLabel {
         this.chord.sounds3D.forEach(note => {
                 
             line = new THREE.Line(geo.clone(), mat) 
+            line.matrixAutoUpdate = false
             line.name = 'group.line'
 
             this.obj.add(line)

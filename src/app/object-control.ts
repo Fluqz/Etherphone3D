@@ -3,6 +3,8 @@ import { Theremin3D } from './theremin/theremin3D'
 import { SceneManager } from './scene-manager'
 import { Note3D } from './theremin/note3D'
 import { Theremin } from './theremin/theremin'
+import * as THREE from 'three'
+import { XRControllerModelFactory } from 'three/examples/jsm/webxr/XRControllerModelFactory'
 
 export class ObjectControl {
 
@@ -23,9 +25,9 @@ export class ObjectControl {
     private plane: Plane
 
     private keyMap: Map<string, boolean> = new Map()
-    private XKey: boolean
-    private YKey: boolean
-    private ZKey: boolean
+    private XKey: boolean = true
+    private YKey: boolean = true
+    private ZKey: boolean = true
     
     constructor(_theremin3D: Theremin3D) {
 
@@ -40,9 +42,13 @@ export class ObjectControl {
         
         this.plane = new Plane(new Vector3(0, 1, 0), 0)
 
-        SceneManager.renderer.domElement.addEventListener('mousedown', this.onMouseDown.bind(this), false)
-        SceneManager.renderer.domElement.addEventListener('mouseup', this.onMouseUp.bind(this), false)
-        SceneManager.renderer.domElement.addEventListener('mousemove', this.onMouseMove.bind(this), false)
+        this.keyMap.set('x', false)
+        this.keyMap.set('y', false)
+        this.keyMap.set('z', false)
+
+        SceneManager.renderer.domElement.addEventListener('pointerdown', this.onMouseDown.bind(this), false)
+        SceneManager.renderer.domElement.addEventListener('pointerup', this.onMouseUp.bind(this), false)
+        SceneManager.renderer.domElement.addEventListener('pointermove', this.onMouseMove.bind(this), false)
 
         // document.addEventListener('mouseleave', this.onLeaveContainer.bind(this), false)
 
@@ -51,8 +57,8 @@ export class ObjectControl {
         SceneManager.renderer.domElement.addEventListener('touchcancel', this.onTouchCancel.bind(this), false)
         SceneManager.renderer.domElement.addEventListener('touchmove', this.onTouchMove.bind(this), false)
         
-        SceneManager.renderer.domElement.addEventListener('keyup', this.onKeyUp.bind(this), false)
-        SceneManager.renderer.domElement.addEventListener('keydown', this.onKeyDown.bind(this), false)
+        document.body.addEventListener('keyup', this.onKeyUp.bind(this), false)
+        document.body.addEventListener('keydown', this.onKeyDown.bind(this), false)
     }
 
 
@@ -121,9 +127,131 @@ export class ObjectControl {
 
     // ON KEY DOWN SWITCH NOTE/CHORD TO OLD POSITION WHEN CLICKED
     // ON KEY UP SWITCH BACK TO CURRENT POSITION
+    public createController() {
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 5 ) ] );
+
+        SceneManager.controller1 = SceneManager.renderer.xr.getController( 0 );
+        SceneManager.controller1.add( new THREE.Line( geometry ) );
+        SceneManager.controller1.addEventListener('selectstart', this.onSelectStart.bind(this))
+        SceneManager.controller1.addEventListener('selectend', this.onSelectEnd.bind(this))
+        SceneManager.scene.add( SceneManager.controller1 );
+
+        SceneManager.controller2 = SceneManager.renderer.xr.getController( 1 );
+        SceneManager.controller2.add( new THREE.Line( geometry ) );
+        SceneManager.controller2.addEventListener('selectstart', this.onSelectStart.bind(this))
+        SceneManager.controller2.addEventListener('selectend', this.onSelectEnd.bind(this))
+        SceneManager.scene.add( SceneManager.controller2 );
+
+        const controllerModelFactory = new XRControllerModelFactory();
+
+        SceneManager.controllerGrip1 = SceneManager.renderer.xr.getControllerGrip( 0 );
+        SceneManager.controllerGrip1.add( controllerModelFactory.createControllerModel( SceneManager.controllerGrip1 ) );
+        SceneManager.scene.add( SceneManager.controllerGrip1 );
+
+        SceneManager.controllerGrip2 = SceneManager.renderer.xr.getControllerGrip( 1 );
+        SceneManager.controllerGrip2.add( controllerModelFactory.createControllerModel( SceneManager.controllerGrip2 ) );
+        SceneManager.scene.add( SceneManager.controllerGrip2 );
+    }
+
+    public removeController() {
+
+        SceneManager.scene.remove(SceneManager.controller1)
+        SceneManager.scene.remove(SceneManager.controller2)
+        SceneManager.scene.remove(SceneManager.controllerGrip1)
+        SceneManager.scene.remove(SceneManager.controllerGrip2)
+    }
 
 
     // EVENTS
+
+    public onSelectStart(event) {
+
+
+        const controller = event.target;
+
+        const intersections = this.getIntersections( controller );
+
+        if ( intersections.length > 0 ) {
+
+            const intersection = intersections[ 0 ];
+
+            const object = intersection.object;
+
+            controller.attach( object );
+
+            controller.userData.selected = object;
+        }
+    }
+
+    public onSelectEnd(event) {
+
+
+        const controller = event.target;
+
+        if ( controller.userData.selected !== undefined ) {
+
+            const object = controller.userData.selected;
+
+            // group.attach( object );
+
+            controller.userData.selected = undefined;
+        }
+    }
+
+    private tempMatrix: THREE.Matrix4
+    private getIntersections( controller ) {
+
+        this.tempMatrix.identity().extractRotation( controller.matrixWorld );
+
+        this.raycaster.ray.origin.setFromMatrixPosition( controller.matrixWorld );
+        this.raycaster.ray.direction.set( 0, 0, - 1 ).applyMatrix4( this.tempMatrix );
+
+        return this.raycaster.intersectObjects( this.collectRaycastObjs(), false );
+
+    }
+
+    private intersected: THREE.Object3D[]
+    private intersectObjects( controller ) {
+
+        // Do not highlight when already selected
+
+        if ( controller.userData.selected !== undefined ) return;
+
+        const line = controller.getObjectByName( 'line' );
+        const intersections = this.getIntersections( controller );
+
+        if ( intersections.length > 0 ) {
+
+            const intersection = intersections[ 0 ];
+
+            const object = intersection.object;
+
+            this.intersected.push( object );
+
+            line.scale.z = intersection.distance;
+
+        } else {
+
+            line.scale.z = 5;
+
+        }
+
+    }
+
+    private cleanIntersected() {
+
+        while ( this.intersected.length ) {
+
+            const object = this.intersected.pop();
+
+            if(object instanceof THREE.Mesh)
+                object.material.emissive.r = 0;
+        }
+    }
+
+
     public onMouseDown(event) {
         // console.log(event)
         this.mouseDown = true
@@ -197,7 +325,6 @@ export class ObjectControl {
             ObjectControl.selectedObj = null
         }
 
-        // SceneSetup.instance.onMouseDown(event)
         console.log('CURRENTLY SELECTED: ', ObjectControl.selectedObjs, '  Main: ', ObjectControl.selected)
     }
 
@@ -224,9 +351,6 @@ export class ObjectControl {
         if(ObjectControl.selectedObjs.length > 1) {
 
         }
-
-        // SceneSetup.instance.onMouseUp(event)
-        
     }
 
     public onMouseMove(event) {
@@ -248,7 +372,11 @@ export class ObjectControl {
 
                 this.moveTo.copy(this.ip.sub(this.offset))
 
-                // if(this.XKey) this.moveTo.x = this.moveTo.x
+
+                if(!this.XKey) this.moveTo.x = ObjectControl.selected.position.x
+                if(!this.YKey) this.moveTo.y = ObjectControl.selected.position.y
+                if(!this.ZKey) this.moveTo.z = ObjectControl.selected.position.z
+
                 // if(Y || Y == undefined) tmpPos.y = (moveTo.y)
                 // if(Z || Z == undefined) tmpPos.z = (moveTo.z)
 
@@ -300,30 +428,22 @@ export class ObjectControl {
 
     public onKeyDown(e: KeyboardEvent) {
 
+        if(e.repeat) return
+
         // MAKE POSSIBLE TO CLICK TWO KEYS e.g. X AND Y AND DONT CHANGE Z 
         const key = e.key.toLowerCase()
 
         if(key == 'x' || key == 'y' || key == 'z' || key == '<') {
             
-            this.XKey = false
-            this.YKey = false
-            this.ZKey = false
-            
-            this.keyMap.set(key, e.type == 'keydown')
+            this.keyMap.set(key, true)
 
-            if(this.keyMap.get('x')) {
+            this.XKey = this.keyMap.get('x')
+            this.YKey = this.keyMap.get('y')
+            this.ZKey = this.keyMap.get('z') || this.keyMap.get('<')
 
-                this.XKey = true
-            }
-            if(this.keyMap.get('y')) {
-                
-                this.YKey = true
-            }
-            if(this.keyMap.get('z') || this.keyMap.get('<')) {
-
-                this.ZKey = true
-            }
+            this.offset[key] = this.mouse[key]
         }
+        console.log('keymap',this.keyMap)
     }
 
     public onKeyUp(e) {
@@ -332,25 +452,18 @@ export class ObjectControl {
 
         if(key == 'x' || key == 'y' || key == 'z' || key == '<') {
         
-            this.keyMap.set(key, e.type == 'keydown')
+            this.keyMap.set(key, false)
 
-            if(this.keyMap.get('x') && this.keyMap.get('y') || 
-                this.keyMap.get('x') && (this.keyMap.get('z') || this.keyMap.get('<')) || 
-                this.keyMap.get('y') && (this.keyMap.get('z') || this.keyMap.get('<')) ||
-                this.keyMap.get('x') && this.keyMap.get('y') && (this.keyMap.get('z') || this.keyMap.get('<'))) {
-                
-                if(this.keyMap.get(key)) {
+            this.XKey = this.keyMap.get('x')
+            this.YKey = this.keyMap.get('y')
+            this.ZKey = this.keyMap.get('z') || this.keyMap.get('<')
 
-                    this.XKey = false
-                }
-            }
-            else {
-                
-                this.XKey = true
-                this.YKey = true
-                this.ZKey = true
-            }
+            if(!this.XKey && !this.YKey && !this.ZKey) 
+                this.XKey = this.YKey = this.ZKey = true
+            
         }
+
+        console.log('keymap',this.keyMap)
     }
 
     onResize() {

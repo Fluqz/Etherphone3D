@@ -7,7 +7,6 @@ import { SceneManager } from '../scene-manager';
 
 export class Theremin3D {
 
-    static instance: Theremin3D
     public theremin: Theremin
 
     public notes3D: Note3D[] = []
@@ -17,13 +16,11 @@ export class Theremin3D {
 
     constructor(ctrl: Theremin) {
 
-        Theremin3D.instance = this
-
         this.theremin = ctrl
 
         this.obj = new Object3D()
         this.obj.name = 'theremin.3D'
-
+        this.obj.matrixAutoUpdate = false
 
         this.theremin.notes.forEach(note3D => {
 
@@ -44,7 +41,7 @@ export class Theremin3D {
 
         Theremin.computeFromPosition(note3D.ctrl, position)
 
-        note3D.update()
+        note3D.move(position)
     }
 
 
@@ -74,6 +71,15 @@ export class Theremin3D {
         return null
     }
 
+    getNote3D(note: Note) : Note3D {
+
+        for(let n of this.notes3D) {
+
+            if(note == n.ctrl) return n
+        }
+        return null
+    }
+
     public addNote3D(note: Note) : Note3D {
 
         let note3D = new Note3D(note)
@@ -96,7 +102,7 @@ export class Theremin3D {
         if(i != -1) {
 
             this.notes3D.splice(i, 1)
-            SceneManager.scene.remove(note3D.obj)
+            if(note3D.obj.parent) note3D.obj.parent.remove(note3D.obj)
             note3D.destroy()
             return true
         }
