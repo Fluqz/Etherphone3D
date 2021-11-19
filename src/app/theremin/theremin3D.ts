@@ -31,17 +31,17 @@ export class Theremin3D {
 
     public update() {
 
-        // for(let note3D of this.notes3D) { 
+        for(let note3D of this.notes3D) { 
          
-        //     note3D.update()
-        // }
+            note3D.update()
+        }
     }
 
     public static moveNote(note3D: Note3D, position: Vector3) {
 
         Theremin.computeFromPosition(note3D.ctrl, position)
 
-        note3D.update()
+        note3D.move(position)
     }
 
 

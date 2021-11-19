@@ -1,10 +1,10 @@
-import { AxesBehaviour } from './axes-behaviour';
+import { Modulation } from './modulation';
 import { Note } from '../note';
 import { Axis } from '../axis'
 import { Vector3 } from 'three';
 import { BeatMachine } from 'src/app/beatmachine/beat-machine';
 
-export class Octivator extends AxesBehaviour {
+export class Octivator extends Modulation {
 
     private octaves: Map<number, Note> = new Map<number, Note>()
     private octave: Note
@@ -70,7 +70,7 @@ export class Octivator extends AxesBehaviour {
             this.octaves.set(note.id, oct)
         }
 
-        if(oct.type != note.type) oct.type = note.type
+        if(oct.wave != note.wave) oct.wave = note.wave
         oct.volume = note.volume
 
         return oct

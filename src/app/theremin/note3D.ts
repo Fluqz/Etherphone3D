@@ -10,8 +10,7 @@ import { FragmentShader } from '../shaders/fragment-shaders'
 import { VertexShader } from '../shaders/vertex-shaders'
 import * as Tone from 'tone'
 
-
-export class Note3D{
+export class Note3D {
 
     public ctrl: Note
     public obj: Mesh
@@ -80,8 +79,6 @@ export class Note3D{
 
     public update() {
 
-        this.move(this.ctrl.position)
-
         // this.distanceLabel.update()
 
         this.memoryLabel.update()
@@ -95,6 +92,8 @@ export class Note3D{
     public move(moveTo: Vector3) {
 
         this.position = moveTo
+
+        this.update()
     }
 
     public select() {

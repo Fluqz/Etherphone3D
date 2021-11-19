@@ -83,9 +83,6 @@ export class Chord3D{
 
     public update() {
 
-        this.move(this.ctrl.position)
-
-
         this.distanceLabel.update()
 
         this.memoryLabel.update()
@@ -99,6 +96,8 @@ export class Chord3D{
     public move(moveTo: Vector3) {
 
         this.position = moveTo
+
+        this.update()
     }
 
     public select() {

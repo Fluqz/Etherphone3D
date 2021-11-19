@@ -1,5 +1,5 @@
 import { Component, Input, ElementRef } from '@angular/core'
-import { AxesBehaviour } from './axes-behaviours/axes-behaviour'
+import { Modulation } from './axes-behaviours/modulation'
 import { ObjectControl } from '../object-control'
 import { Axis } from './axis'
 import { Theremin } from './theremin'
@@ -24,7 +24,7 @@ import { Theremin3D } from './theremin3D'
             
                 <label for="x">X</label>
                 <select name="x">
-                    <option *ngFor="let b of axesBehaviours; let i = index" value="i" (change)="setAxisbehaviour('x', $event.target.value)">{{ b.name }}</option>
+                    <option *ngFor="let b of Modulations; let i = index" value="i" (change)="setAxisbehaviour('x', $event.target.value)">{{ b.name }}</option>
                 </select>
 
             </div>
@@ -33,7 +33,7 @@ import { Theremin3D } from './theremin3D'
 
                 <label for="y">Y</label>
                 <select name="y">
-                    <option *ngFor="let b of axesBehaviours; let i = index" value="i" (change)="setAxisbehaviour('y', $event.target.value)">{{ b.name }}</option>
+                    <option *ngFor="let b of Modulations; let i = index" value="i" (change)="setAxisbehaviour('y', $event.target.value)">{{ b.name }}</option>
                 </select>
                 
             </div>
@@ -42,7 +42,7 @@ import { Theremin3D } from './theremin3D'
 
                 <label for="z">Z</label>
                 <select name="z">
-                    <option *ngFor="let b of axesBehaviours; let i = index" value="i" (change)="setAxisbehaviour('z', $event.target.value)">{{ b.name }}</option>
+                    <option *ngFor="let b of Modulations; let i = index" value="i" (change)="setAxisbehaviour('z', $event.target.value)">{{ b.name }}</option>
                 </select>
             
             </div>
@@ -74,9 +74,9 @@ import { Theremin3D } from './theremin3D'
         this.host = this.hostRef.nativeElement
     }
 
-    get axesBehaviours() {
+    get Modulations() {
 
-        return Theremin.axesBehaviours
+        return Theremin.Modulations
     }
 
     ngAfterViewInit() {}
@@ -96,10 +96,10 @@ import { Theremin3D } from './theremin3D'
     }
 
 
-    public setAxisbehaviour(a: string, b: AxesBehaviour) {
+    public setAxisbehaviour(a: string, b: Modulation) {
 
         console.log(b)
-        this.theremin.setAxisbehaviour(a, b)
+        Theremin.setAxisbehaviour(a, b)
     }
         
     public toggleAxesLabel() {

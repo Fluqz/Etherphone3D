@@ -1,9 +1,9 @@
-import { AxesBehaviour } from './axes-behaviour';
+import { Modulation } from './modulation';
 import { Note } from '../note';
 import { Axis } from '../axis'
 import { Vector3 } from 'three';
 
-export class VolumeShift extends AxesBehaviour {
+export class VolumeShift extends Modulation {
 
     constructor(axis?: Axis) { 
         

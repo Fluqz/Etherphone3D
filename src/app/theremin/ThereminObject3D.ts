@@ -11,7 +11,7 @@ import { FragmentShader } from '../shaders/fragment-shaders'
 import { VertexShader } from '../shaders/vertex-shaders'
 import * as Tone from 'tone'
 
-export class TObject {
+export class ThereminObject3D {
 
     public ctrl: Note
     public obj: Mesh

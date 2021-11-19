@@ -1,10 +1,10 @@
-import { AxesBehaviour } from './axes-behaviour'
+import { Modulation } from './modulation'
 import { Note } from '../note'
 import { NoteData, NoteDataClass } from "../../data/frequency-of-notes"
 import { Axis } from '../axis'
 import { Vector3 } from 'three'
 
-export class FrequencyShift extends AxesBehaviour {
+export class FrequencyShift extends Modulation {
 
     noteData: NoteData[] = []
 
