@@ -21,7 +21,7 @@
     "@angular/router": "~10.0.0-rc.2",
     "@types/three": "^0.131.1",
     "rxjs": "~6.5.5",
-    "serialize-javascript": "^2.1.2",
+    "serialize-javascript": "^3.1.0",
     "three": "^0.132.2",
     "tone": "^14.7.77",
     "tslib": "^2.0.0",
